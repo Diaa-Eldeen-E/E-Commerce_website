@@ -1,20 +1,31 @@
 import React from 'react';
 import Layout from './layouts/Layout';
+import Home from './components/Home'
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {Route, Router, Switch} from "react-router-dom";
+import {Route, BrowserRouter, Routes} from "react-router-dom";
+import AdminHome from "./components/admin/AdminHome";
 
-// import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 function App() {
     return (
         <div className="App">
-            <Router>
-                <Switch>
-                    <Route exact path='/' component={}
-                </Switch>
-            </Router>
-            <Layout/>
+            <BrowserRouter>
+                {/*Change from Switch to Routes*/}
+                <Routes>
+                    {/*Change from component to element and change from Home to <Home/>*/}
+                    <Route exact path='/' element={<Home/>}/>
+                    <Route path='/home' element={<Home/>}/>
+
+                </Routes>
+
+                {/*Admin routes*/}
+                <Routes>
+                    <Route exact path='/admin/' element={<AdminHome/>}/>
+                    <Route exact path='/admin/home' element={<AdminHome/>}/>
+
+                </Routes>
+            </BrowserRouter>
         </div>
     );
 }

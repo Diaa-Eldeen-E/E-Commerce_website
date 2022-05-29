@@ -1,6 +1,6 @@
 import {Outlet} from "react-router-dom";
 import React from "react";
-import Navigationbar from "../components/Admin/Navigationbar";
+import AdminNavigationbar from "../components/admin/AdminNavigationbar";
 
 
 const Layout = function () {
@@ -10,12 +10,11 @@ const Layout = function () {
         <div>
             <div className="container-fluid">
                 <div className="row">
-                    <Navigationbar/>
+                    <AdminNavigationbar/>
                 </div>
 
                 <div className="row">
 
-                    <Outlet/>
 
                 </div>
 

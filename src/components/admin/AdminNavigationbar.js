@@ -2,7 +2,7 @@ import {Container, Navbar, NavDropdown, Nav, Form, FormControl, Button, Image} f
 import {Link} from "react-router-dom";
 
 
-const Navigationbar = function () {
+const AdminNavigationbar = function () {
 
 
     return (
@@ -63,4 +63,4 @@ const Navigationbar = function () {
 }
 
 
-export default Navigationbar;
+export default AdminNavigationbar;

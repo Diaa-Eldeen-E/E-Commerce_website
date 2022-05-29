@@ -1,20 +1,20 @@
 import React from "react";
-import Navigationbar from "../components/Navigationbar";
+import AdminNavigationbar from "./AdminNavigationbar.js";
 
 
-const Home = function () {
+const AdminHome = function () {
 
     return (
 
         <div>
             <div className="container-fluid">
                 <div className="row">
-                    <Navigationbar/>
+                    <AdminNavigationbar/>
                 </div>
 
                 <div className="row">
 
-                    Home page
+                    Admin Home page
 
                 </div>
 
@@ -27,4 +27,4 @@ const Home = function () {
 }
 
 
-export default Home;
+export default AdminHome;
