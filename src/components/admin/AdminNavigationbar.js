@@ -38,7 +38,7 @@ const AdminNavigationbar = function () {
                     />
                     <Button className="h-100 p-0 rounded-0 bg-white border-start-0 rounded-end"
                             style={{"borderColor": "#ced4da"}}><Image
-                        src={'./assets/search-logo.png'} className="h-100"/></Button>
+                        src={'../assets/search-logo.png'} className="h-100"/></Button>
                 </Form>
 
                 <Nav

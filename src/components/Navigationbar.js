@@ -1,9 +1,14 @@
 import {Container, Navbar, NavDropdown, Nav, Form, FormControl, Button, Image} from "react-bootstrap";
-import {Link} from "react-router-dom";
+import {useAuth} from "./auth/AuthProvider";
 
+
+const getUsername = () => {
+    return localStorage.getItem('auth_name');
+}
 
 const Navigationbar = function () {
 
+    const {getToken, onLogout} = useAuth();
 
     return (
 
@@ -46,13 +51,27 @@ const Navigationbar = function () {
                     style={{maxHeight: '100px', marginRight: '0px'}}
                     // navbarScroll
                 >
-                    <NavDropdown title="Account" id="navbarScrollingDropdown">
-                        <NavDropdown.Item href="#action3">Action</NavDropdown.Item>
-                        <NavDropdown.Item href="#action4">Another action</NavDropdown.Item>
-                        <NavDropdown.Divider/>
-                        <NavDropdown.Item href="#action5">
-                            Something else here
+                    <NavDropdown title={getToken() ? getUsername() : "Account"} id="navbarScrollingDropdown">
+                        <NavDropdown.Item href="/login" hidden={getToken() ? true : false}>
+                            Sign in
                         </NavDropdown.Item>
+                        <NavDropdown.Item href="/register" hidden={getToken() ? true : false} className='text-warning'>
+                            Register
+                        </NavDropdown.Item>
+                        <NavDropdown.Item href="/orders" hidden={getToken() ? false : true}>Your
+                            orders</NavDropdown.Item>
+                        <NavDropdown.Item href="/list" hidden={getToken() ? false : true}>Your list</NavDropdown.Item>
+                        <NavDropdown.Item href="/settings"
+                                          hidden={getToken() ? false : true}>Settings</NavDropdown.Item>
+                        {/*<NavDropdown.Divider/>*/}
+                        <Form onSubmit={onLogout}>
+                            <Button type='submit' className='bg-white text-danger border-0'
+                                    hidden={getToken() ? false : true}>Sign
+                                out</Button>
+                        </Form>
+                        {/*<NavDropdown.Item href="#action5">*/}
+                        {/*    Something else here*/}
+                        {/*</NavDropdown.Item>*/}
                     </NavDropdown>
                 </Nav>
             </Container>

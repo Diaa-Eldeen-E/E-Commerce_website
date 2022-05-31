@@ -8,9 +8,9 @@ const Home = function () {
 
         <div>
             <div className="container-fluid">
-                <div className="row">
-                    <Navigationbar/>
-                </div>
+                {/*<div className="row">*/}
+                {/*    <Navigationbar/>*/}
+                {/*</div>*/}
 
                 <div className="row">
 

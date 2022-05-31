@@ -1,26 +1,24 @@
 import {Outlet} from "react-router-dom";
 import React from "react";
 import Navigationbar from "../components/Navigationbar";
+import {Col, Container, Row} from "react-bootstrap";
 
 
 const Layout = function () {
 
     return (
 
-        <div>
-            <div className="container-fluid">
-                <div className="row">
-                    <Navigationbar/>
-                </div>
+        <Container fluid>
 
-                <div className="row">
+            <Row>
+                <Navigationbar/>
+            </Row>
 
-                    <Outlet/>
+            <Row>
+                <Outlet/>
+            </Row>
 
-                </div>
-
-            </div>
-        </div>
+        </Container>
 
     );
 
