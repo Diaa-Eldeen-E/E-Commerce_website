@@ -18,6 +18,8 @@ const Layout = function () {
                 <Outlet/>
             </Row>
 
+            {/*  TODO: Add footer (copy rights, about us, contact, policies)  */}
+
         </Container>
 
     );

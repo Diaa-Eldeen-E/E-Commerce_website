@@ -1,30 +1,28 @@
 import {Outlet} from "react-router-dom";
 import React from "react";
 import AdminNavigationbar from "../components/admin/AdminNavigationbar";
+import {Container, Row} from "react-bootstrap";
+import Navigationbar from "../components/Navigationbar";
 
 
-const Layout = function () {
+const AdminLayout = function () {
 
     return (
+        <Container fluid>
 
-        <div>
-            <div className="container-fluid">
-                <div className="row">
-                    <AdminNavigationbar/>
-                </div>
+            <Row>
+                <AdminNavigationbar/>
+            </Row>
 
-                <div className="row">
+            <Row>
+                <Outlet/>
+            </Row>
 
-
-                </div>
-
-            </div>
-        </div>
-
+        </Container>
     );
 
 
 }
 
 
-export default Layout;
+export default AdminLayout;

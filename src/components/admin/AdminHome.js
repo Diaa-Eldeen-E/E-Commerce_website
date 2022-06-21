@@ -1,6 +1,7 @@
 import React, {useEffect} from "react";
 import axios from "axios";
 import AdminNavigationbar from "./AdminNavigationbar.js";
+import {Container, Row} from "react-bootstrap";
 
 
 const AdminHome = function () {
@@ -8,20 +9,16 @@ const AdminHome = function () {
 
     return (
 
-        <div>
-            <div className="container-fluid">
-                <div className="row">
-                    <AdminNavigationbar/>
-                </div>
+        <Container>
+            <Row>
 
-                <div className="row">
+                {/*TODO: Show last sold items, current balance, Average monthly sales, Average daily, today sales
+                    The most sold items (last day, last month, absolute)*/}
 
-                    Admin Home page
+                Admin Home page
 
-                </div>
-
-            </div>
-        </div>
+            </Row>
+        </Container>
 
     );
 

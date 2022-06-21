@@ -1,5 +1,5 @@
 import {useNavigate} from 'react-router';
-import {useState, useContext, createContext} from "react";
+import {useState, useContext, createContext, useEffect} from "react";
 import axios from "axios";
 
 import SweetAlert from 'react-bootstrap-sweetalert';
@@ -28,19 +28,23 @@ axios.interceptors.request.use(function (config) {
 //     }
 // });
 
+const AlertTimeout = 100;
 
 const AuthProvider = function ({children}) {
 
     // In react-router-dom v6 useHistory() is replaced by useNavigate().
     const navigate = useNavigate();
 
+    // TODO: Change to store token, store both auth_token and auth_name in single function
     const getToken = () => localStorage.getItem('auth_token');
     const setToken = (token) => localStorage.setItem('auth_token', token);
     const clearToken = () => localStorage.removeItem('auth_token');
 
+    // const [isAdmin, setIsAdmin] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [validationErrors, setValidationErrors] = useState('');
     const [alert, setAlert] = useState({'show': false, 'message': ''});
+
 
     const handleLogin = async (formData) => {
 
@@ -48,7 +52,10 @@ const AuthProvider = function ({children}) {
             axios.post('/api/login', formData).then((res) => {
                 if (res.data.status === 200) {
                     localStorage.setItem('auth_name', res.data.username);
-                    setToken(res.data.token)
+                    setToken(res.data.token);
+                    // if (res.data.isAdmin == 1)
+                    //     setIsAdmin(true);
+
                     setAlert({'show': true, 'message': res.data.message});
                     navigate('/')
 
@@ -74,12 +81,12 @@ const AuthProvider = function ({children}) {
                 if (res.data.status === 200) {
                     localStorage.removeItem('auth_name');
                     clearToken();
+                    // setIsAdmin(false);
 
-                    setAlert({'show': true, 'message': res.data.message});
+                    // setAlert({'show': true, 'message': res.data.message});
                     navigate('/');
                 } else {
                     console.log('Logout error, ' + res.data.message);
-                    setErrorMessage(res.data.message);
                     navigate('/');
                 }
             })
@@ -115,9 +122,10 @@ const AuthProvider = function ({children}) {
     const value = {
         setToken,
         getToken,
+        // isAdmin,
         // username,
-        errorMessage,
-        validationErrors,
+        // errorMessage,
+        // validationErrors,
         onLogin: handleLogin,
         onLogout: handleLogout,
         onRegister: handleRegister

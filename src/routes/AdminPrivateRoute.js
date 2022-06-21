@@ -10,10 +10,8 @@ import {useEffect, useState} from "react";
 const AdminPrivateRoute = function ({children}) {
     //    Check admin auth
 
-    const {isAdmin} = useAuth();
     const location = useLocation();
 
-    console.log('isAdmin: ' + isAdmin);
 
     // const [authenticated, setAuthenticated] = useState(false);
     // const [loading, setLoading] = useState(true);
@@ -36,9 +34,12 @@ const AdminPrivateRoute = function ({children}) {
     // console.log("here");
     // console.log(authenticated + ", props: " + props);
 
+    //TODO: Admin authorization (Role attribute in users table, abilities attribute in tokens table)
+
     return (
         children
-        // isAdmin ? children : <Navigate to='login' replace state={{from: location}}/>
+        // Change navigate to, to /
+        // isAdmin ? children : <Navigate to='/notfound' replace state={{from: location}}/>
     );
 }
 

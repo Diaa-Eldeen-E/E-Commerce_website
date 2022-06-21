@@ -22,6 +22,8 @@ const Navigationbar = function () {
                 >
                     <Nav.Link href="#action1">Home</Nav.Link>
                     <Nav.Link href="#action2">Link</Nav.Link>
+
+                    {/*TODO: Categories*/}
                     <NavDropdown title="Categories" id="navbarScrollingDropdown">
                         <NavDropdown.Item href="#action3">Action</NavDropdown.Item>
                         <NavDropdown.Item href="#action4">Another action</NavDropdown.Item>
@@ -73,6 +75,8 @@ const Navigationbar = function () {
                         {/*    Something else here*/}
                         {/*</NavDropdown.Item>*/}
                     </NavDropdown>
+
+                    {/*    [TODO: Cart]*/}
                 </Nav>
             </Container>
         </Navbar>

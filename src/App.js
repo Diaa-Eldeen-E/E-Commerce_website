@@ -12,11 +12,19 @@ import AdminHome from "./components/admin/AdminHome";
 import {useNavigate, Navigate} from "react-router";
 
 import axios from "axios";
+import Page404 from "./components/Page404";
+import AdminLayout from "./layouts/AdminLayout";
+import RequireAuth from "./components/auth/RequireAuth";
 
 axios.defaults.withCredentials = true;
 axios.defaults.baseURL = 'http://localhost:8000';
 
 const getToken = () => localStorage.getItem('auth_token');
+
+const Roles = {
+    user: 0,
+    admin: 1
+}
 
 function App() {
 
@@ -36,21 +44,32 @@ function App() {
                             <Route path='/home' element={<Home/>}/>
                             <Route path='/login' element={getToken() ? <Navigate to='/' replace/> : <Login/>}/>
                             <Route path='/register' element={getToken() ? <Navigate to='/' replace/> : <Register/>}/>
+
+                            {/*  TODO: Add routes for categories, products, orders, cart, list, Settings  */}
+
                         </Route>
-                        {/*</Routes>*/}
 
                         {/*Admin routes*/}
-                        {/*<Routes>*/}
-                        <Route
-                            path='/admin/home'
-                            exact
-                            element={
-                                <AdminPrivateRoute>
-                                    <AdminHome/>
-                                </AdminPrivateRoute>
-                            }
-                        />
+                        <Route path='/admin' element={<RequireAuth allowedRole={Roles.admin}/>}>
 
+                            <Route element={<AdminLayout/>}>
+                                <Route index element={<AdminHome/>}/>
+                                <Route
+                                    path='/admin/home'
+                                    exact
+                                    element={
+                                        <AdminHome/>
+                                    }
+                                />
+
+                            </Route>
+
+                            {/*<Route index element={<AdminPrivateRoute> <AdminLayout/> </AdminPrivateRoute>}/>*/}
+                        </Route>
+
+
+                        <Route path='/notfound' element={<Page404/>}/>
+                        <Route path='*' element={<Page404/>}/>
 
                     </Routes>
                 </AuthProvider>
