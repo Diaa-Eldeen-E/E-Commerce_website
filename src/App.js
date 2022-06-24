@@ -15,6 +15,8 @@ import axios from "axios";
 import Page404 from "./components/Page404";
 import AdminLayout from "./layouts/AdminLayout";
 import RequireAuth from "./components/auth/RequireAuth";
+import Categories from "./components/admin/Categories";
+import UpdateCategory from "./components/admin/UpdateCategory";
 
 axios.defaults.withCredentials = true;
 axios.defaults.baseURL = 'http://localhost:8000';
@@ -54,13 +56,9 @@ function App() {
 
                             <Route element={<AdminLayout/>}>
                                 <Route index element={<AdminHome/>}/>
-                                <Route
-                                    path='/admin/home'
-                                    exact
-                                    element={
-                                        <AdminHome/>
-                                    }
-                                />
+                                <Route path='/admin/home' exact element={<AdminHome/>}/>
+                                <Route path='/admin/categories' exact element={<Categories/>}/>
+                                <Route path='updatecategory/:catName' element={<UpdateCategory/>}/>
 
                             </Route>
 

@@ -5,6 +5,7 @@ import Register from "./Register";
 import Page404 from "../Page404";
 import axios from "axios";
 import {useAuth} from "./AuthProvider";
+import Loading from "../Loading";
 
 const RequireAuth = function ({allowedRole}) {
 
@@ -42,7 +43,7 @@ const RequireAuth = function ({allowedRole}) {
 
 
     return (
-        isLoading ? "Loading" :
+        isLoading ? <Loading/> :
             isAllowed ? <Outlet/> : <Navigate to='/notfound' replace/>
 
         //    You can further check user login and implement specific reaction on being logged in but not authorized
