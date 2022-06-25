@@ -7,6 +7,9 @@ import axios from "axios";
 import {useAuth} from "./AuthProvider";
 import Loading from "../Loading";
 
+// https://www.youtube.com/watch?v=oUZjO00NkhY
+
+// Authorization process for protected routes
 const RequireAuth = function ({allowedRole}) {
 
     const navigate = useNavigate();

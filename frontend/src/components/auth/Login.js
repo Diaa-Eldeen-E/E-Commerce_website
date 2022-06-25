@@ -23,6 +23,7 @@ const Login = function () {
 
         // TODO: Save previous location, and redirect to it after login
         // https://github.com/gitdagray/react_protected_routes/blob/main/src/components/Login.js
+        // https://www.youtube.com/watch?v=oUZjO00NkhY
 
         try {
             // onLogin(inputs);
