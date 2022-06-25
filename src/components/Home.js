@@ -1,9 +1,16 @@
-import React from "react";
+import React, {useEffect} from "react";
 import Navigationbar from "../components/Navigationbar";
+import {useNavigate} from "react-router";
 
 
 const Home = function () {
 
+    const navigate = useNavigate();
+    // href={'/admin/category/' + catName + '?pn=' + (i) + '&ps=' + pageSize}
+
+    useEffect(() => {
+        navigate('/categories');
+    }, [])
     return (
 
         <div>

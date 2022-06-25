@@ -28,7 +28,7 @@ axios.interceptors.request.use(function (config) {
 //     }
 // });
 
-const AlertTimeout = 100;
+const AlertTimeout = 2000;
 
 const AuthProvider = function ({children}) {
 
@@ -57,7 +57,8 @@ const AuthProvider = function ({children}) {
                     //     setIsAdmin(true);
 
                     setAlert({'show': true, 'message': res.data.message});
-                    navigate('/')
+                    setTimeout(() => navigate('/'), AlertTimeout);
+
 
                 } else if (res.data.status === 401) {
                     setErrorMessage(res.data.message);

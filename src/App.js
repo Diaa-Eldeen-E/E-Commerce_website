@@ -15,8 +15,14 @@ import axios from "axios";
 import Page404 from "./components/Page404";
 import AdminLayout from "./layouts/AdminLayout";
 import RequireAuth from "./components/auth/RequireAuth";
-import Categories from "./components/admin/Categories";
+import AdminCategories from "./components/admin/AdminCategories";
 import UpdateCategory from "./components/admin/UpdateCategory";
+import AdminCategory from "./components/admin/AdminCategory";
+import AddProduct from "./components/admin/AddProduct";
+import AdminProduct from "./components/admin/AdminProduct";
+import Category from "./components/Category";
+import Product from "./components/Product";
+import Categories from "./components/Categories"
 
 axios.defaults.withCredentials = true;
 axios.defaults.baseURL = 'http://localhost:8000';
@@ -43,6 +49,9 @@ function App() {
                             {/*Index route A child route with no path that renders in the parent's outlet at
                              the parent's URL By default*/}
                             <Route index element={<Home/>}/>
+                            <Route path='category/:catName' element={<Category/>}/>
+                            <Route path='category/:catName/:productID' element={<Product/>}/>
+                            <Route path='categories' element={<Categories/>}/>
                             <Route path='/home' element={<Home/>}/>
                             <Route path='/login' element={getToken() ? <Navigate to='/' replace/> : <Login/>}/>
                             <Route path='/register' element={getToken() ? <Navigate to='/' replace/> : <Register/>}/>
@@ -57,8 +66,11 @@ function App() {
                             <Route element={<AdminLayout/>}>
                                 <Route index element={<AdminHome/>}/>
                                 <Route path='/admin/home' exact element={<AdminHome/>}/>
-                                <Route path='/admin/categories' exact element={<Categories/>}/>
+                                <Route path='/admin/categories' exact element={<AdminCategories/>}/>
                                 <Route path='updatecategory/:catName' element={<UpdateCategory/>}/>
+                                <Route path='category/:catName' element={<AdminCategory/>}/>
+                                <Route path='addproduct' element={<AddProduct/>}/>
+                                <Route path='category/:catName/:productID' element={<AdminProduct/>}/>
 
                             </Route>
 

@@ -1,4 +1,16 @@
-import {Container, Navbar, NavDropdown, Nav, Form, FormControl, Button, Image} from "react-bootstrap";
+import {
+    Container,
+    Navbar,
+    NavDropdown,
+    Nav,
+    Form,
+    FormControl,
+    Button,
+    Image,
+    Row,
+    Col,
+    InputGroup
+} from "react-bootstrap";
 import {Link} from "react-router-dom";
 import {useAuth} from "../auth/AuthProvider";
 import {useEffect, useState} from "react";
@@ -89,68 +101,75 @@ const AdminNavigationbar = function () {
 
     return (
 
-        <Navbar bg="secondary" style={{"height": "50px"}}>
-            <Container fluid className={"h-100"}>
-                <Navbar.Brand href="#" className={"text-warning"}>Store</Navbar.Brand>
+        <Container fluid className='bg-secondary'>
 
-                <Nav
-                    className="me-5 my-2 my-lg-0"
-                    style={{maxHeight: '100px'}}
-                >
+            <Navbar>
+                <Container fluid style={{height: "50px"}}>
+                    <Row className='w-100'>
+                        {/* Brand */}
+                        <Col className='col-1'>
+                            <Navbar.Brand href="#" className={"text-warning"}>Store</Navbar.Brand>
+                        </Col>
 
-                    <Nav.Link href="#action1">Home</Nav.Link>
-                    <Nav.Link href="#action2">Link</Nav.Link>
+                        {/* Links to home and categories*/}
+                        <Col className='col-4'>
+                            <Nav>
+                                <Nav.Link href="#action1">Home</Nav.Link>
 
-                    {/*TODO: Categories where admin can edit*/}
-                    {/*Request categories from the database*/}
-                    {/*Make category component, will take each item of categories returned as input*/}
-                    {/* The category component shall take an extra argument to make it editable*/}
-                    <NavDropdown title="Categories" id="navbarScrollingDropdown">
+                                <NavDropdown title="Categories" id="navbarScrollingDropdown">
 
-                        <Nested parent_id={0} categs={categories} categsChildren={categsChildrenState}/>
+                                    <Nested parent_id={0} categs={categories} categsChildren={categsChildrenState}/>
 
-                        <NavDropdown.Divider/>
-                        <NavDropdown.Item href="/admin/categories">
-                            All categories
-                        </NavDropdown.Item>
-                    </NavDropdown>
-                    <Nav.Link href="#" disabled>
-                        Link
-                    </Nav.Link>
-                </Nav>
-                <Form className="d-flex h-100 w-50">
-                    <FormControl
-                        type="search"
-                        placeholder="Search"
-                        className="me-0 border-end-0 rounded-0 rounded-start"
-                        aria-label="Search"
-                    />
-                    <Button className="h-100 p-0 rounded-0 bg-white border-start-0 rounded-end"
-                            style={{"borderColor": "#ced4da"}}><Image
-                        src={'../assets/search-logo.png'} className="h-100"/></Button>
-                </Form>
+                                    <NavDropdown.Divider/>
+                                    <NavDropdown.Item href="/admin/categories">
+                                        All categories
+                                    </NavDropdown.Item>
+                                </NavDropdown>
+                            </Nav>
+                        </Col>
 
-                <Nav
-                    className="justify-content-end"
-                    style={{maxHeight: '100px', marginRight: '0px'}}
-                    // navbarScroll
-                >
-                    <NavDropdown title={getUsername()} id="navbarScrollingDropdown">
+                        {/* Search form */}
+                        <Col className='col-6' style={{maxHeight: "50px"}}>
+                            <Form className="">
 
-                        <NavDropdown.Item href="/list">Your list</NavDropdown.Item>
-                        <NavDropdown.Item href="/settings">Settings</NavDropdown.Item>
-                        {/*<NavDropdown.Divider/>*/}
-                        <Form onSubmit={onLogout}>
-                            <Button type='submit' className='bg-white text-danger border-0'>Sign out</Button>
-                        </Form>
-                        {/*<NavDropdown.Item href="#action5">*/}
-                        {/*    Something else here*/}
-                        {/*</NavDropdown.Item>*/}
-                    </NavDropdown>
+                                <InputGroup className='h-100'>
+                                    <FormControl
+                                        type="search"
+                                        placeholder="Search"
+                                        className="me-0 border-end-0 rounded-0 rounded-start"
+                                        aria-label="Search"
+                                    />
+                                    <Image
+                                        src={'/assets/search-logo.png'} className="w-auto rounded-end"
+                                        style={{maxHeight: "40px"}}/>
+                                </InputGroup>
+                            </Form>
+                        </Col>
 
-                </Nav>
-            </Container>
-        </Navbar>
+                        {/* Account */}
+                        <Col className='col-1'>
+                            <Nav navbarScroll>
+                                <NavDropdown title={getUsername()} id="navbarScrollingDropdown">
+
+                                    <NavDropdown.Item href="/list">Your list</NavDropdown.Item>
+                                    <NavDropdown.Item href="/settings">Settings</NavDropdown.Item>
+                                    {/*<NavDropdown.Divider/>*/}
+                                    <Form onSubmit={onLogout}>
+                                        <Button type='submit' className='bg-white text-danger border-0'>Sign
+                                            out</Button>
+                                    </Form>
+                                    {/*<NavDropdown.Item href="#action5">*/}
+                                    {/*    Something else here*/}
+                                    {/*</NavDropdown.Item>*/}
+                                </NavDropdown>
+
+                            </Nav>
+                        </Col>
+                    </Row>
+                </Container>
+            </Navbar>
+
+        </Container>
     );
 
 

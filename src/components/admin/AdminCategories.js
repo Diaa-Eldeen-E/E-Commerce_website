@@ -4,7 +4,7 @@ import {Button, Col, Container, Fade, Form, Row, ListGroup, ListGroupItem} from 
 import {Link} from "react-router-dom";
 
 
-const Categories = function () {
+const AdminCategories = function () {
     const [refreshData, setRefreshData] = useState(true);
     const [categsState, setCategsState] = useState([]);
     const [categsChildrenState, setCategsChildrenState] = useState([]);
@@ -132,24 +132,6 @@ const Categories = function () {
             return (
                 <>
                     <ListItem category={categs[cat_id]}/>
-                    {/*<li key={cat_id} className='list-group-item-action'>*/}
-                    {/*    <Row className='align-items-center'>*/}
-
-                    {/*        /!* Category name*!/*/}
-                    {/*        <Col className='col-md-9'>*/}
-                    {/*            <p className='my-auto'> {categs[cat_id].name}</p>*/}
-                    {/*        </Col>*/}
-
-                    {/*        /!* Buttons *!/*/}
-                    {/*        <Col>*/}
-                    {/*            <Link to={'/admin/updatecategory/' + categs[cat_id].name}>*/}
-                    {/*                <Button variant='outline-primary' className='mx-1 my-1'>Update</Button></Link>*/}
-                    {/*            <Button variant='outline-danger' className='mx-1 my-1'*/}
-                    {/*                    onClick={() => deleteCategory(categs[cat_id].name)}>Delete</Button>*/}
-                    {/*        </Col>*/}
-
-                    {/*    </Row>*/}
-                    {/*</li>*/}
                     {categsChildren[cat_id]?.length > 0 &&
                         <Nested parent_id={cat_id} categs={categsState} categsChildren={categsChildrenState}/>}
                 </>
@@ -170,7 +152,7 @@ const Categories = function () {
     return (
         <Container className="my-4">
 
-            {/* Categories lists*/}
+            {/* AdminCategories lists*/}
             <Row className='w-75 mx-auto'>
                 <Nested parent_id={0} categs={categsState} categsChildren={categsChildrenState}/>
             </Row>
@@ -212,7 +194,7 @@ const Categories = function () {
     );
 }
 
-export default Categories;
+export default AdminCategories;
 
 
 //

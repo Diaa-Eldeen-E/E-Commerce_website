@@ -5,7 +5,7 @@ import {useNavigate} from "react-router";
 import axios from "axios";
 import SweetAlert from "react-bootstrap-sweetalert";
 
-const AlertTimeout = 100;
+const AlertTimeout = 1000;
 
 const Login = function () {
 
@@ -37,7 +37,10 @@ const Login = function () {
                         // setIsAdmin(true);
 
                         setAlert({'show': true, 'message': res.data.message});
-                        setTimeout(() => navigate('/'), AlertTimeout);
+                        if (res.data?.isAdmin == 1)
+                            setTimeout(() => navigate('/admin'), AlertTimeout);
+                        else
+                            setTimeout(() => navigate('/'), AlertTimeout);
 
                     } else if (res.data.status === 401) {
                         setErrorMessage(res.data.message);
