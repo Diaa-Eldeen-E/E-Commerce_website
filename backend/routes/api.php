@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -53,6 +54,19 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+// Create an admin
+Route::get('users/createadmin', function (Request $request) {
+    static $adminsCount = 0;
+    $adminsCount += 1;
+    $admin = new \App\Models\User;
+    $admin->name = 'admin' . $adminsCount;
+    $admin->password = Hash::make('123456');
+    $admin->email = 'a' . $adminsCount . "@aa.com";
+    $admin->role = 1;
+    $admin->save();
+
+    return ("<h1>Username: $admin->name</h1><h1>Password: 123456</h1>");
+});
 
 // Todo token abilities
 // https://laravel.com/docs/9.x/sanctum#token-abilities

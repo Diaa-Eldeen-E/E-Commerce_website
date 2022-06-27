@@ -37,7 +37,7 @@ $ npm start     # Start the frontend server
 
 ### 5. Create Admin User
 
-- Run this on chrome: http://localhost:5000/api/users/createadmin
+- Run this on chrome: http://localhost:8000/api/users/createadmin
 - It returns admin email and password
 
 
