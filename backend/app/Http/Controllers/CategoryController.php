@@ -40,8 +40,8 @@ class CategoryController extends Controller
         // Validate input, (No duplicate name, parent must exist)
         $parent_name = $request->parent;
         $validator = Validator::make($request->all(), [
-            'name' => 'required|unique:categories,name',
-            'parent' => 'nullable|exists:categories,name'
+            'name' => 'required|alpha_dash|unique:categories,name',
+            'parent' => 'nullable|alpha_dash|exists:categories,name'
         ]);
 
 
@@ -77,10 +77,19 @@ class CategoryController extends Controller
         $catName = $request->keys();
 
         // Validate input
+        $validator = Validator::make(['catName' => $catName], [
+            'catName' => 'required|alpha_dash|exists:categories,name',
+        ]);
 
-        $category = Category::where('name', $catName)->get();
-        if ($category->count() == 1) {
-            $deleted = Category::where('name', $catName)->delete();
+        if ($validator->fails()) {
+            return response()->json([
+                'validation_errors' => $validator->messages(),
+                'message' => 'Invalid inputs'
+            ]);
+        } else {
+
+            $category = Category::where('name', $catName)->get();
+            $deleted = $category->delete();
             if ($deleted)
                 return response()->json([
                     'status' => 200,
@@ -88,22 +97,18 @@ class CategoryController extends Controller
                 ]);
             else
                 return response()->json('Not deleted');
-
-        } else
-            return response()->json('Error during deletion');
+        }
     }
 
     public function updateCategory(Request $request, $catName)
     {
-
-
         // Validate input, (No duplicate name, parent must exist)
         $parent_name = $request->parent;
 
         $validator = Validator::make($request->all() + ['catName' => $catName], [
-            'name' => 'required|unique:categories,name',
-            'catName' => 'required|exists:categories,name',
-            'parent' => 'nullable|exists:categories,name'
+            'name' => 'required|alpha_dash|unique:categories,name',
+            'catName' => 'required|alpha_dash|exists:categories,name',
+            'parent' => 'nullable|alpha_dash|exists:categories,name'
         ]);
 
 
@@ -132,7 +137,5 @@ class CategoryController extends Controller
                 'message' => 'Category updated successfully'
             ]);
         }
-
-        return response()->json($catName);
     }
 }

@@ -10,61 +10,69 @@ use App\Models\User;
 class AuthController extends Controller
 {
     //
-    public function register (Request $request)
+    public function register(Request $request)
     {
         // Validate the form data received
         $validator = Validator::make($request->all(), [
-            'username'=>'required|unique:users,name',
-            'email'=>'required|email|max:255|unique:users,email',
-            'password'=>'required|min:8'
+            'username' => 'required|alpha_dash|max:255|unique:users,name',
+            'email' => 'required|email|max:255|unique:users,email',
+            'password' => 'required|min:8|max:255'
         ]);
 
-        if($validator->fails())
-        {
+        if ($validator->fails()) {
             return response()->json([
-                'validation_errors'=>$validator->messages(),
-                'message'=>'Invalid inputs'
+                'validation_errors' => $validator->messages(),
+                'message' => 'Invalid inputs'
             ]);
-        }
-        else {
+        } else {
             $user = User::create([
-                'name'=>$request->username,
-                'email'=>$request->email,
-                'password'=>Hash::make($request->password),
+                'name' => $request->username,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
             ]);
 
             $token = $user->createToken($user->email . '_Token');
             return response()->json([
-                'status'=>200,
-                'username'=>$user->name,
-                'token'=>$token->plainTextToken,
-                'message'=>'Registered successfully'
+                'status' => 200,
+                'username' => $user->name,
+                'token' => $token->plainTextToken,
+                'message' => 'Registered successfully'
             ]);
         }
     }
 
 
-    public function login (Request $request)
+    public function login(Request $request)
     {
+        // Validate input
+        $validator = Validator::make($request->all(), [
+            'username' => 'required|alpha_dash|max:255|exists:users,name',
+            'password' => 'required|alpha-dash|max:255'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'validation_errors' => $validator->messages(),
+                'message' => 'Invalid credentials'
+            ]);
+        }
         // Check that user exists and the passwords are matching
         $user = User::where('name', $request->username)->first();
-        if(! $user || ! Hash::check($request->password, $user->password))
-        {
+        if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json([
-                'status'=>401,
-                'message'=>'Invalid credentials'
+                'status' => 401,
+                'message' => 'Invalid credentials'
             ]);
 
-        }
-        else {
+        } else {
             $token = $user->createToken($user->name . '_Token')->plainTextToken;
 
             return response()->json([
-                'status'=>200,
-                'username'=>$user->name,
-                'token'=>$token,
-                'isAdmin'=>$user->role == 1 ? 1 : 0,
-                'message'=>'Logged in successfully'
+                'status' => 200,
+                'username' => $user->name,
+                'token' => $token,
+                'isAdmin' => $user->role == 1 ? 1 : 0,
+                'message' => 'Logged in successfully'
             ]);
         }
     }
@@ -74,8 +82,8 @@ class AuthController extends Controller
     {
         $request->user()->tokens()->delete();
         return response()->json([
-            'status'=>200,
-            'message'=>'Logged out successfully'
+            'status' => 200,
+            'message' => 'Logged out successfully'
         ]);
     }
 
@@ -84,8 +92,8 @@ class AuthController extends Controller
         $user_role = $request->user()->role;
         if ($user_role == 1)
             return response()->json([
-              'user_role'=>$user_role ? 1 : 0
-         ]);
+                'user_role' => $user_role ? 1 : 0
+            ]);
         else
             return response()->json(['Error, Unauthorized'], 401);
     }

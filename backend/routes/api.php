@@ -54,10 +54,12 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+
 // Create an admin
 Route::get('users/createadmin', function (Request $request) {
-    static $adminsCount = 0;
+    $adminsCount = \App\Models\User::where('role', 1)->count();
     $adminsCount += 1;
+    
     $admin = new \App\Models\User;
     $admin->name = 'admin' . $adminsCount;
     $admin->password = Hash::make('123456');
