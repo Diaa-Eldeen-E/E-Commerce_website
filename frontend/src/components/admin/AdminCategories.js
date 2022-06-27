@@ -2,12 +2,13 @@ import axios from "axios";
 import {useEffect, useState} from "react";
 import {Button, Col, Container, Fade, Form, Row, ListGroup, ListGroupItem} from "react-bootstrap";
 import {Link} from "react-router-dom";
-
+import ListNestedCategories from "../ListNestedCategories";
+import Loading from "../Loading";
 
 const AdminCategories = function () {
     const [refreshData, setRefreshData] = useState(true);
-    const [categsState, setCategsState] = useState([]);
-    const [categsChildrenState, setCategsChildrenState] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [categories, setCategories] = useState([]);
 
     // Load categories from database
     useEffect(() => {
@@ -15,39 +16,11 @@ const AdminCategories = function () {
             return;
         setRefreshData(false);
         axios.get('/sanctum/csrf-cookie').then((response) => {
-            axios.get('/api/categories').then((res) => {
+            axios.get('/api/nestedcategories').then((res) => {
 
-                    // Data preprocessing
-                    let categories = res.data;
-                    let minIdx = 9999999;
-                    categories.forEach((cat) => {
-                        if (cat.id < minIdx)
-                            minIdx = cat.id;
-                    });
-
-                    let tempCategs = [];
-                    let tempCategsChildren = [];
-                    categories.forEach((cat) => {
-                        cat.id -= (minIdx - 1);
-                        if (cat.parent_id > 0)
-                            cat.parent_id -= (minIdx - 1);
-                        else
-                            cat.parent_id = 0;
-
-                        // Add it in categories array
-                        tempCategs[cat.id] = cat;
-
-                        // Push this category in its parent array of children
-                        if (tempCategsChildren[cat.parent_id]?.length >= 1)
-                            tempCategsChildren[cat.parent_id].push(cat.id);
-                        else
-                            tempCategsChildren[cat.parent_id] = [cat.id];
-                    });
-
-                    setCategsState(tempCategs);
-                    setCategsChildrenState(tempCategsChildren);
-                }
-            )
+                setCategories(res.data);
+                setIsLoading(false);
+            })
         });
     }, [refreshData]);
 
@@ -64,131 +37,18 @@ const AdminCategories = function () {
     }
 
 
-    // Adding category form
-    const [inputs, setInputs] = useState({});
-    const [errorMessage, setErrorMessage] = useState('');
-    const [validationErrors, setValidationErrors] = useState('');
-    const [isAdd, setIsAdd] = useState(false);
-
-    const handleChange = (event) => {
-        const Name = event.target.name;
-        const Value = event.target.value;
-
-        setInputs({...inputs, [Name]: Value});
-        console.log("Name: " + Name, "Value: " + Value);
-    }
-
-    const handleSubmit = function (event) {
-        event.preventDefault();
-
-        axios.get('/sanctum/csrf-cookie').then((response) => {
-            axios.post('/api/category', inputs).then((res) => {
-                    // Category added successfully
-                    if (res.data.status === 200) {
-                        setRefreshData(true);
-                        setErrorMessage('');
-                        setValidationErrors('');
-                        setIsAdd(true);
-                        setTimeout(() => setIsAdd(false), 2000);
-                    }
-                    // Failed
-                    else {
-                        // Show error message
-                        setErrorMessage(res.data.message);
-                        setValidationErrors(res.data.validation_errors);
-                    }
-                }
-            )
-        })
-    }
-
-    const ListItem = function ({category}) {
-        return (
-            <li key={category.id} className='list-group-item-action'>
-                <Row className='align-items-center'>
-
-                    {/* Category name*/}
-                    <Col className='col-md-9'>
-                        <Link to={'/admin/category/' + category.name}><p className='my-auto'> {category.name}</p></Link>
-                    </Col>
-
-                    {/* Buttons */}
-                    <Col>
-                        <Link to={'/admin/updatecategory/' + category.name}>
-                            <Button variant='outline-primary' className='mx-1 my-1'>Update</Button></Link>
-                        <Button variant='outline-danger' className='mx-1 my-1'
-                                onClick={() => deleteCategory(category.name)}>Delete</Button>
-                    </Col>
-
-                </Row>
-            </li>
-        )
-    }
-
-    // Listing nested categories
-    const Nested = ({parent_id, categs, categsChildren}) => {
-
-        const listChildren = (cat_id) => {
-            return (
-                <>
-                    <ListItem category={categs[cat_id]}/>
-                    {categsChildren[cat_id]?.length > 0 &&
-                        <Nested parent_id={cat_id} categs={categsState} categsChildren={categsChildrenState}/>}
-                </>
-            );
-        }
-
-
-        if (categsChildren[parent_id]?.length > 0) {
-            return (
-                <ul style={{listStyleType: "none"}}>
-                    {categsChildren[parent_id].map(listChildren)}
-                </ul>
-            )
-        } else
-            return (<div></div>);
-    }
-
     return (
         <Container className="my-4">
+            <Link to='/admin/addcategory' className='position-absolute end-0 me-3 mt-3'>Add category</Link>
 
             {/* AdminCategories lists*/}
-            <Row className='w-75 mx-auto'>
-                <Nested parent_id={0} categs={categsState} categsChildren={categsChildrenState}/>
-            </Row>
-
-            {/* Adding category form*/}
             <Row className='w-75 mx-auto mt-3'>
-                <Form onSubmit={handleSubmit}>
-
-                    {/*<p className='text-danger'>{errorMessage}</p>*/}
-                    <Row>
-                        {/* Category name input */}
-                        <Form.Group as={Col} md='4' className='mb-3' controlId="formCategory">
-                            <Form.Control type='text' name='name' placeholder='Category name' onChange={handleChange}
-                                          isInvalid={validationErrors.name}/>
-                            <Form.Control.Feedback type='invalid'>{validationErrors.name}</Form.Control.Feedback>
-                        </Form.Group>
-
-                        {/* Category parent select options*/}
-                        <Col className='col-md-4'>
-                            <Form.Select aria-label="Default select example" name='parent' onChange={handleChange}>
-                                <option value="">None</option>
-                                {/* List all categories as possible parent categories*/}
-                                {categsState?.map(
-                                    (category) =>
-                                        <option value={category.name} key={category.id}>{category.name}</option>)}
-                            </Form.Select>
-                        </Col>
-                        <Col className='col-md-4'>
-                            <Button type='submit' className='bg-primary'>Add category</Button>
-                        </Col>
-
-                        <Fade in={isAdd} className='text-success '><p>Category added</p></Fade>
-
-                    </Row>
-                </Form>
+                {
+                    isLoading ? <Loading/> : <ListNestedCategories categories={categories} isAdmin={true}
+                                                                   displayButtons={true}/>
+                }
             </Row>
+
 
         </Container>
     );
@@ -203,6 +63,41 @@ export default AdminCategories;
 //
 //
 // Trash
+
+
+{/* Adding category form*/
+}
+// <Row className='w-75 mx-auto mt-3'>
+//     <Form onSubmit={handleSubmit}>
+//
+//         {/*<p className='text-danger'>{errorMessage}</p>*/}
+//         <Row>
+//             {/* Category name input */}
+//             <Form.Group as={Col} md='4' className='mb-3' controlId="formCategory">
+//                 <Form.Control type='text' name='name' placeholder='Category name' onChange={handleChange}
+//                               isInvalid={validationErrors.name}/>
+//                 <Form.Control.Feedback type='invalid'>{validationErrors.name}</Form.Control.Feedback>
+//             </Form.Group>
+//
+//             {/* Category parent select options*/}
+//             <Col className='col-md-4'>
+//                 <Form.Select aria-label="Default select example" name='parent' onChange={handleChange}>
+//                     <option value="">None</option>
+//                     {/* List all categories as possible parent categories*/}
+//                     {categsState?.map(
+//                         (category) =>
+//                             <option value={category.name} key={category.id}>{category.name}</option>)}
+//                 </Form.Select>
+//             </Col>
+//             <Col className='col-md-4'>
+//                 <Button type='submit' className='bg-primary'>Add category</Button>
+//             </Col>
+//
+//             <Fade in={isAdd} className='text-success '><p>Category added</p></Fade>
+//
+//         </Row>
+//     </Form>
+// </Row>
 
 // Transform categories from category, parent form into category, children form
 // const transCategory = function (cats) {

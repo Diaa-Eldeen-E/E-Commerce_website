@@ -12,15 +12,27 @@ use Illuminate\Support\Facades\Validator;
 class CategoryController extends Controller
 {
     //
-    public function categories(Request $request)
+    public function getNestedCategories(Request $request)
     {
-//        $min_id = DB::table('categories')->min('id');
-//        $cats = DB::table('categories')->select(DB::raw('id - ' . ($min_id - 1) . ' as id, name,
-//        COALESCE(parent_id - ' .
-//            ($min_id - 1) . ' , 0) as parent_id'))->get();
-//        $cats = Category::whereNull('parent_id')->get();
-        $cats = DB::table('categories')->orderBy('name', 'asc')->get();
-        return response()->json($cats);
+        // Return categories in nested form
+        $rootCats = Category::where('parent_id', NULL)->orderBy('name', 'asc')->get();
+        function rec_cat($parents)
+        {
+            foreach ($parents as $parent) {
+                $parent->children = Category::where('parent_id', $parent->id)->orderBy('name', 'asc')->get();
+                if ($parent->children->count() > 0)
+                    rec_cat($parent->children);
+            }
+        }
+
+        rec_cat($rootCats);
+        return response()->json($rootCats);
+    }
+
+    public function getCategories(Request $request)
+    {
+        $categories = DB::table('categories')->orderBy('name', 'asc')->get();
+        return response()->json($categories);
     }
 
     public function addCategory(Request $request)

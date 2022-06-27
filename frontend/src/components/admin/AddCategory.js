@@ -4,14 +4,11 @@ import axios from "axios";
 import {useNavigate} from "react-router";
 import {useParams} from "react-router-dom";
 
-const UpdateCategory = function () {
+const AddCategory = function () {
 
     const navigate = useNavigate();
 
-    // Category name to be updated, taken from URL parameters
-    let {catName} = useParams();
-
-    // Update category form
+    // Add category form
     const [category, setCategory] = useState({});
     const [categories, setCategories] = useState([]);
     const [inputs, setInputs] = useState({});
@@ -23,14 +20,7 @@ const UpdateCategory = function () {
 
         axios.get('/sanctum/csrf-cookie').then((response) => {
             axios.get('/api/categories').then((res) => {
-
-                // Remove the category being updated from the list of categories and store it separately
-                let tempCategories = res.data?.slice();  // Copy categories
-                let idx = tempCategories.findIndex((item) => item.name == catName); // Find category being updated
-                setCategory(tempCategories[idx]);   // Category being updated
-
-                tempCategories?.splice(idx, 1);  // Remove category being updated from the list
-                setCategories(tempCategories);
+                setCategories(res.data);
             })
         });
     }, []);
@@ -47,7 +37,7 @@ const UpdateCategory = function () {
         event.preventDefault();
 
         axios.get('/sanctum/csrf-cookie').then((response) => {
-            axios.put('/api/category/' + catName, inputs).then((res) => {
+            axios.post('/api/category/', inputs).then((res) => {
                     // Category added successfully
                     if (res.data.status === 200) {
                         setErrorMessage('');
@@ -74,7 +64,7 @@ const UpdateCategory = function () {
                     <Row>
                         {/* Category name input */}
                         <Form.Group as={Col} md='4' className='mb-3' controlId="formCategory">
-                            <Form.Control type='text' name='name' placeholder={catName} onChange={handleChange}
+                            <Form.Control type='text' name='name' placeholder='Category name' onChange={handleChange}
                                           isInvalid={validationErrors.name}/>
                             <Form.Control.Feedback type='invalid'>{validationErrors.name}</Form.Control.Feedback>
                         </Form.Group>
@@ -92,7 +82,7 @@ const UpdateCategory = function () {
                     </Row>
                     <Row className='mt-5'>
                         <Col>
-                            <Button type='submit' className='bg-primary'>Update category</Button>
+                            <Button type='submit' className='bg-primary'>Add category</Button>
                             <Button className='bg-danger mx-5'
                                     onClick={() => navigate('/admin/categories')}>Cancel</Button>
                         </Col>
@@ -105,4 +95,4 @@ const UpdateCategory = function () {
 
 }
 
-export default UpdateCategory;
+export default AddCategory;

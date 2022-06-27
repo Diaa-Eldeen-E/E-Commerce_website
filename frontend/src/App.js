@@ -17,6 +17,7 @@ import AdminLayout from "./layouts/AdminLayout";
 import RequireAuth from "./components/auth/RequireAuth";
 import AdminCategories from "./components/admin/AdminCategories";
 import UpdateCategory from "./components/admin/UpdateCategory";
+import AddCategory from "./components/admin/AddCategory";
 import AdminCategory from "./components/admin/AdminCategory";
 import AddProduct from "./components/admin/AddProduct";
 import AdminProduct from "./components/admin/AdminProduct";
@@ -68,6 +69,7 @@ function App() {
                                 <Route path='/admin/home' exact element={<AdminHome/>}/>
                                 <Route path='/admin/categories' exact element={<AdminCategories/>}/>
                                 <Route path='updatecategory/:catName' element={<UpdateCategory/>}/>
+                                <Route path='addcategory' element={<AddCategory/>}/>
                                 <Route path='category/:catName' element={<AdminCategory/>}/>
                                 <Route path='addproduct' element={<AddProduct/>}/>
                                 <Route path='category/:catName/:productID' element={<AdminProduct/>}/>

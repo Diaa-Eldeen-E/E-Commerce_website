@@ -3,6 +3,8 @@ import {useAuth} from "./auth/AuthProvider";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import {Link} from "react-router-dom";
+import ListNestedCategories from "./ListNestedCategories";
+import SearchBar from "./SearchBar";
 
 
 const getUsername = () => {
@@ -14,80 +16,17 @@ const Navigationbar = function () {
     const {getToken, onLogout} = useAuth();
 
     const [categories, setCategories] = useState();
-    const [categsChildrenState, setCategsChildrenState] = useState([]);
 
     //    Fetch categories
     useEffect(() => {
         axios.get('/sanctum/csrf-cookie').then((response) => {
-            axios.get('/api/categories').then((res) => {
-
-                    // Data preprocessing
-                    let tempCategories = res.data;
-                    let minIdx = 9999999;
-                    tempCategories.forEach((cat) => {
-                        if (cat.id < minIdx)
-                            minIdx = cat.id;
-                    });
-
-                    let tempCategs = [];
-                    let tempCategsChildren = [];
-                    tempCategories.forEach((cat) => {
-                        cat.id -= (minIdx - 1);
-                        if (cat.parent_id > 0)
-                            cat.parent_id -= (minIdx - 1);
-                        else
-                            cat.parent_id = 0;
-
-                        // Add it in categories array
-                        tempCategs[cat.id] = cat;
-
-                        // Push this category in its parent array of children
-                        if (tempCategsChildren[cat.parent_id]?.length >= 1)
-                            tempCategsChildren[cat.parent_id].push(cat.id);
-                        else
-                            tempCategsChildren[cat.parent_id] = [cat.id];
-                    });
-
-                    setCategories(tempCategs);
-                    setCategsChildrenState(tempCategsChildren);
+            axios.get('/api/nestedcategories').then((res) => {
+                    setCategories(res.data);
                 }
             )
         });
     }, []);
 
-
-    const ListItem = function ({category}) {
-        return (
-            <li key={category.id} className='list-group-item-action'>
-                <Link to={'/category/' + category.name}> {category.name} </Link>
-            </li>
-        )
-    }
-
-    // Listing nested categories
-    const Nested = ({parent_id, categs, categsChildren}) => {
-
-        const listChildren = (cat_id) => {
-            return (
-                <>
-                    <ListItem category={categs[cat_id]}/>
-
-                    {categsChildren[cat_id]?.length > 0 &&
-                        <Nested parent_id={cat_id} categs={categories} categsChildren={categsChildrenState}/>}
-                </>
-            );
-        }
-
-
-        if (categsChildren[parent_id]?.length > 0) {
-            return (
-                <ul style={{listStyleType: "none"}} className='ps-3'>
-                    {categsChildren[parent_id].map(listChildren)}
-                </ul>
-            )
-        } else
-            return (<div></div>);
-    }
 
     return (
 
@@ -104,7 +43,7 @@ const Navigationbar = function () {
 
                     <NavDropdown title="Categories" id="navbarScrollingDropdown">
 
-                        <Nested parent_id={0} categs={categories} categsChildren={categsChildrenState}/>
+                        <ListNestedCategories categories={categories}/>
 
                         <NavDropdown.Divider/>
                         <NavDropdown.Item href="/categories">
@@ -113,17 +52,8 @@ const Navigationbar = function () {
                     </NavDropdown>
 
                 </Nav>
-                <Form className="d-flex h-100 w-50">
-                    <FormControl
-                        type="search"
-                        placeholder="Search"
-                        className="me-0 border-end-0 rounded-0 rounded-start"
-                        aria-label="Search"
-                    />
-                    <Button className="h-100 p-0 rounded-0 bg-white border-start-0 rounded-end"
-                            style={{"borderColor": "#ced4da"}}><Image
-                        src={'/assets/search-logo.png'} className="h-100"/></Button>
-                </Form>
+
+                <SearchBar/>
 
                 <Nav
                     className="justify-content-end"

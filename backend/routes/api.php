@@ -21,10 +21,11 @@ Route::get('products', [\App\Http\Controllers\ProductController::class, 'getProd
 //Only admin should be able to add product
 Route::post('addproduct', [\App\Http\Controllers\ProductController::class, 'addProduct']);
 
-Route::get('categories', [\App\Http\Controllers\CategoryController::class, 'categories']);
+Route::get('categories', [\App\Http\Controllers\CategoryController::class, 'getCategories']);
+Route::get('nestedcategories', [\App\Http\Controllers\CategoryController::class, 'getNestedCategories']);
 
 // Only admin should be able to update category
-Route::post('category/{catName}', [\App\Http\Controllers\CategoryController::class, 'updateCategory']);
+Route::put('category/{catName}', [\App\Http\Controllers\CategoryController::class, 'updateCategory']);
 
 // Only admin should be able to add category
 Route::post('category', [\App\Http\Controllers\CategoryController::class, 'addCategory']);

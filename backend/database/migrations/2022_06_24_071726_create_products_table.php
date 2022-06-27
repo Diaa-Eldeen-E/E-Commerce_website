@@ -21,7 +21,8 @@ class CreateProductsTable extends Migration
             $table->text('description');
             $table->unsignedDouble('price');
             $table->unsignedInteger('stock');
-            $table->unsignedInteger('stars')->default(0);
+            $table->unsignedInteger('rating')->default(0);
+            $table->unsignedInteger('raters_count')->default(0);
 //            Add a relation to users ratings (stars)
 
 
