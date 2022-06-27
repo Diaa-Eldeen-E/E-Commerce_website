@@ -15,6 +15,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// Search
+Route::get('products/search', [\App\Http\Controllers\ProductController::class, 'searchProducts']);
+
 Route::get('product', [\App\Http\Controllers\ProductController::class, 'getProduct']);
 
 Route::get('products', [\App\Http\Controllers\ProductController::class, 'getProducts']);
@@ -59,7 +62,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('users/createadmin', function (Request $request) {
     $adminsCount = \App\Models\User::where('role', 1)->count();
     $adminsCount += 1;
-    
+
     $admin = new \App\Models\User;
     $admin->name = 'admin' . $adminsCount;
     $admin->password = Hash::make('123456');

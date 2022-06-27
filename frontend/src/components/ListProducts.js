@@ -2,9 +2,9 @@ import {Container, Row} from "react-bootstrap";
 import {productsPerRow} from "../constants";
 import ProductItem from "./ProductItem";
 
-const listRow = (products) => {
+const listRow = (products, idx) => {
     return (
-        <Row>
+        <Row key={idx}>
             {products.map(ProductItem)}
         </Row>
     );

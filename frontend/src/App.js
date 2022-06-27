@@ -24,6 +24,7 @@ import AdminProduct from "./components/admin/AdminProduct";
 import Category from "./components/Category";
 import Product from "./components/Product";
 import Categories from "./components/Categories"
+import SearchPage from "./components/SearchPage";
 
 axios.defaults.withCredentials = true;
 axios.defaults.baseURL = 'http://localhost:8000';
@@ -73,6 +74,7 @@ function App() {
                                 <Route path='category/:catName' element={<AdminCategory/>}/>
                                 <Route path='addproduct' element={<AddProduct/>}/>
                                 <Route path='category/:catName/:productID' element={<AdminProduct/>}/>
+                                <Route path='search' element={<SearchPage/>}/>
 
                             </Route>
 
