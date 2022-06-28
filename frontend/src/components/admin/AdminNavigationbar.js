@@ -70,7 +70,7 @@ const AdminNavigationbar = function () {
 
                         {/* Search form */}
                         <Col className='col-6' style={{maxHeight: "50px"}}>
-                            <SearchBar/>
+                            <SearchBar isAdmin={true}/>
                         </Col>
 
                         {/* Account */}

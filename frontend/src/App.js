@@ -52,12 +52,13 @@ function App() {
                              the parent's URL By default*/}
                             <Route index element={<Home/>}/>
                             <Route path='category/:catName' element={<Category/>}/>
-                            <Route path='category/:catName/:productID' element={<Product/>}/>
+                            <Route path='product/:productID' element={<Product/>}/>
                             <Route path='categories' element={<Categories/>}/>
                             <Route path='/home' element={<Home/>}/>
                             <Route path='/login' element={getToken() ? <Navigate to='/' replace/> : <Login/>}/>
                             <Route path='/register' element={getToken() ? <Navigate to='/' replace/> : <Register/>}/>
 
+                            <Route path='search' element={<SearchPage/>}/>
                             {/*  TODO: Add routes for categories, products, orders, cart, list, Settings  */}
 
                         </Route>
@@ -73,8 +74,8 @@ function App() {
                                 <Route path='addcategory' element={<AddCategory/>}/>
                                 <Route path='category/:catName' element={<AdminCategory/>}/>
                                 <Route path='addproduct' element={<AddProduct/>}/>
-                                <Route path='category/:catName/:productID' element={<AdminProduct/>}/>
-                                <Route path='search' element={<SearchPage/>}/>
+                                <Route path='product/:productID' element={<AdminProduct/>}/>
+                                <Route path='search' element={<SearchPage isAdmin={true}/>}/>
 
                             </Route>
 

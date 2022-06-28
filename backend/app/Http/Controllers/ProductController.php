@@ -18,7 +18,7 @@ class ProductController extends Controller
 
         // Validate input
         $validator = Validator::make(['query' => $query, 's_idx' => $startIdx, 'e_idx' => $endIdx], [
-            'query' => 'required|alpha-dash|max:255',
+            'query' => 'required|regex:/^[\w\-\s]+$/|max:255',
             's_idx' => 'required|integer|min:0',
             'e_idx' => 'required|integer|min:0',
         ]);
@@ -30,11 +30,15 @@ class ProductController extends Controller
             ]);
         }
 
+        $query = str_replace(' ', '%', $query);
+
         // Search in products table
         $results = DB::table('products')->where('name', 'like', '%' . $query . '%')
             ->offset($startIdx)->limit($endIdx - $startIdx)->get();
         $totalCount = DB::table('products')->where('name', 'like', '%' . $query . '%')
             ->count();
+
+
         return response()->json([
             'status' => 200,
             'results' => $results,
@@ -47,8 +51,8 @@ class ProductController extends Controller
     {
         // Validate input, (No duplicate name, category must exist)
         $validator = Validator::make($request->all(), [
-            'name' => 'required|alpha_dash|unique:products,name',
-            'category_name' => 'required|alpha_dash|exists:categories,name',
+            'name' => 'required|regex:/^[\w\-\s]+$/|unique:products,name',
+            'category_name' => 'required|regex:/^[\w\-\s]+$/|exists:categories,name',
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
         ]);
@@ -90,7 +94,7 @@ class ProductController extends Controller
 
         // Validate input, (No duplicate name, category must exist)
         $validator = Validator::make(['cat_name' => $catName, 's_idx' => $startIdx, 'e_idx' => $endIdx], [
-            'cat_name' => 'required|alpha_dash|exists:categories,name',
+            'cat_name' => 'required|regex:/^[\w\-\s]+$/|exists:categories,name',
             's_idx' => 'required|integer|min:0',
             'e_idx' => 'required|integer|min:0',
         ]);
@@ -128,7 +132,8 @@ class ProductController extends Controller
     public function getProduct(Request $request)
     {
 
-        $productID = $request->keys();
+        $productID = $request->query('q');
+
 
         // Validate input
         $validator = Validator::make(['product_id' => $productID], [

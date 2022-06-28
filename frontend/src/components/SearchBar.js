@@ -1,20 +1,28 @@
-import {Button, Form, FormControl, Image, InputGroup, OverlayTrigger, Popover, Overlay} from "react-bootstrap";
+import {
+    Button,
+    Form,
+    FormControl,
+    Image,
+    InputGroup,
+    OverlayTrigger,
+    Popover,
+    Overlay,
+    Container, Col, Spinner
+} from "react-bootstrap";
 import {useState, useRef, useLayoutEffect, useEffect} from "react";
 import axios from "axios";
 import {useNavigate} from "react-router";
+import Loading from "./Loading";
+import {Link} from "react-router-dom";
 
-const searchItem = (item) => {
-    return (
-        <li key={item.id}>{item.name}</li>
-    );
-}
 
-const SearchBar = function () {
+const SearchBar = function ({isAdmin}) {
 
     const navigate = useNavigate();
 
     const [searchText, setSearchText] = useState('');
     const [searchResults, setSearchResults] = useState([]);
+    const ref = useRef(null);
 
     const handleChange = (event) => {
         setSearchText(event.target.value);
@@ -39,11 +47,11 @@ const SearchBar = function () {
         navigate('/admin/search?' + query);
     }
 
-    const ref = useRef(null);
 
     const [popoverStyle, setPopoverStyle] = useState({});
-
     const handleFoucs = (e) => {
+
+        // Adjust the search results popover to the size of the input text
         setPopoverStyle({
             width: ref?.current?.offsetWidth,
             maxWidth: ref?.current?.offsetWidth,
@@ -51,7 +59,9 @@ const SearchBar = function () {
     }
 
     const handleBlur = (e) => {
-        setSearchResults([]);
+
+        // Hide search results, when the search bar is not focused
+        setTimeout(() => setSearchResults([]), 100);
         e.target.value = '';
         setSearchText('');
     }
@@ -60,6 +70,13 @@ const SearchBar = function () {
         e.preventDefault();
         search(searchText);
     }
+
+    const searchItem = (item) => {
+        return (
+            <li key={item.id}><Link to={(isAdmin ? '/admin' : '') + '/product/' + item.id}>{item.name}</Link></li>
+        );
+    }
+
     return (
         <Form onSubmit={handleSubmit}>
             <InputGroup className='h-100'>
@@ -70,9 +87,9 @@ const SearchBar = function () {
                     overlay={
                         <Popover id='popover-contained' style={popoverStyle}>
                             <Popover.Body>
-                                <ul>
+                                <ul style={{listStyleType: "none"}}>
                                     {
-                                        searchResults?.length && searchResults?.map(searchItem)
+                                        searchResults?.length > 0 && searchResults?.map(searchItem)
                                     }
                                 </ul>
                             </Popover.Body>

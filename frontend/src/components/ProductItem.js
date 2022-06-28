@@ -2,12 +2,13 @@ import {Card, Col, Row} from "react-bootstrap";
 import {Link} from "react-router-dom";
 import StarRatingComponent from "react-star-rating-component";
 
-const ProductItem = function (product) {
+const ProductItem = function ({product, isAdmin}) {
+
     return (
         <>
             <Col style={{maxWidth: "500px"}}>
                 <Card>
-                    <Link to={'' + product.id}>
+                    <Link to={(isAdmin ? '/admin' : '') + '/product/' + product.id}>
                         <Card.Img src={product.image_src}
                                   style={{maxHeight: "200px", maxWidth: "500px", width: "auto"}}/>
                     </Link>

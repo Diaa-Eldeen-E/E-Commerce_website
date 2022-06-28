@@ -7,7 +7,7 @@ import PaginationList from "./PaginationList";
 import {defaultPageSize} from "../constants";
 import Loading from "./Loading";
 
-const SearchPage = function () {
+const SearchPage = function ({isAdmin}) {
 
     const [searchResults, setSearchResults] = useState([]);
     const [totalCount, setTotalCount] = useState(10);
@@ -39,6 +39,8 @@ const SearchPage = function () {
     }, [searchParams]);
 
 
+    // TODO:  Add options for case sensitivity, price range, date, availability, and category
+
     return (
 
         <>
@@ -54,7 +56,7 @@ const SearchPage = function () {
                                 </Col>
                             </Row>
 
-                            <ListProducts products={searchResults}/>
+                            <ListProducts products={searchResults} isAdmin={isAdmin}/>
                             <PaginationList pgNum={pageNum} perPage={pageSize} totalItemsCount={totalCount}/>
                         </Container>
                         :

@@ -13,13 +13,13 @@ const AdminProduct = function () {
     //    Fetch the product from the database
     useEffect(() => {
         axios.get('/sanctum/csrf-cookie').then((response) => {
-            axios.get('/api/product?' + productID).then((res) => {
+            axios.get('/api/product?q=' + productID).then((res) => {
                 if (res.data.status === 200)
                     setProduct(res.data.product);
             })
         })
 
-    }, [])
+    }, [productID])
 
     return (
         <Container>
@@ -28,7 +28,7 @@ const AdminProduct = function () {
                 <Col md='4'>
                     <Card>
                         <Link to={'' + product.id}>
-                            <Card.Img src={'/' + product.image_src}/>
+                            <Card.Img src={product.image_src}/>
                         </Link>
                         <Card.Body>
                             <Card.Title>{product.name}</Card.Title>
@@ -41,16 +41,7 @@ const AdminProduct = function () {
                                     <StarRatingComponent
                                         name="rate1"
                                         starCount={5}
-                                        value={product.stars}
-                                        onStarClick={(newRating) => {
-
-                                            setProduct((oldProducts) => {
-                                                let idx = oldProducts.findIndex((p) => p.name == product.name);
-                                                let tempProducts = oldProducts.slice();
-                                                tempProducts[idx].stars = newRating;
-                                                return tempProducts;
-                                            })
-                                        }}
+                                        value={Math.ceil(product.rating / product.raters_count)}
                                     />
                                 </Col>
                                 <Col className='col-4 text-danger'>
@@ -69,3 +60,16 @@ const AdminProduct = function () {
 }
 
 export default AdminProduct;
+
+
+// trash
+// <StarRatingComponent attritubte:
+// onStarClick={(newRating) => {
+//
+//     setProduct((oldProducts) => {
+//         let idx = oldProducts.findIndex((p) => p.name == product.name);
+//         let tempProducts = oldProducts.slice();
+//         tempProducts[idx].stars = newRating;
+//         return tempProducts;
+//     })
+// }}

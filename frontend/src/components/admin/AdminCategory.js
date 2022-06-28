@@ -50,7 +50,7 @@ const AdminCategory = function () {
             <Link to='/admin/addproduct' className='position-absolute end-0 me-3 mt-3'>Add product</Link>
 
             {/*  Products  */}
-            <ListProducts products={productsState}/>
+            <ListProducts products={productsState} isAdmin={true}/>
 
             <PaginationList pageNum={pageNum} perPage={pageSize} totalItemsCount={totalCount}/>
         </Container>

@@ -15,6 +15,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('search', function (Request $request) {
+
+    return response()->json([
+        'data' => \App\Models\Product::search($request->query('q'))->take(3)->get(),
+        'count' => \App\Models\Product::search($request->query('q'))->count()
+    ]);
+});
+
 // Search
 Route::get('products/search', [\App\Http\Controllers\ProductController::class, 'searchProducts']);
 
