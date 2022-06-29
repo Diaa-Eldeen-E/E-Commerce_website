@@ -129,6 +129,7 @@ return [
     'uploaded' => 'The :attribute failed to upload.',
     'url' => 'The :attribute must be a valid URL.',
     'uuid' => 'The :attribute must be a valid UUID.',
+    'generic_name' => 'The :attribute must only contain letters, numbers, spaces, dashes and underscores.',
 
     /*
     |--------------------------------------------------------------------------
