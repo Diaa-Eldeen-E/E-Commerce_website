@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cart_item;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Wishlist;
+use App\Models\Wishlist_item;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -18,7 +21,7 @@ class ProductController extends Controller
 
         // Validate input
         $validator = Validator::make(['query' => $query, 's_idx' => $startIdx, 'e_idx' => $endIdx], [
-            'query' => 'required|regex:/^[\w\-\s]+$/|max:255',
+            'query' => 'required|generic_name|max:255',
             's_idx' => 'required|integer|min:0',
             'e_idx' => 'required|integer|min:0',
         ]);
@@ -51,8 +54,8 @@ class ProductController extends Controller
     {
         // Validate input, (No duplicate name, category must exist)
         $validator = Validator::make($request->all(), [
-            'name' => 'required|regex:/^[\w\-\s]+$/|unique:products,name',
-            'category_name' => 'required|regex:/^[\w\-\s]+$/|exists:categories,name',
+            'name' => 'required|generic_name|unique:products,name',
+            'category_name' => 'required|generic_name|exists:categories,name',
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
         ]);
@@ -94,7 +97,7 @@ class ProductController extends Controller
 
         // Validate input, (No duplicate name, category must exist)
         $validator = Validator::make(['cat_name' => $catName, 's_idx' => $startIdx, 'e_idx' => $endIdx], [
-            'cat_name' => 'required|regex:/^[\w\-\s]+$/|exists:categories,name',
+            'cat_name' => 'required|generic_name|exists:categories,name',
             's_idx' => 'required|integer|min:0',
             'e_idx' => 'required|integer|min:0',
         ]);
@@ -155,5 +158,123 @@ class ProductController extends Controller
                 'message' => 'Product retrieved'
             ]);
         }
+    }
+
+    public function addToWishlist(Request $request)
+    {
+        // Validate input
+        $validator = Validator::make($request->all(), [
+            'product_id' => 'required|integer|exists:products,id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'validation_errors' => $validator->messages(),
+                'message' => 'Invalid inputs'
+            ]);
+        }
+
+        // Add the product to this user's wishlist
+        $wishlist_item = new Wishlist_item;
+        $wishlist_item->product_id = $request->product_id;
+
+        $request->user()->wishlist()->first()->items()->save($wishlist_item);
+//        $wishlist_item->wishlist_id = $request->user()->wishlist_id;
+//        $wishlist_item->save();
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Product added to wishlist successfully'
+        ]);
+    }
+
+    public function removeFromWishlist(Request $request)
+    {
+        // Validate input
+        $validator = Validator::make($request->all(), [
+            'product_id' => 'required|integer|exists:wishlist_items,product_id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'validation_errors' => $validator->messages(),
+                'message' => 'Invalid inputs'
+            ]);
+        }
+
+        // Remove the product from the user's wishlist
+        $deleted = $request->user()->wishlist()->first()->items()
+            ->where('product_id', $request->product_id)->delete();
+
+
+        if ($deleted)
+            return response()->json([
+                'status' => 200,
+                'message' => 'Product removed from wishlist'
+            ]);
+        else
+            return response()->json(['Failed to delete'], 500);
+    }
+
+    public function addToCart(Request $request)
+    {
+        // Validate input
+        $validator = Validator::make($request->all(), [
+            'product_id' => 'required|integer|exists:products,id',
+            'quantity' => 'required|integer|min:0'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'validation_errors' => $validator->messages(),
+                'message' => 'Invalid inputs'
+            ]);
+        }
+        $product = Product::where('id', $request->product_id)->first();
+        if ($request->quantity > $product->stock)
+            return response()->json(['The requested quantity is unavailable'], 400);
+
+        // Add the product to this user's cart
+//        $cart_item = new Cart_item([
+//            'product_id' => $productID,
+//            'cart_id' => $request->user()->cart()->first()->id,
+//            'quantity' => $request->quantity
+//        ]);
+//        $cart_item->save();
+
+        $request->user()->cart()->first()->products()
+            ->attach($request->product_id, ['quantity' => $request->quantity]);
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Items added to cart successfully'
+        ]);
+    }
+
+    public function removeFromCart(Request $request)
+    {
+        // Validate input
+        $validator = Validator::make($request->all(), [
+            'product_id' => 'required|integer|exists:cart_items,product_id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'validation_errors' => $validator->messages(),
+                'message' => 'Invalid inputs'
+            ]);
+        }
+
+        // Remove the product from the user's wishlist
+        $deleted = $request->user()->cart()->first()->items()
+            ->where('product_id', $request->product_id)->delete();
+        
+        if ($deleted)
+            return response()->json([
+                'status' => 200,
+                'message' => 'Product removed from cart'
+            ]);
+        else
+            return response()->json(['Failed to delete'], 500);
     }
 }

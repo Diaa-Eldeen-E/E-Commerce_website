@@ -40,7 +40,7 @@ class CategoryController extends Controller
         // Validate input, (No duplicate name, parent must exist)
         $parent_name = $request->parent;
         $validator = Validator::make($request->all(), [
-            'name' => 'required|alpha_dash|unique:categories,name',
+            'name' => 'required|generic_name|unique:categories,name',
             'parent' => 'nullable|alpha_dash|exists:categories,name'
         ]);
 
@@ -61,7 +61,8 @@ class CategoryController extends Controller
             }
             $cat->save();
 
-            $cat = Category::where('name', $cat->name)->first();
+//            $cat = Category::where('name', $cat->name)->first();
+//            $cat->refresh();
 
             return response()->json([
                 'status' => 200,
@@ -75,10 +76,11 @@ class CategoryController extends Controller
     public function deleteCategory(Request $request)
     {
         $catName = $request->keys();
+        // TODO: Delete category by ID
 
         // Validate input
         $validator = Validator::make(['catName' => $catName], [
-            'catName' => 'required|alpha_dash|exists:categories,name',
+            'catName' => 'required|generic_name|exists:categories,name',
         ]);
 
         if ($validator->fails()) {
@@ -105,10 +107,12 @@ class CategoryController extends Controller
         // Validate input, (No duplicate name, parent must exist)
         $parent_name = $request->parent;
 
+        // TODO Update category by ID
+
         $validator = Validator::make($request->all() + ['catName' => $catName], [
-            'name' => 'required|alpha_dash|unique:categories,name',
-            'catName' => 'required|alpha_dash|exists:categories,name',
-            'parent' => 'nullable|alpha_dash|exists:categories,name'
+            'name' => 'required|generic_name|unique:categories,name',
+            'catName' => 'required|generic_name|exists:categories,name',
+            'parent' => 'nullable|generic_name|exists:categories,name'
         ]);
 
 

@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Wishlist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
+use App\Models\Cart;
 
 class AuthController extends Controller
 {
@@ -24,21 +26,29 @@ class AuthController extends Controller
                 'validation_errors' => $validator->messages(),
                 'message' => 'Invalid inputs'
             ]);
-        } else {
-            $user = User::create([
-                'name' => $request->username,
-                'email' => $request->email,
-                'password' => Hash::make($request->password),
-            ]);
-
-            $token = $user->createToken($user->email . '_Token');
-            return response()->json([
-                'status' => 200,
-                'username' => $user->name,
-                'token' => $token->plainTextToken,
-                'message' => 'Registered successfully'
-            ]);
         }
+
+        // Create an empty Cart and an empty Wishlist for the user
+        $cart = Cart::create([]);
+        $wishlist = Wishlist::create([]);
+
+        // Create the user
+        $user = new User;
+        $user->name = $request->username;
+        $user->email = $request->email;
+        $user->password = Hash::make($request->password);
+        $user->cart_id = $cart->id;
+        $user->wishlist_id = $wishlist->id;
+        $user->save();
+
+        $token = $user->createToken($user->email . '_Token');
+        return response()->json([
+            'status' => 200,
+            'username' => $user->name,
+            'token' => $token->plainTextToken,
+            'message' => 'Registered successfully'
+        ]);
+
     }
 
 
@@ -47,7 +57,7 @@ class AuthController extends Controller
         // Validate input
         $validator = Validator::make($request->all(), [
             'username' => 'required|alpha_dash|max:255|exists:users,name',
-            'password' => 'required|alpha-dash|max:255'
+            'password' => 'required|max:255'
         ]);
 
         if ($validator->fails()) {
@@ -56,6 +66,7 @@ class AuthController extends Controller
                 'message' => 'Invalid credentials'
             ]);
         }
+
         // Check that user exists and the passwords are matching
         $user = User::where('name', $request->username)->first();
         if (!$user || !Hash::check($request->password, $user->password)) {

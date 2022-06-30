@@ -23,6 +23,7 @@ Route::get('search', function (Request $request) {
     ]);
 });
 
+
 // Search
 Route::get('products/search', [\App\Http\Controllers\ProductController::class, 'searchProducts']);
 
@@ -54,6 +55,10 @@ Route::post('login', [\App\Http\Controllers\AuthController::class, 'login']);
 // Handle logout (Must be authenticated first)
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('logout', [\App\Http\Controllers\AuthController::class, 'logout']);
+    Route::post('addtowishlist', [\App\Http\Controllers\ProductController::class, 'addToWishlist']);
+    Route::post('addtocart', [\App\Http\Controllers\ProductController::class, 'addToCart']);
+    Route::post('removefromwishlist', [\App\Http\Controllers\ProductController::class, 'removeFromWishlist']);
+    Route::post('removefromcart', [\App\Http\Controllers\ProductController::class, 'removeFromCart']);
 });
 
 
