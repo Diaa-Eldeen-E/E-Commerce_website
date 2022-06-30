@@ -14,6 +14,7 @@ class Product extends Model
     use Searchable;
 
 
+    // Configure Scout to search products by name
     public function toSearchableArray()
     {
         $array = $this->toArray();

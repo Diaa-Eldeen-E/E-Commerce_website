@@ -12,6 +12,18 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    // Return the user's cart
+    public function cart()
+    {
+        return $this->hasOne(Cart::class, 'id', 'cart_id');
+    }
+
+    // Return the user's wishlist
+    public function wishlist()
+    {
+        return $this->hasOne(Wishlist::class, 'id', 'wishlist_id');
+    }
+
     /**
      * The attributes that are mass assignable.
      *
@@ -21,6 +33,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'cart_id',
+        'wishlist_id'
     ];
 
     /**
