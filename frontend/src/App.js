@@ -22,9 +22,11 @@ import AdminCategory from "./components/admin/AdminCategory";
 import AddProduct from "./components/admin/AddProduct";
 import AdminProduct from "./components/admin/AdminProduct";
 import Category from "./components/Category";
-import Product from "./components/Product";
+import ProductPage from "./components/ProductPage";
 import Categories from "./components/Categories"
 import SearchPage from "./components/SearchPage";
+import WishlistPage from "./pages/WishlistPage";
+import CartPage from "./pages/CartPage";
 
 axios.defaults.withCredentials = true;
 axios.defaults.baseURL = 'http://localhost:8000';
@@ -52,14 +54,16 @@ function App() {
                              the parent's URL By default*/}
                             <Route index element={<Home/>}/>
                             <Route path='category/:catName' element={<Category/>}/>
-                            <Route path='product/:productID' element={<Product/>}/>
+                            <Route path='product/:productID' element={<ProductPage/>}/>
                             <Route path='categories' element={<Categories/>}/>
                             <Route path='/home' element={<Home/>}/>
                             <Route path='/login' element={getToken() ? <Navigate to='/' replace/> : <Login/>}/>
                             <Route path='/register' element={getToken() ? <Navigate to='/' replace/> : <Register/>}/>
 
                             <Route path='search' element={<SearchPage/>}/>
-                            {/*  TODO: Add routes for categories, products, orders, cart, list, Settings  */}
+                            <Route path='wishlist' element={<WishlistPage/>}/>
+                            <Route path='cart' element={<CartPage/>}/>
+                            {/*  TODO: Add routes for orders, Settings  */}
 
                         </Route>
 

@@ -24,16 +24,6 @@ const ProductItem = function ({product, isAdmin}) {
                                     name="rate1"
                                     starCount={5}
                                     value={Math.ceil(product.rating / product.raters_count)}
-                                    // onStarClick={(newRating) => {
-                                    //
-                                    //     setProductsState((oldProducts) => {
-                                    //         let idx = oldProducts.findIndex((p) => p.name == product.name);
-                                    //         let tempProducts = oldProducts.slice();
-                                    //         tempProducts[idx].stars = newRating;
-                                    //         return tempProducts;
-                                    //     })
-                                    // }
-                                    //}
                                 />
                             </Col>
                             <Col className='text-danger'>

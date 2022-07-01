@@ -9,34 +9,10 @@ import AddToCartForm from "./AddToCartForm";
 import {useAuth} from "./auth/AuthProvider";
 import AddToWishlistButton from "./AddToWishlistButton";
 import Loading from "./Loading";
+import ProductReviewsTab from "./ProductReviewsTab";
 
 
-const ProductReviewsTab = ({product}) => {
-    return (
-        <>
-            {/*     Rating it */}
-            <Row className='mt-5'>
-                <Col>
-                    <h3>Rate the product</h3>
-                    <StarRatingComponent
-                        name="rate1"
-                        starCount={5}
-                        value={Math.ceil(product.rating / product.raters_count)}
-                    />
-
-                    <StarRatingComponent
-                        name="rate1"
-                        starCount={5}
-                        value={Math.ceil(product.rating / product.raters_count)}
-                    />
-                </Col>
-            </Row>
-        </>
-    )
-}
-
-
-const Product = function () {
+const ProductPage = function () {
 
     const {catName, productID} = useParams();
     const [product, setProduct] = useState({});
@@ -89,7 +65,7 @@ const Product = function () {
                         <Container className='justify-content-center w-75 mx-auto mt-5'>
                             <Row>
 
-                                {/* Product image */}
+                                {/* ProductPage image */}
                                 <Col className='col-sm-auto'>
 
                                     <Link to={'/product/' + product.id}>
@@ -99,24 +75,24 @@ const Product = function () {
                                     </Link>
                                 </Col>
 
-                                {/* Product name, price, add to cart, wishlist, etc*/}
-                                <Col className='ms-5'>
+                                {/* ProductPage name, price, add to cart, wishlist, etc*/}
+                                <Col className='ms-8'>
                                     <Container>
                                         <Row>
                                             <h2>{product.name}</h2>
                                         </Row>
 
-                                        <Row className='mt-5'>
+                                        <Row className='mt-3'>
                                             <AddToWishlistButton product={product}/>
                                         </Row>
-                                        <Row className='mt-5'>
-                                            <p>{product.price}</p>
+                                        <Row className='mt-3'>
+                                            <p className='text-danger'>{product.price}$</p>
                                         </Row>
 
 
                                         {
                                             getToken() ?
-                                                <Row className='mt-5'>
+                                                <Row className='mt-3'>
                                                     <AddToCartForm product={product}/>
                                                 </Row>
                                                 :
@@ -125,10 +101,6 @@ const Product = function () {
                                     </Container>
                                 </Col>
 
-
-                                <Col className=''>
-
-                                </Col>
 
                             </Row>
 
@@ -158,7 +130,7 @@ const Product = function () {
                                 {
                                     isDescriptionActive ?
                                         <div className='mt-3'>
-                                            <p>{product.description}</p>
+                                            <p dangerouslySetInnerHTML={{__html: product.description}}/>
                                         </div>
                                         :
                                         <ProductReviewsTab product={product}/>
@@ -175,4 +147,4 @@ const Product = function () {
     )
 }
 
-export default Product;
+export default ProductPage;

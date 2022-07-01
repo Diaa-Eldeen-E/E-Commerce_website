@@ -67,23 +67,32 @@ const Navigationbar = function () {
                         <NavDropdown.Item href="/register" hidden={getToken() ? true : false} className='text-warning'>
                             Register
                         </NavDropdown.Item>
-                        <NavDropdown.Item href="/orders" hidden={getToken() ? false : true}>Your
-                            orders</NavDropdown.Item>
-                        <NavDropdown.Item href="/list" hidden={getToken() ? false : true}>Your list</NavDropdown.Item>
+                        <NavDropdown.Item href="/cart" hidden={getToken() ? false : true}>
+                            Your cart
+                        </NavDropdown.Item>
+                        <NavDropdown.Item href="/orders" hidden={getToken() ? false : true}>
+                            Your orders
+                        </NavDropdown.Item>
+                        <NavDropdown.Item href="/wishlist" hidden={getToken() ? false : true}>
+                            Your list
+                        </NavDropdown.Item>
                         <NavDropdown.Item href="/settings"
-                                          hidden={getToken() ? false : true}>Settings</NavDropdown.Item>
+                                          hidden={getToken() ? false : true}>
+                            Settings
+                        </NavDropdown.Item>
                         {/*<NavDropdown.Divider/>*/}
                         <Form onSubmit={onLogout}>
                             <Button type='submit' className='bg-white text-danger border-0'
-                                    hidden={getToken() ? false : true}>Sign
-                                out</Button>
+                                    hidden={getToken() ? false : true}>
+                                Sign out
+                            </Button>
                         </Form>
                         {/*<NavDropdown.Item href="#action5">*/}
                         {/*    Something else here*/}
                         {/*</NavDropdown.Item>*/}
                     </NavDropdown>
 
-                    {/*    [TODO: Cart]*/}
+                    {/*    [TODO: Cart icon ] */}
                 </Nav>
             </Container>
         </Navbar>
