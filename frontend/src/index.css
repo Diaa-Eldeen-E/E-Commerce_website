@@ -12,3 +12,11 @@
 /*    monospace;*/
 /*}*/
 
+#add-wishlist:hover {
+    color: black;
+}
+
+#add-wishlist {
+    color: gray;
+}
+

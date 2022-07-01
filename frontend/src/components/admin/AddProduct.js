@@ -38,7 +38,7 @@ const AddProduct = function () {
 
         axios.get('/sanctum/csrf-cookie').then((response) => {
             axios.post('/api/addproduct', inputs).then((res) => {
-                    // Product added successfully
+                    // ProductPage added successfully
                     if (res.data.status === 200) {
                         setErrorMessage('');
                         setValidationErrors('');
@@ -67,10 +67,11 @@ const AddProduct = function () {
 
                     {/*<p className='text-danger'>{errorMessage}</p>*/}
                     <Row>
-                        {/* Product name input */}
+                        {/* ProductPage name input */}
                         <Form.Group className='mb-3' controlId="formCategory">
                             <FloatingLabel label='Name'>
-                                <Form.Control type='text' name='name' placeholder='Product name' onChange={handleChange}
+                                <Form.Control type='text' name='name' placeholder='ProductPage name'
+                                              onChange={handleChange}
                                               isInvalid={validationErrors.name}/>
                                 <Form.Control.Feedback type='invalid'>{validationErrors.name}</Form.Control.Feedback>
                             </FloatingLabel>
@@ -94,7 +95,7 @@ const AddProduct = function () {
                             </FloatingLabel>
                         </Form.Group>
 
-                        {/* Product image source input */}
+                        {/* ProductPage image source input */}
                         <Form.Group className='mb-3' controlId="formImgSrc">
                             <FloatingLabel label='Image source'>
                                 <Form.Control type='text' name='image_src' placeholder='Image source'
@@ -102,16 +103,16 @@ const AddProduct = function () {
                             </FloatingLabel>
                         </Form.Group>
 
-                        {/* Product description input */}
+                        {/* ProductPage description input */}
                         <Form.Group className='mb-3' controlId="formDescription">
                             <FloatingLabel label='Description'>
-                                <Form.Control as='textarea' name='description' placeholder='Product description'
+                                <Form.Control as='textarea' name='description' placeholder='ProductPage description'
                                               onChange={handleChange}
                                               style={{height: "100px"}}/>
                             </FloatingLabel>
                         </Form.Group>
 
-                        {/* Product price input */}
+                        {/* ProductPage price input */}
                         <Col>
                             <FloatingLabel label='Price' className='mb-3'>
                                 <Form.Control
@@ -128,11 +129,11 @@ const AddProduct = function () {
 
                         </Col>
 
-                        {/* Product stock input */}
+                        {/* ProductPage stock input */}
                         <Col>
                             <Form.Group className='mb-3' controlId="formDescription">
                                 <FloatingLabel label='Stock'>
-                                    <Form.Control type='text' name='stock' placeholder='Product stock'
+                                    <Form.Control type='text' name='stock' placeholder='ProductPage stock'
                                                   onChange={handleChange}
                                                   isInvalid={validationErrors.stock}/>
                                     <Form.Control.Feedback
