@@ -57,8 +57,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('logout', [\App\Http\Controllers\AuthController::class, 'logout']);
     Route::post('addtowishlist', [\App\Http\Controllers\ProductController::class, 'addToWishlist']);
     Route::post('addtocart', [\App\Http\Controllers\ProductController::class, 'addToCart']);
-    Route::post('removefromwishlist', [\App\Http\Controllers\ProductController::class, 'removeFromWishlist']);
-    Route::post('removefromcart', [\App\Http\Controllers\ProductController::class, 'removeFromCart']);
+    Route::delete('removefromwishlist', [\App\Http\Controllers\ProductController::class, 'removeFromWishlist']);
+    Route::delete('removefromcart', [\App\Http\Controllers\ProductController::class, 'removeFromCart']);
+    Route::get('islisted', [\App\Http\Controllers\ProductController::class, 'isListed']);
+    Route::get('iscarted', [\App\Http\Controllers\ProductController::class, 'isCarted']);
+    Route::get('wishlist', [\App\Http\Controllers\ProductController::class, 'getWishlist']);
+    Route::get('cart', [\App\Http\Controllers\ProductController::class, 'getCart']);
+
 });
 
 

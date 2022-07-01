@@ -14,6 +14,7 @@ class CreateWishlistItemsTable extends Migration
     public function up()
     {
         Schema::create('wishlist_items', function (Blueprint $table) {
+            // TODO: Add auto incrementing id for cart_items
             $table->unsignedBigInteger('wishlist_id');
             $table->unsignedBigInteger('product_id');
             $table->timestamps();
