@@ -63,6 +63,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('iscarted', [\App\Http\Controllers\ProductController::class, 'isCarted']);
     Route::get('wishlist', [\App\Http\Controllers\ProductController::class, 'getWishlist']);
     Route::get('cart', [\App\Http\Controllers\ProductController::class, 'getCart']);
+    Route::get('review', [\App\Http\Controllers\ProductController::class, 'getReview']);
+    Route::post('review', [\App\Http\Controllers\ProductController::class, 'addReview']);
+
 
 });
 

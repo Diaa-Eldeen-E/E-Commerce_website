@@ -14,7 +14,7 @@ import ProductReviewsTab from "./ProductReviewsTab";
 
 const ProductPage = function () {
 
-    const {catName, productID} = useParams();
+    const {productID} = useParams();
     const [product, setProduct] = useState({});
     const {getToken} = useAuth();
     const [isDescriptionActive, setIsDescriptionActive] = useState(true);
@@ -42,7 +42,6 @@ const ProductPage = function () {
 
     const handleSelect = (eventKey) => {
 
-        console.log(eventKey);
         if (eventKey == 'description') {
             setIsDescriptionActive(true);
             setIsReviewsActive(false);
@@ -50,7 +49,6 @@ const ProductPage = function () {
         } else if (eventKey == 'reviews') {
             setIsDescriptionActive(false);
             setIsReviewsActive(true);
-
         }
     }
 

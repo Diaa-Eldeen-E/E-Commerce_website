@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Cart_item;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Review;
+use App\Models\User;
 use App\Models\Wishlist;
 use App\Models\Wishlist_item;
 use Illuminate\Http\Request;
@@ -123,6 +125,11 @@ class ProductController extends Controller
 
             $totalProductsCount = DB::table('products')->whereIn('category_id', $idArr)->count('id');
 
+            foreach ($products as $product) {
+                $product->rating = $product->reviews()->sum('rating');
+                $product->raters_count = $product->reviews()->count();
+            }
+
             return response()->json([
                 'status' => 200,
                 'products' => $products,
@@ -152,6 +159,10 @@ class ProductController extends Controller
         } else {
 
             $product = Product::where('id', $productID)->first();
+
+            $product->rating = $product->reviews()->sum('rating');
+            $product->raters_count = $product->reviews()->count();
+            $product->reviews = $product->reviews()->get();
 
             return response()->json([
                 'status' => 200,
@@ -238,7 +249,7 @@ class ProductController extends Controller
         // Add the product to this user's cart
         $prevCartItem = $request->user()->cart()->first()->items()
             ->where('product_id', $request->product_id)->first();
-        
+
         // Already in cart?
         if ($prevCartItem) {
             // Add this quantity to the previous quantity if available
@@ -355,6 +366,55 @@ class ProductController extends Controller
             'status' => 200,
             'products' => $request->user()->cart()->first()->products()->get(),
             'message' => 'Products retrieved'
+        ]);
+    }
+
+    public function getReview(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'product_id' => 'required|integer|min:0',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'validation_errors' => $validator->messages(),
+                'message' => 'Invalid inputs'
+            ]);
+        }
+
+        $review = $request->user()->reviews()->where('product_id', $request->product_id)->first();
+
+        return response()->json([
+            'review' => $review
+        ]);
+    }
+
+    public function addReview(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'product_id' => 'required|integer|min:0',
+            'rating' => 'required|integer|min:0|max:5',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'validation_errors' => $validator->messages(),
+                'message' => 'Invalid inputs'
+            ]);
+        }
+
+        $review = Review::create([
+            'product_id' => $request->product_id,
+            'rating' => $request->rating,
+            'description' => $request->description ? $request->description : NULL,
+            'user_id' => $request->user()->id
+        ]);
+
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Review added successfully',
+            'review' => $review
         ]);
     }
 }

@@ -7,12 +7,13 @@ import {useAuth} from "./auth/AuthProvider";
 
 const ProductReviewForm = ({product}) => {
 
-    const [inputs, setInputs] = useState({});
+    const [inputs, setInputs] = useState({'product_id': product.id});
     const [review, setReview] = useState({});
     const [isLoading, setIsLoading] = useState(true);
     const {getToken} = useAuth();
 
     useEffect(() => {
+        console.log('here');
         getToken() ?
             axios.get('/sanctum/csrf-cookie').then((response) => {
                 axios.get('/api/review?product_id=' + product.id).then((res) => {
@@ -40,21 +41,12 @@ const ProductReviewForm = ({product}) => {
 
         axios.get('/sanctum/csrf-cookie').then((response) => {
             axios.post('/api/review', inputs).then((res) => {
-                    // Review added successfully
-                    if (res.data.status === 200) {
-                        // setErrorMessage('');
-                        // setValidationErrors('');
-                        setReview(inputs);
-                        window.location.reload(false);
-                    }
-                    // Failed
-                    else {
-                        // Show error message
-                        // setErrorMessage(res.data.message);
-                        // setValidationErrors(res.data.validation_errors);
-                    }
+                // Review added successfully
+                if (res.data.status === 200) {
+                    setReview(inputs);
+                    window.location.reload(false);
                 }
-            )
+            })
         })
     }
 

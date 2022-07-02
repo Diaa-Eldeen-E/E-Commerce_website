@@ -10,6 +10,13 @@ class Product extends Model
 {
     use HasFactory;
 
+    // Return the product's reviews from all users
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+
     // Register a model observer that will automatically keep the products model in sync with the search driver
     use Searchable;
 

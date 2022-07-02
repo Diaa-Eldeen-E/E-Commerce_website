@@ -24,6 +24,12 @@ class User extends Authenticatable
         return $this->hasOne(Wishlist::class, 'id', 'wishlist_id');
     }
 
+    // Return the user's reviews on products
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
     /**
      * The attributes that are mass assignable.
      *

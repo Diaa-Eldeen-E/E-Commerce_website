@@ -4,30 +4,43 @@ import ProductReviewForm from "./ProductReviewForm";
 
 const ProductReviewsTab = ({product}) => {
     return (
-        <>
-            {/*     Rating it */}
-            <Row className='mt-5'>
-                <Col>
-                    <p>Based on {product.raters_count} reviews</p>
-
-                    <StarRatingComponent
-                        name="rate1"
-                        starCount={5}
-                        value={Math.ceil(product.rating / product.raters_count)}
-                    />
-
-                    <h4 className='text-warning'>{(product.rating / product.raters_count).toFixed(1)}</h4>
-
-                    {/* TODO: Show raters count for each star rating */}
 
 
-                </Col>
+        <Row className='mt-5'>
 
-                <Col>
-                    <ProductReviewForm product={product}/>
-                </Col>
-            </Row>
-        </>
+
+            <Col>
+                {
+                    product.raters_count > 0 ?
+                        <div>
+                            <p>Based on {product.raters_count} reviews</p>
+
+                            <StarRatingComponent
+                                name="rate1"
+                                starCount={5}
+                                value={Math.ceil(product.rating / product.raters_count)}
+                            />
+
+                            <h4 className='text-warning'>{(product.rating / product.raters_count).toFixed(1)}</h4>
+
+                            {/*TODO: Show raters count for each star rating */}
+
+                        </div>
+
+                        :
+                        
+                        <h4>Not rated yet</h4>
+                }
+            </Col>
+
+
+            <Col>
+                <ProductReviewForm product={product}/>
+            </Col>
+
+
+        </Row>
+
     )
 }
 

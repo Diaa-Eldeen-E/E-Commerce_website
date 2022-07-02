@@ -17,14 +17,10 @@ class CreateProductsTable extends Migration
             $table->unsignedBigInteger('id')->autoIncrement();  // Primary key
             $table->string('name', 255)->unique();
             $table->unsignedBigInteger('category_id');
-            $table->string('image_src')->default('assets/products/no_image.png');
+            $table->string('image_src')->default('/assets/products/no_image.png');
             $table->text('description');
             $table->unsignedDouble('price');
             $table->unsignedInteger('stock');
-            $table->unsignedInteger('rating')->default(0);
-            $table->unsignedInteger('raters_count')->default(0);
-//            Add a relation to users ratings (stars)
-
 
             $table->timestamps();
 
