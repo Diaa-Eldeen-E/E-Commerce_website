@@ -41,62 +41,58 @@ const AdminNavigationbar = function () {
 
     return (
 
-        <Container fluid className='bg-secondary'>
+        <Navbar className='bg-secondary'>
+            <Container fluid style={{height: "50px"}}>
+                <Row className='w-100'>
+                    {/* Brand */}
+                    <Col className='col-1'>
+                        <Navbar.Brand href="#" className={"text-warning"}>Store</Navbar.Brand>
+                    </Col>
 
-            <Navbar>
-                <Container fluid style={{height: "50px"}}>
-                    <Row className='w-100'>
-                        {/* Brand */}
-                        <Col className='col-1'>
-                            <Navbar.Brand href="#" className={"text-warning"}>Store</Navbar.Brand>
-                        </Col>
+                    {/* Links to home and categories*/}
+                    <Col className='col-4'>
+                        <Nav>
+                            <Nav.Link href="#action1">Home</Nav.Link>
 
-                        {/* Links to home and categories*/}
-                        <Col className='col-4'>
-                            <Nav>
-                                <Nav.Link href="#action1">Home</Nav.Link>
+                            <NavDropdown title="Categories" id="navbarScrollingDropdown">
 
-                                <NavDropdown title="Categories" id="navbarScrollingDropdown">
+                                <ListNestedCategories categories={categories} isAdmin={true}/>
 
-                                    <ListNestedCategories categories={categories} isAdmin={true}/>
+                                <NavDropdown.Divider/>
+                                <NavDropdown.Item href="/admin/categories">
+                                    All categories
+                                </NavDropdown.Item>
+                            </NavDropdown>
+                        </Nav>
+                    </Col>
 
-                                    <NavDropdown.Divider/>
-                                    <NavDropdown.Item href="/admin/categories">
-                                        All categories
-                                    </NavDropdown.Item>
-                                </NavDropdown>
-                            </Nav>
-                        </Col>
+                    {/* Search form */}
+                    <Col className='col-6' style={{maxHeight: "50px"}}>
+                        <SearchBar isAdmin={true}/>
+                    </Col>
 
-                        {/* Search form */}
-                        <Col className='col-6' style={{maxHeight: "50px"}}>
-                            <SearchBar isAdmin={true}/>
-                        </Col>
+                    {/* Account */}
+                    <Col className='col-1'>
+                        <Nav navbarScroll>
+                            <NavDropdown title={getUsername()} id="navbarScrollingDropdown">
 
-                        {/* Account */}
-                        <Col className='col-1'>
-                            <Nav navbarScroll>
-                                <NavDropdown title={getUsername()} id="navbarScrollingDropdown">
+                                <NavDropdown.Item href="/list">Your list</NavDropdown.Item>
+                                <NavDropdown.Item href="/settings">Settings</NavDropdown.Item>
+                                {/*<NavDropdown.Divider/>*/}
+                                <Form onSubmit={onLogout}>
+                                    <Button type='submit' className='bg-white text-danger border-0'>Sign
+                                        out</Button>
+                                </Form>
+                                {/*<NavDropdown.Item href="#action5">*/}
+                                {/*    Something else here*/}
+                                {/*</NavDropdown.Item>*/}
+                            </NavDropdown>
 
-                                    <NavDropdown.Item href="/list">Your list</NavDropdown.Item>
-                                    <NavDropdown.Item href="/settings">Settings</NavDropdown.Item>
-                                    {/*<NavDropdown.Divider/>*/}
-                                    <Form onSubmit={onLogout}>
-                                        <Button type='submit' className='bg-white text-danger border-0'>Sign
-                                            out</Button>
-                                    </Form>
-                                    {/*<NavDropdown.Item href="#action5">*/}
-                                    {/*    Something else here*/}
-                                    {/*</NavDropdown.Item>*/}
-                                </NavDropdown>
-
-                            </Nav>
-                        </Col>
-                    </Row>
-                </Container>
-            </Navbar>
-
-        </Container>
+                        </Nav>
+                    </Col>
+                </Row>
+            </Container>
+        </Navbar>
     );
 
 
