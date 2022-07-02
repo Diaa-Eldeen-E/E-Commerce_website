@@ -2,10 +2,10 @@ import {useEffect, useState} from "react";
 import {useParams, useSearchParams} from "react-router-dom";
 import axios from "axios";
 import {Col, Container, Row} from "react-bootstrap";
-import ListProducts from "./ListProducts";
-import PaginationList from "./PaginationList";
+import ListProducts from "../components/ListProducts";
+import PaginationList from "../components/PaginationList";
 import {defaultPageSize} from "../constants";
-import Loading from "./Loading";
+import Loading from "../components/Loading";
 
 const SearchPage = function ({isAdmin}) {
 

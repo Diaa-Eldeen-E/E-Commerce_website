@@ -78,9 +78,9 @@ const AddProduct = function () {
 
                         </Form.Group>
 
-                        {/* Category parent select options*/}
+                        {/* ProductsPage parent select options*/}
                         <Form.Group className='mb-3'>
-                            <FloatingLabel label='Category'>
+                            <FloatingLabel label='ProductsPage'>
                                 <Form.Select aria-label="Default select example" name='category_name'
                                              onChange={handleChange}
                                              isInvalid={validationErrors.category_name}>

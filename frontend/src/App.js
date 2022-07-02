@@ -1,6 +1,6 @@
 import React from 'react';
 import Layout from './layouts/Layout';
-import Home from './components/Home'
+import Home from './pages/Home'
 import AdminPrivateRoute from "./routes/AdminPrivateRoute";
 import AuthProvider, {useAuth} from "./components/auth/AuthProvider";
 import Login from "./components/auth/Login";
@@ -12,7 +12,7 @@ import AdminHome from "./components/admin/AdminHome";
 import {useNavigate, Navigate} from "react-router";
 
 import axios from "axios";
-import Page404 from "./components/Page404";
+import Page404 from "./pages/Page404";
 import AdminLayout from "./layouts/AdminLayout";
 import RequireAuth from "./components/auth/RequireAuth";
 import AdminCategories from "./components/admin/AdminCategories";
@@ -21,10 +21,10 @@ import AddCategory from "./components/admin/AddCategory";
 import AdminCategory from "./components/admin/AdminCategory";
 import AddProduct from "./components/admin/AddProduct";
 import AdminProduct from "./components/admin/AdminProduct";
-import Category from "./components/Category";
-import ProductPage from "./components/ProductPage";
-import Categories from "./components/Categories"
-import SearchPage from "./components/SearchPage";
+import ProductsPage from "./pages/ProductsPage";
+import ProductPage from "./pages/ProductPage";
+import CategoriesPage from "./pages/CategoriesPage"
+import SearchPage from "./pages/SearchPage";
 import WishlistPage from "./pages/WishlistPage";
 import CartPage from "./pages/CartPage";
 
@@ -53,9 +53,9 @@ function App() {
                             {/*Index route A child route with no path that renders in the parent's outlet at
                              the parent's URL By default*/}
                             <Route index element={<Home/>}/>
-                            <Route path='category/:catName' element={<Category/>}/>
+                            <Route path='category/:catName' element={<ProductsPage/>}/>
                             <Route path='product/:productID' element={<ProductPage/>}/>
-                            <Route path='categories' element={<Categories/>}/>
+                            <Route path='categories' element={<CategoriesPage/>}/>
                             <Route path='/home' element={<Home/>}/>
                             <Route path='/login' element={getToken() ? <Navigate to='/' replace/> : <Login/>}/>
                             <Route path='/register' element={getToken() ? <Navigate to='/' replace/> : <Register/>}/>

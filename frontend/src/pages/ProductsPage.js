@@ -3,13 +3,13 @@ import {Link, useParams, useSearchParams} from "react-router-dom";
 import axios from "axios";
 import {Card, Col, Container, Row, Pagination} from "react-bootstrap";
 import StarRatingComponent from 'react-star-rating-component';
-import PaginationList from "./PaginationList";
-import ListProducts from "./ListProducts";
+import PaginationList from "../components/PaginationList";
+import ListProducts from "../components/ListProducts";
 
 const defaultPageSize = 7;
 const productsPerRow = 3;
 
-const Category = function () {
+const ProductsPage = function () {
     const [productsState, setProductsState] = useState([]);
     const [rating, setRating] = useState(3);
     const [totalCount, setTotalCount] = useState(10);
@@ -17,7 +17,7 @@ const Category = function () {
     const onStarClick = (newRating) => {
         setRating(newRating);
     }
-    // Category name to be shown
+    // ProductsPage name to be shown
     let {catName} = useParams();
 
 //    Extracting Page number, page size from the URL query params
@@ -56,7 +56,7 @@ const Category = function () {
 }
 
 
-export default Category;
+export default ProductsPage;
 
 
 // TRash

@@ -2,10 +2,10 @@ import axios from "axios";
 import {useEffect, useState} from "react";
 import {Button, Col, Container, Fade, Form, Row, ListGroup, ListGroupItem} from "react-bootstrap";
 import {Link} from "react-router-dom";
-import ListNestedCategories from "./ListNestedCategories";
-import Loading from "./Loading";
+import ListNestedCategories from "../components/ListNestedCategories";
+import Loading from "../components/Loading";
 
-const Categories = function () {
+const CategoriesPage = function () {
     const [refreshData, setRefreshData] = useState(true);
     const [isLoading, setIsLoading] = useState(true);
     const [categories, setCategories] = useState([]);
@@ -44,7 +44,7 @@ const Categories = function () {
     return (
         <Container className="my-4">
 
-            {/* AdminCategories lists*/}
+            {/* Categories lists*/}
             <Row className='w-75 mx-auto'>
                 {
                     isLoading ? <Loading/> : <ListNestedCategories categories={categories}/>
@@ -56,7 +56,7 @@ const Categories = function () {
     );
 }
 
-export default Categories;
+export default CategoriesPage;
 
 
 // Trash
@@ -99,7 +99,7 @@ export default Categories;
 //         <li key={category.id} className='list-group-item-action'>
 //             <Row className='align-items-center'>
 //
-//                 {/* Category name*/}
+//                 {/* ProductsPage name*/}
 //                 <Col className='col-md-9'>
 //                     <Link to={'/category/' + category.name}><p className='my-auto'> {category.name}</p></Link>
 //                 </Col>

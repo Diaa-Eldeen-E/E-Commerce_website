@@ -25,7 +25,7 @@ const CategoryItem = function ({category, isAdmin, displayButtons}) {
         <li key={category.id} className='list-group-item-action'>
             <Row className='align-items-center'>
 
-                {/* Category name*/}
+                {/* ProductsPage name*/}
                 <Col className='col-8'>
                     <Link to={(isAdmin ? '/admin/' : '/') + 'category/' + category.name}><p
                         className='my-auto'> {category.name}</p></Link>

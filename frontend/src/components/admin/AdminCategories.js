@@ -72,14 +72,14 @@ export default AdminCategories;
 //
 //         {/*<p className='text-danger'>{errorMessage}</p>*/}
 //         <Row>
-//             {/* Category name input */}
+//             {/* ProductsPage name input */}
 //             <Form.Group as={Col} md='4' className='mb-3' controlId="formCategory">
-//                 <Form.Control type='text' name='name' placeholder='Category name' onChange={handleChange}
+//                 <Form.Control type='text' name='name' placeholder='ProductsPage name' onChange={handleChange}
 //                               isInvalid={validationErrors.name}/>
 //                 <Form.Control.Feedback type='invalid'>{validationErrors.name}</Form.Control.Feedback>
 //             </Form.Group>
 //
-//             {/* Category parent select options*/}
+//             {/* ProductsPage parent select options*/}
 //             <Col className='col-md-4'>
 //                 <Form.Select aria-label="Default select example" name='parent' onChange={handleChange}>
 //                     <option value="">None</option>
@@ -93,7 +93,7 @@ export default AdminCategories;
 //                 <Button type='submit' className='bg-primary'>Add category</Button>
 //             </Col>
 //
-//             <Fade in={isAdd} className='text-success '><p>Category added</p></Fade>
+//             <Fade in={isAdd} className='text-success '><p>ProductsPage added</p></Fade>
 //
 //         </Row>
 //     </Form>

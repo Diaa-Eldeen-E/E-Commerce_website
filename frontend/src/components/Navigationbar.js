@@ -67,11 +67,7 @@ const Navigationbar = function () {
 
                     {/* Account */}
                     <Col className='col-1'>
-                        <Nav
-                            className="justify-content-end"
-                            style={{maxHeight: '100px', marginRight: '0px'}}
-                            // navbarScroll
-                        >
+                        <Nav navbarScroll>
                             <NavDropdown title={getToken() ? getUsername() : "Account"} id="navbarScrollingDropdown">
                                 <NavDropdown.Item href="/login" hidden={getToken() ? true : false}>
                                     Sign in

@@ -54,7 +54,7 @@ const AdminNavigationbar = function () {
                         <Nav>
                             <Nav.Link href="#action1">Home</Nav.Link>
 
-                            <NavDropdown title="Categories" id="navbarScrollingDropdown">
+                            <NavDropdown title="CategoriesPage" id="navbarScrollingDropdown">
 
                                 <ListNestedCategories categories={categories} isAdmin={true}/>
 

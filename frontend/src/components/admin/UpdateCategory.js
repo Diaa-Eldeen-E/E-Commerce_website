@@ -8,7 +8,7 @@ const UpdateCategory = function () {
 
     const navigate = useNavigate();
 
-    // Category name to be updated, taken from URL parameters
+    // ProductsPage name to be updated, taken from URL parameters
     let {catName} = useParams();
 
     // Update category form
@@ -27,7 +27,7 @@ const UpdateCategory = function () {
                 // Remove the category being updated from the list of categories and store it separately
                 let tempCategories = res.data?.slice();  // Copy categories
                 let idx = tempCategories.findIndex((item) => item.name == catName); // Find category being updated
-                setCategory(tempCategories[idx]);   // Category being updated
+                setCategory(tempCategories[idx]);   // ProductsPage being updated
 
                 tempCategories?.splice(idx, 1);  // Remove category being updated from the list
                 setCategories(tempCategories);
@@ -48,7 +48,7 @@ const UpdateCategory = function () {
 
         axios.get('/sanctum/csrf-cookie').then((response) => {
             axios.put('/api/category/' + catName, inputs).then((res) => {
-                    // Category added successfully
+                    // ProductsPage added successfully
                     if (res.data.status === 200) {
                         setErrorMessage('');
                         setValidationErrors('');
@@ -72,14 +72,14 @@ const UpdateCategory = function () {
 
                     {/*<p className='text-danger'>{errorMessage}</p>*/}
                     <Row>
-                        {/* Category name input */}
+                        {/* ProductsPage name input */}
                         <Form.Group as={Col} md='4' className='mb-3' controlId="formCategory">
                             <Form.Control type='text' name='name' placeholder={catName} onChange={handleChange}
                                           isInvalid={validationErrors.name}/>
                             <Form.Control.Feedback type='invalid'>{validationErrors.name}</Form.Control.Feedback>
                         </Form.Group>
 
-                        {/* Category parent select options*/}
+                        {/* ProductsPage parent select options*/}
                         <Col className='col-md-4'>
                             <Form.Select aria-label="Default select example" name='parent' onChange={handleChange}>
                                 <option value="">None</option>

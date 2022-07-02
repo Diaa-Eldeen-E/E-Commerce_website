@@ -38,7 +38,7 @@ const AddCategory = function () {
 
         axios.get('/sanctum/csrf-cookie').then((response) => {
             axios.post('/api/category/', inputs).then((res) => {
-                    // Category added successfully
+                    // ProductsPage added successfully
                     if (res.data.status === 200) {
                         setErrorMessage('');
                         setValidationErrors('');
@@ -62,14 +62,15 @@ const AddCategory = function () {
 
                     {/*<p className='text-danger'>{errorMessage}</p>*/}
                     <Row>
-                        {/* Category name input */}
+                        {/* ProductsPage name input */}
                         <Form.Group as={Col} md='4' className='mb-3' controlId="formCategory">
-                            <Form.Control type='text' name='name' placeholder='Category name' onChange={handleChange}
+                            <Form.Control type='text' name='name' placeholder='ProductsPage name'
+                                          onChange={handleChange}
                                           isInvalid={validationErrors.name}/>
                             <Form.Control.Feedback type='invalid'>{validationErrors.name}</Form.Control.Feedback>
                         </Form.Group>
 
-                        {/* Category parent select options*/}
+                        {/* ProductsPage parent select options*/}
                         <Col className='col-md-4'>
                             <Form.Select aria-label="Default select example" name='parent' onChange={handleChange}>
                                 <option value="">None</option>

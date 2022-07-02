@@ -61,7 +61,7 @@ const SearchBar = function ({isAdmin}) {
     const handleBlur = (e) => {
 
         // Hide search results, when the search bar is not focused
-        setTimeout(() => setSearchResults([]), 100);
+        setTimeout(() => setSearchResults([]), 250);
         e.target.value = '';
         setSearchText('');
     }

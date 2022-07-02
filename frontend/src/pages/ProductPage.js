@@ -4,12 +4,12 @@ import StarRatingComponent from "react-star-rating-component";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import {maxProductImageHeight, maxProductImageWidth} from "../constants";
-import AddToCartForm from "./AddToCartForm";
+import AddToCartForm from "../components/AddToCartForm";
 
-import {useAuth} from "./auth/AuthProvider";
-import AddToWishlistButton from "./AddToWishlistButton";
-import Loading from "./Loading";
-import ProductReviewsTab from "./ProductReviewsTab";
+import {useAuth} from "../components/auth/AuthProvider";
+import AddToWishlistButton from "../components/AddToWishlistButton";
+import Loading from "../components/Loading";
+import ProductReviewsTab from "../components/ProductReviewsTab";
 
 
 const ProductPage = function () {
@@ -32,7 +32,7 @@ const ProductPage = function () {
             })
         })
 
-    }, [])
+    }, [productID])
 
     let productImageStyle = {
         maxHeight: maxProductImageHeight,

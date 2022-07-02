@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import {Navigate, useNavigate} from "react-router";
 import {Outlet} from "react-router-dom";
 import Register from "./Register";
-import Page404 from "../Page404";
+import Page404 from "../../pages/Page404";
 import axios from "axios";
 import {useAuth} from "./AuthProvider";
 import Loading from "../Loading";

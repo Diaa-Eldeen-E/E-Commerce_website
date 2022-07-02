@@ -15,7 +15,7 @@ const AdminCategory = function () {
     const onStarClick = (newRating) => {
         setRating(newRating);
     }
-    // Category name to be shown
+    // ProductsPage name to be shown
     let {catName} = useParams();
 
     console.log(catName);
