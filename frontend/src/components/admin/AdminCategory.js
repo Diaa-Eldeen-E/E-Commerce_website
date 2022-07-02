@@ -1,20 +1,16 @@
 import {useEffect, useState} from "react";
 import {Link, useParams, useSearchParams} from "react-router-dom";
 import axios from "axios";
-import {Card, Col, Container, Row, Pagination} from "react-bootstrap";
+import {Card, Col, Container, Row, Pagination, Button, Table} from "react-bootstrap";
 import StarRatingComponent from 'react-star-rating-component';
 import PaginationList from "../PaginationList";
 import {defaultPageSize, productsPerRow} from "../../constants";
 import ListProducts from "../ListProducts";
 
 const AdminCategory = function () {
-    const [productsState, setProductsState] = useState([]);
-    const [rating, setRating] = useState(3);
+    const [products, setProducts] = useState([]);
     const [totalCount, setTotalCount] = useState(10);
 
-    const onStarClick = (newRating) => {
-        setRating(newRating);
-    }
     // ProductsPage name to be shown
     let {catName} = useParams();
 
@@ -35,7 +31,7 @@ const AdminCategory = function () {
         axios.get('/sanctum/csrf-cookie').then((response) => {
             axios.get('/api/products?' + query).then((res) => {
                 if (res.data.status === 200) {
-                    setProductsState(res.data.products);
+                    setProducts(res.data.products);
                     setTotalCount(res.data.totalProductsCount);
                 }
             })
@@ -43,6 +39,9 @@ const AdminCategory = function () {
 
     }, [catName]);
 
+    const deleteProduct = function (product) {
+
+    }
 
     return (
         <Container>
@@ -50,8 +49,41 @@ const AdminCategory = function () {
             <Link to='/admin/addproduct' className='position-absolute end-0 me-3 mt-3'>Add product</Link>
 
             {/*  Products  */}
-            <ListProducts products={productsState} isAdmin={true}/>
+            {/*<ListProducts products={productsState} isAdmin={true}/>*/}
+            <Table striped hover className='align-items-center justify-content-start w-75 mx-auto mt-4'>
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                </tr>
+                </thead>
 
+                <tbody>
+                {
+                    products.map((product, idx) =>
+
+                        <tr className='table-row' key={product.id}>
+                            <td>{idx + 1}</td>
+                            <td><Link to={'/admin/product/' + product.id}>{product.name}</Link></td>
+                            <td>{product.price}</td>
+                            <td>{product.stock}</td>
+
+                            <td align='end'>
+                                <Button variant='outline-primary' href={'/admin/updateproduct/' + product.id}>
+                                    Update
+                                </Button>
+                                <Button variant='outline-danger' className='mx-2'
+                                        onClick={() => deleteProduct(product)}>
+                                    x
+                                </Button>
+                            </td>
+                        </tr>
+                    )
+                }
+                </tbody>
+            </Table>
             <PaginationList pageNum={pageNum} perPage={pageSize} totalItemsCount={totalCount}/>
         </Container>
     )

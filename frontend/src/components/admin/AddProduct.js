@@ -67,10 +67,10 @@ const AddProduct = function () {
 
                     {/*<p className='text-danger'>{errorMessage}</p>*/}
                     <Row>
-                        {/* ProductPage name input */}
+                        {/* Product name input */}
                         <Form.Group className='mb-3' controlId="formCategory">
                             <FloatingLabel label='Name'>
-                                <Form.Control type='text' name='name' placeholder='ProductPage name'
+                                <Form.Control type='text' name='name' placeholder='Product name'
                                               onChange={handleChange}
                                               isInvalid={validationErrors.name}/>
                                 <Form.Control.Feedback type='invalid'>{validationErrors.name}</Form.Control.Feedback>

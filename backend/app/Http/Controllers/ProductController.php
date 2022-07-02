@@ -92,6 +92,51 @@ class ProductController extends Controller
 
     }
 
+    public function updateProduct(Request $request, $product_id)
+    {
+        // Validate input, (No duplicate name, parent must exist)
+
+        $validator = Validator::make($request->all() + ['product_id' => $product_id], [
+            'product_id' => 'required|generic_name|exists:products,id',
+            'name' => 'generic_name|max:255',
+            'category_name' => 'max:255|generic_name|exists:categories,name',
+            'price' => 'numeric|min:0',
+            'stock' => 'integer|min:0',
+        ]);
+
+
+        if ($validator->fails()) {
+            return response()->json([
+                'validation_errors' => $validator->messages(),
+                'message' => 'Invalid inputs'
+            ]);
+        } else {
+
+            $product = Product::where('id', $product_id)->first();
+
+            if ($request->has('name'))
+                $product->name = $request->name;
+
+            if ($request->has('category_name'))
+                $product->category_id = Category::where('name', $request->category_name)->first()->id;
+
+            if ($request->has('price'))
+                $product->price = $request->price;
+
+            if ($request->has('stock'))
+                $product->stock = $request->stock;
+            
+            $product->save();
+
+
+            return response()->json([
+                'status' => 200,
+                'category' => $product,
+                'message' => 'Product updated successfully'
+            ]);
+        }
+    }
+
     public function getProducts(Request $request)
     {
         $catName = $request->query('cat_name');
@@ -142,12 +187,8 @@ class ProductController extends Controller
 
     public function getProduct(Request $request)
     {
-
-        $productID = $request->query('q');
-
-
         // Validate input
-        $validator = Validator::make(['product_id' => $productID], [
+        $validator = Validator::make($request->all(), [
             'product_id' => 'required|integer|exists:products,id',
         ]);
 
@@ -158,7 +199,7 @@ class ProductController extends Controller
             ]);
         } else {
 
-            $product = Product::where('id', $productID)->first();
+            $product = Product::where('id', $request->product_id)->first();
 
             $product->rating = $product->reviews()->sum('rating');
             $product->raters_count = $product->reviews()->count();

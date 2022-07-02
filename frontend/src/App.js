@@ -27,6 +27,7 @@ import CategoriesPage from "./pages/CategoriesPage"
 import SearchPage from "./pages/SearchPage";
 import WishlistPage from "./pages/WishlistPage";
 import CartPage from "./pages/CartPage";
+import UpdateProduct from "./components/admin/UpdateProduct";
 
 axios.defaults.withCredentials = true;
 axios.defaults.baseURL = 'http://localhost:8000';
@@ -78,6 +79,7 @@ function App() {
                                 <Route path='addcategory' element={<AddCategory/>}/>
                                 <Route path='category/:catName' element={<AdminCategory/>}/>
                                 <Route path='addproduct' element={<AddProduct/>}/>
+                                <Route path='updateproduct/:productID' element={<UpdateProduct/>}/>
                                 <Route path='product/:productID' element={<AdminProduct/>}/>
                                 <Route path='search' element={<SearchPage isAdmin={true}/>}/>
 

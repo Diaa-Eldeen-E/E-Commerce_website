@@ -24,7 +24,7 @@ const ProductPage = function () {
     //    Fetch the product from the database
     useEffect(() => {
         axios.get('/sanctum/csrf-cookie').then((response) => {
-            axios.get('/api/product?q=' + productID).then((res) => {
+            axios.get('/api/product?product_id=' + productID).then((res) => {
                 if (res.data.status === 200)
                     setProduct(res.data.product);
 

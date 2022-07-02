@@ -40,6 +40,9 @@ Route::get('nestedcategories', [\App\Http\Controllers\CategoryController::class,
 // Only admin should be able to update category
 Route::put('category/{catName}', [\App\Http\Controllers\CategoryController::class, 'updateCategory']);
 
+// Only admin should be able to update product
+Route::put('product/{product_id}', [\App\Http\Controllers\ProductController::class, 'updateProduct']);
+
 // Only admin should be able to add category
 Route::post('category', [\App\Http\Controllers\CategoryController::class, 'addCategory']);
 
