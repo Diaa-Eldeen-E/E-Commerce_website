@@ -2,8 +2,8 @@ import axios from "axios";
 import {useEffect, useState} from "react";
 import {Button, Col, Container, Fade, Form, Row, ListGroup, ListGroupItem} from "react-bootstrap";
 import {Link} from "react-router-dom";
-import ListNestedCategories from "../ListNestedCategories";
-import Loading from "../Loading";
+import ListNestedCategories from "../components/ListNestedCategories";
+import Loading from "../components/Loading";
 
 const AdminCategories = function () {
     const [refreshData, setRefreshData] = useState(true);
@@ -23,18 +23,6 @@ const AdminCategories = function () {
             })
         });
     }, [refreshData]);
-
-
-    const deleteCategory = function (catName) {
-        axios.get('/sanctum/csrf-cookie').then((response) => {
-            axios.delete('/api/category?' + catName).then((res) => {
-                if (res.data.status === 200)
-                    setRefreshData(true);
-                else
-                    console.log('Failed to delete item');
-            })
-        })
-    }
 
 
     return (

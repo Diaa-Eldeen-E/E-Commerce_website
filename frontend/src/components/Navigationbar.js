@@ -1,5 +1,5 @@
 import {Container, Navbar, NavDropdown, Nav, Form, Row, Button, Image, Col} from "react-bootstrap";
-import {useAuth} from "./auth/AuthProvider";
+import {useAuth} from "../auth/AuthProvider";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import {Link} from "react-router-dom";

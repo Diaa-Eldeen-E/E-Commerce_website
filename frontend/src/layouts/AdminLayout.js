@@ -1,6 +1,6 @@
 import {Outlet} from "react-router-dom";
 import React from "react";
-import AdminNavigationbar from "../components/admin/AdminNavigationbar";
+import AdminNavigationbar from "../admin/AdminNavigationbar";
 import {Container, Row} from "react-bootstrap";
 import Navigationbar from "../components/Navigationbar";
 

@@ -1,7 +1,7 @@
 import {Navigate, Route, useLocation} from "react-router-dom";
-import AdminHome from "../components/admin/AdminHome";
+import AdminHome from "../admin/AdminHome";
 import React, {useContext} from "react";
-import {useAuth} from "../components/auth/AuthProvider";
+import {useAuth} from "../auth/AuthProvider";
 
 import axios from "axios";
 import {useEffect, useState} from "react";

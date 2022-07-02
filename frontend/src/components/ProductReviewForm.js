@@ -3,7 +3,7 @@ import {Button, Col, Form, FormLabel, Row} from "react-bootstrap";
 import axios from "axios";
 import {useEffect, useState} from "react";
 import Loading from "./Loading";
-import {useAuth} from "./auth/AuthProvider";
+import {useAuth} from "../auth/AuthProvider";
 
 const ProductReviewForm = ({product}) => {
 

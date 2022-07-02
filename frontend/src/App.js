@@ -2,32 +2,32 @@ import React from 'react';
 import Layout from './layouts/Layout';
 import Home from './pages/Home'
 import AdminPrivateRoute from "./routes/AdminPrivateRoute";
-import AuthProvider, {useAuth} from "./components/auth/AuthProvider";
-import Login from "./components/auth/Login";
-import Register from "./components/auth/Register";
+import AuthProvider, {useAuth} from "./auth/AuthProvider";
+import Login from "./auth/Login";
+import Register from "./auth/Register";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Route, BrowserRouter, Routes} from "react-router-dom";
-import AdminHome from "./components/admin/AdminHome";
+import AdminHome from "./admin/AdminHome";
 import {useNavigate, Navigate} from "react-router";
 
 import axios from "axios";
 import Page404 from "./pages/Page404";
 import AdminLayout from "./layouts/AdminLayout";
-import RequireAuth from "./components/auth/RequireAuth";
-import AdminCategories from "./components/admin/AdminCategories";
-import UpdateCategory from "./components/admin/UpdateCategory";
-import AddCategory from "./components/admin/AddCategory";
-import AdminCategory from "./components/admin/AdminCategory";
-import AddProduct from "./components/admin/AddProduct";
-import AdminProduct from "./components/admin/AdminProduct";
+import RequireAuth from "./auth/RequireAuth";
+import AdminCategories from "./admin/AdminCategories";
+import UpdateCategory from "./admin/UpdateCategory";
+import AddCategory from "./admin/AddCategory";
+import AdminCategory from "./admin/AdminCategory";
+import AddProduct from "./admin/AddProduct";
+import AdminProduct from "./admin/AdminProduct";
 import ProductsPage from "./pages/ProductsPage";
 import ProductPage from "./pages/ProductPage";
 import CategoriesPage from "./pages/CategoriesPage"
 import SearchPage from "./pages/SearchPage";
 import WishlistPage from "./pages/WishlistPage";
 import CartPage from "./pages/CartPage";
-import UpdateProduct from "./components/admin/UpdateProduct";
+import UpdateProduct from "./admin/UpdateProduct";
 
 axios.defaults.withCredentials = true;
 axios.defaults.baseURL = 'http://localhost:8000';
@@ -54,7 +54,7 @@ function App() {
                             {/*Index route A child route with no path that renders in the parent's outlet at
                              the parent's URL By default*/}
                             <Route index element={<Home/>}/>
-                            <Route path='category/:catName' element={<ProductsPage/>}/>
+                            <Route path='category/:categoryID' element={<ProductsPage/>}/>
                             <Route path='product/:productID' element={<ProductPage/>}/>
                             <Route path='categories' element={<CategoriesPage/>}/>
                             <Route path='/home' element={<Home/>}/>
@@ -75,9 +75,9 @@ function App() {
                                 <Route index element={<AdminHome/>}/>
                                 <Route path='/admin/home' exact element={<AdminHome/>}/>
                                 <Route path='/admin/categories' exact element={<AdminCategories/>}/>
-                                <Route path='updatecategory/:catName' element={<UpdateCategory/>}/>
+                                <Route path='updatecategory/:categoryID' element={<UpdateCategory/>}/>
                                 <Route path='addcategory' element={<AddCategory/>}/>
-                                <Route path='category/:catName' element={<AdminCategory/>}/>
+                                <Route path='category/:categoryID' element={<AdminCategory/>}/>
                                 <Route path='addproduct' element={<AddProduct/>}/>
                                 <Route path='updateproduct/:productID' element={<UpdateProduct/>}/>
                                 <Route path='product/:productID' element={<AdminProduct/>}/>

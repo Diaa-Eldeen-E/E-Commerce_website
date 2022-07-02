@@ -18,7 +18,7 @@ class CreateProductsTable extends Migration
             $table->string('name', 255)->unique();
             $table->unsignedBigInteger('category_id');
             $table->string('image_src')->default('/assets/products/no_image.png');
-            $table->text('description');
+            $table->text('description')->nullable();
             $table->unsignedDouble('price');
             $table->unsignedInteger('stock');
 

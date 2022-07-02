@@ -8,10 +8,10 @@ const CategoryItem = function ({category, isAdmin, displayButtons}) {
 
     const navigate = useNavigate();
 
-    const deleteCategory = function (catName) {
+    const deleteCategory = function (categoryID) {
 
         axios.get('/sanctum/csrf-cookie').then((response) => {
-            axios.delete('/api/category?' + catName).then((res) => {
+            axios.delete('/api/category/' + categoryID).then((res) => {
                 if (res.data.status === 200)
                     window.location.reload(false);
                 else
@@ -27,7 +27,7 @@ const CategoryItem = function ({category, isAdmin, displayButtons}) {
 
                 {/* ProductsPage name*/}
                 <Col className='col-8'>
-                    <Link to={(isAdmin ? '/admin/' : '/') + 'category/' + category.name}><p
+                    <Link to={(isAdmin ? '/admin/' : '/') + 'category/' + category.id}><p
                         className='my-auto'> {category.name}</p></Link>
                 </Col>
 
@@ -35,11 +35,11 @@ const CategoryItem = function ({category, isAdmin, displayButtons}) {
                     isAdmin && displayButtons &&
                     // Buttons
                     <Col>
-                        <Link to={'/admin/updatecategory/' + category.name}>
+                        <Link to={'/admin/updatecategory/' + category.id}>
                             <Button variant='outline-primary' className='mx-1 my-1'>Update</Button>
                         </Link>
                         <Button variant='outline-danger' className='mx-1 my-1'
-                                onClick={() => deleteCategory(category.name)}>Delete</Button>
+                                onClick={() => deleteCategory(category.id)}>Delete</Button>
                     </Col>
                 }
 

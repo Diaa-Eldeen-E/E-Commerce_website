@@ -6,7 +6,7 @@ import axios from "axios";
 import {maxProductImageHeight, maxProductImageWidth} from "../constants";
 import AddToCartForm from "../components/AddToCartForm";
 
-import {useAuth} from "../components/auth/AuthProvider";
+import {useAuth} from "../auth/AuthProvider";
 import AddToWishlistButton from "../components/AddToWishlistButton";
 import Loading from "../components/Loading";
 import ProductReviewsTab from "../components/ProductReviewsTab";

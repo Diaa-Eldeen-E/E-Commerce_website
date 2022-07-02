@@ -3,18 +3,18 @@ import {Link, useParams, useSearchParams} from "react-router-dom";
 import axios from "axios";
 import {Card, Col, Container, Row, Pagination, Button, Table} from "react-bootstrap";
 import StarRatingComponent from 'react-star-rating-component';
-import PaginationList from "../PaginationList";
-import {defaultPageSize, productsPerRow} from "../../constants";
-import ListProducts from "../ListProducts";
+import PaginationList from "../components/PaginationList";
+import {defaultPageSize, productsPerRow} from "../constants";
+import ListProducts from "../components/ListProducts";
 
 const AdminCategory = function () {
     const [products, setProducts] = useState([]);
     const [totalCount, setTotalCount] = useState(10);
 
     // ProductsPage name to be shown
-    let {catName} = useParams();
+    let {categoryID} = useParams();
 
-    console.log(catName);
+    // console.log(catName);
     // const [catName, setcatName] = useState(catNam);
 
 //    Extracting Page number, page size from the URL query params
@@ -27,7 +27,7 @@ const AdminCategory = function () {
 
 //    Fetch products in this category by page
     useEffect(() => {
-        let query = 'cat_name=' + catName + '&s_idx=' + startIdx + '&e_idx=' + endIdx;
+        let query = 'category_id=' + categoryID + '&s_idx=' + startIdx + '&e_idx=' + endIdx;
         axios.get('/sanctum/csrf-cookie').then((response) => {
             axios.get('/api/products?' + query).then((res) => {
                 if (res.data.status === 200) {
@@ -37,10 +37,17 @@ const AdminCategory = function () {
             })
         })
 
-    }, [catName]);
+    }, [categoryID]);
 
     const deleteProduct = function (product) {
-
+        axios.get('/sanctum/csrf-cookie').then((response) => {
+            axios.delete('/api/product/' + product.id).then((res) => {
+                if (res.data.status === 200)
+                    window.location.reload(false);
+                else
+                    console.log('Failed to delete item');
+            })
+        })
     }
 
     return (

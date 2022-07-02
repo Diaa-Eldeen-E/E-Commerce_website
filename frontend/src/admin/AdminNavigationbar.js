@@ -15,8 +15,8 @@ import {Link} from "react-router-dom";
 import {useAuth} from "../auth/AuthProvider";
 import {useEffect, useState} from "react";
 import axios from "axios";
-import ListNestedCategories from "../ListNestedCategories";
-import SearchBar from "../SearchBar";
+import ListNestedCategories from "../components/ListNestedCategories";
+import SearchBar from "../components/SearchBar";
 
 const getUsername = () => {
     return localStorage.getItem('auth_name');

@@ -2,10 +2,10 @@ import {useEffect, useState} from "react";
 import {Navigate, useNavigate} from "react-router";
 import {Outlet} from "react-router-dom";
 import Register from "./Register";
-import Page404 from "../../pages/Page404";
+import Page404 from "../pages/Page404";
 import axios from "axios";
 import {useAuth} from "./AuthProvider";
-import Loading from "../Loading";
+import Loading from "../components/Loading";
 
 // https://www.youtube.com/watch?v=oUZjO00NkhY
 

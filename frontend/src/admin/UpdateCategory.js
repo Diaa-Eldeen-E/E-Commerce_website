@@ -9,7 +9,7 @@ const UpdateCategory = function () {
     const navigate = useNavigate();
 
     // ProductsPage name to be updated, taken from URL parameters
-    let {catName} = useParams();
+    let {categoryID} = useParams();
 
     // Update category form
     const [category, setCategory] = useState({});
@@ -26,11 +26,13 @@ const UpdateCategory = function () {
 
                 // Remove the category being updated from the list of categories and store it separately
                 let tempCategories = res.data?.slice();  // Copy categories
-                let idx = tempCategories.findIndex((item) => item.name == catName); // Find category being updated
-                setCategory(tempCategories[idx]);   // ProductsPage being updated
+                let idx = tempCategories.findIndex((item) => item.id == categoryID); // Find category being updated
+                setCategory(tempCategories[idx]);   // Product being updated
+                setInputs(tempCategories[idx]);    // Default
 
                 tempCategories?.splice(idx, 1);  // Remove category being updated from the list
                 setCategories(tempCategories);
+
             })
         });
     }, []);
@@ -47,7 +49,7 @@ const UpdateCategory = function () {
         event.preventDefault();
 
         axios.get('/sanctum/csrf-cookie').then((response) => {
-            axios.put('/api/category/' + catName, inputs).then((res) => {
+            axios.put('/api/category/' + categoryID, inputs).then((res) => {
                     // ProductsPage added successfully
                     if (res.data.status === 200) {
                         setErrorMessage('');
@@ -72,21 +74,24 @@ const UpdateCategory = function () {
 
                     {/*<p className='text-danger'>{errorMessage}</p>*/}
                     <Row>
-                        {/* ProductsPage name input */}
-                        <Form.Group as={Col} md='4' className='mb-3' controlId="formCategory">
-                            <Form.Control type='text' name='name' placeholder={catName} onChange={handleChange}
+                        {/* Products name input */}
+                        <Form.Group as={Col} md='4' className='mb-3' controlId="formName">
+                            <Form.Label>Name</Form.Label>
+                            <Form.Control type='text' name='name' placeholder={category.name} onChange={handleChange}
                                           isInvalid={validationErrors.name}/>
                             <Form.Control.Feedback type='invalid'>{validationErrors.name}</Form.Control.Feedback>
                         </Form.Group>
 
-                        {/* ProductsPage parent select options*/}
+                        {/* Products parent select options*/}
                         <Col className='col-md-4'>
-                            <Form.Select aria-label="Default select example" name='parent' onChange={handleChange}>
-                                <option value="">None</option>
+                            <Form.Label>Parent</Form.Label>
+                            <Form.Select aria-label="Default select example" name='parent_id' onChange={handleChange}>
+                                <option value=""></option>
                                 {/* List all categories as possible parent categories*/}
                                 {categories?.map(
                                     (category, idx) =>
-                                        <option value={category.name} key={idx}>{category.name}</option>)}
+                                        <option value={category.id} key={category.id}>{category.name}</option>)}
+                                <option value="">None</option>
                             </Form.Select>
                         </Col>
                     </Row>

@@ -62,22 +62,22 @@ const AddCategory = function () {
 
                     {/*<p className='text-danger'>{errorMessage}</p>*/}
                     <Row>
-                        {/* ProductsPage name input */}
-                        <Form.Group as={Col} md='4' className='mb-3' controlId="formCategory">
-                            <Form.Control type='text' name='name' placeholder='ProductsPage name'
+                        {/* Category name input */}
+                        <Form.Group as={Col} md='4' className='mb-3' controlId="formName">
+                            <Form.Control type='text' name='name' placeholder='Category name'
                                           onChange={handleChange}
                                           isInvalid={validationErrors.name}/>
                             <Form.Control.Feedback type='invalid'>{validationErrors.name}</Form.Control.Feedback>
                         </Form.Group>
 
-                        {/* ProductsPage parent select options*/}
+                        {/* Category parent select options*/}
                         <Col className='col-md-4'>
-                            <Form.Select aria-label="Default select example" name='parent' onChange={handleChange}>
+                            <Form.Select aria-label="Default select example" name='parent_id' onChange={handleChange}>
                                 <option value="">None</option>
                                 {/* List all categories as possible parent categories*/}
                                 {categories?.map(
                                     (category, idx) =>
-                                        <option value={category.name} key={idx}>{category.name}</option>)}
+                                        <option value={category.id} key={category.id}>{category.name}</option>)}
                             </Form.Select>
                         </Col>
                     </Row>

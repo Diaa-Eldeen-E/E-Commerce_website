@@ -38,49 +38,41 @@ class CategoryController extends Controller
     public function addCategory(Request $request)
     {
         // Validate input, (No duplicate name, parent must exist)
-        $parent_name = $request->parent;
         $validator = Validator::make($request->all(), [
             'name' => 'required|generic_name|unique:categories,name',
-            'parent' => 'nullable|alpha_dash|exists:categories,name'
+            'parent_id' => 'nullable|numeric|min:0|exists:categories,id'
         ]);
-
 
         if ($validator->fails()) {
             return response()->json([
                 'validation_errors' => $validator->messages(),
                 'message' => 'Invalid inputs'
             ]);
-        } else {
-
-
-            $cat = new Category;
-            $cat->name = $request->name;
-            if ($request->parent) {
-                $parent = Category::where('name', $parent_name)->first();
-                $cat->parent_id = $parent->id;
-            }
-            $cat->save();
-
-//            $cat = Category::where('name', $cat->name)->first();
-//            $cat->refresh();
-
-            return response()->json([
-                'status' => 200,
-                'category' => $cat,
-                'message' => 'Category added successfully'
-            ]);
         }
 
+
+        $category = new Category;
+        $category->name = $request->name;
+        if ($request->has('parent_id')) {
+            $category->parent_id = $request->parent_id;
+        }
+        $category->save();
+
+        $category->refresh();
+
+        return response()->json([
+            'status' => 200,
+            'category' => $category,
+            'message' => 'Category added successfully'
+        ]);
     }
 
-    public function deleteCategory(Request $request)
+    public function deleteCategory(Request $request, $category_id)
     {
-        $catName = $request->keys();
-        // TODO: Delete category by ID
 
         // Validate input
-        $validator = Validator::make(['catName' => $catName], [
-            'catName' => 'required|generic_name|exists:categories,name',
+        $validator = Validator::make(['category_id' => $category_id], [
+            'category_id' => 'required|numeric|min:0|exists:categories,id',
         ]);
 
         if ($validator->fails()) {
@@ -88,58 +80,59 @@ class CategoryController extends Controller
                 'validation_errors' => $validator->messages(),
                 'message' => 'Invalid inputs'
             ]);
-        } else {
-
-            $category = Category::where('name', $catName)->get();
-            $deleted = $category->delete();
-            if ($deleted)
-                return response()->json([
-                    'status' => 200,
-                    'message' => 'Deleted:' . $deleted
-                ]);
-            else
-                return response()->json('Not deleted');
         }
-    }
 
-    public function updateCategory(Request $request, $catName)
-    {
-        // Validate input, (No duplicate name, parent must exist)
-        $parent_name = $request->parent;
+        $deleted = Category::where('id', $category_id)->delete();
 
-        // TODO Update category by ID
-
-        $validator = Validator::make($request->all() + ['catName' => $catName], [
-            'name' => 'required|generic_name|unique:categories,name',
-            'catName' => 'required|generic_name|exists:categories,name',
-            'parent' => 'nullable|generic_name|exists:categories,name'
-        ]);
-
-
-        if ($validator->fails()) {
-            return response()->json([
-                'validation_errors' => $validator->messages(),
-                'message' => 'Invalid inputs'
-            ]);
-        } else {
-
-            $category = Category::where('name', $catName)->first();
-
-            $category->name = $request->name;
-            if ($request->parent) {
-                $parent = Category::where('name', $parent_name)->first();
-                $category->parent_id = $parent->id;
-            } else
-                $category->parent_id = NULL;
-            $category->save();
-
-            $cat = Category::where('name', $category->name)->first();
-
+        if ($deleted)
             return response()->json([
                 'status' => 200,
-                'category' => $cat,
-                'message' => 'Category updated successfully'
+                'deleted' => $deleted,
+                'message' => 'Deleted items successfully'
+            ]);
+        else
+            return response()->json('Not deleted');
+
+    }
+
+    public function updateCategory(Request $request, $category_id)
+    {
+        // Validate input
+        $validator = Validator::make(['category_id' => $category_id], [
+            'category_id' => 'required|numeric|min:0|exists:categories,id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'validation_errors' => $validator->messages(),
+                'message' => 'Invalid inputs'
             ]);
         }
+
+        // Delete old one, then insert the updated one
+        Category::where('id', $category_id)->delete();
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|generic_name|unique:categories,name',
+            'parent_id' => 'nullable|numeric|min:0|exists:categories,id'
+        ]);
+
+        $category = new Category;
+        $category->id = $category_id;
+        $category->name = $request->name;
+
+        if ($request->has('parent_id')) {
+            $category->parent_id = $request->parent_id;
+        }
+
+        $category->save();
+        $category->refresh();
+
+        return response()->json([
+            'status' => 200,
+            'category' => $category,
+            'message' => 'Category updated successfully'
+        ]);
     }
+
 }

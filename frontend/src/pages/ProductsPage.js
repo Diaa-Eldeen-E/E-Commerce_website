@@ -18,7 +18,7 @@ const ProductsPage = function () {
         setRating(newRating);
     }
     // ProductsPage name to be shown
-    let {catName} = useParams();
+    let {categoryID} = useParams();
 
 //    Extracting Page number, page size from the URL query params
     const [searchParams, setSearchParams] = useSearchParams();
@@ -30,7 +30,7 @@ const ProductsPage = function () {
 
 //    Fetch products in this category by page
     useEffect(() => {
-        let query = 'cat_name=' + catName + '&s_idx=' + startIdx + '&e_idx=' + endIdx;
+        let query = 'category_id=' + categoryID + '&s_idx=' + startIdx + '&e_idx=' + endIdx;
         axios.get('/sanctum/csrf-cookie').then((response) => {
             axios.get('/api/products?' + query).then((res) => {
                 if (res.data.status === 200) {
@@ -40,7 +40,7 @@ const ProductsPage = function () {
             })
         })
 
-    }, [catName]);
+    }, [categoryID]);
 
 
     return (

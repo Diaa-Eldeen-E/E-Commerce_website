@@ -58,7 +58,7 @@ class ProductController extends Controller
         // Validate input, (No duplicate name, category must exist)
         $validator = Validator::make($request->all(), [
             'name' => 'required|generic_name|unique:products,name',
-            'category_name' => 'required|generic_name|exists:categories,name',
+            'category' => 'required|numeric|min:0|exists:categories,id',
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
         ]);
@@ -72,7 +72,7 @@ class ProductController extends Controller
 
             $product = new Product;
             $product->name = $request->name;
-            $product->category_id = Category::where('name', $request->category_name)->first()->id;
+            $product->category_id = $request->category;
             if ($request->image_src)
                 $product->image_src = $request->image_src;
 
@@ -81,11 +81,11 @@ class ProductController extends Controller
             $product->stock = $request->stock;
             $product->save();
 
-            $prod = Product::where('name', $product->name)->first();
+            $product->refresh();
 
             return response()->json([
                 'status' => 200,
-                'product' => $prod,
+                'product' => $product,
                 'message' => 'Product added successfully'
             ]);
         }
@@ -110,42 +110,64 @@ class ProductController extends Controller
                 'validation_errors' => $validator->messages(),
                 'message' => 'Invalid inputs'
             ]);
-        } else {
+        }
 
-            $product = Product::where('id', $product_id)->first();
+        $product = Product::where('id', $product_id)->first();
 
-            if ($request->has('name'))
-                $product->name = $request->name;
+        if ($request->has('name'))
+            $product->name = $request->name;
 
-            if ($request->has('category_name'))
-                $product->category_id = Category::where('name', $request->category_name)->first()->id;
+        if ($request->has('category_name'))
+            $product->category_id = Category::where('name', $request->category_name)->first()->id;
 
-            if ($request->has('price'))
-                $product->price = $request->price;
+        if ($request->has('price'))
+            $product->price = $request->price;
 
-            if ($request->has('stock'))
-                $product->stock = $request->stock;
-            
-            $product->save();
+        if ($request->has('stock'))
+            $product->stock = $request->stock;
+
+        $product->save();
 
 
+        return response()->json([
+            'status' => 200,
+            'category' => $product,
+            'message' => 'Product updated successfully'
+        ]);
+
+    }
+
+    public function deleteProduct(Request $request, $product_id)
+    {
+        $validator = Validator::make(['product_id' => $product_id], [
+                'product_id' => 'required|generic_name|exists:products,id',
+            ]
+        );
+
+        if ($validator->fails()) {
             return response()->json([
-                'status' => 200,
-                'category' => $product,
-                'message' => 'Product updated successfully'
+                'validation_errors' => $validator->messages(),
+                'message' => 'Invalid inputs'
             ]);
         }
+
+        $deleted = Product::where('id', $product_id)->delete();
+
+        if ($deleted)
+            return response()->json([
+                'status' => 200,
+                'deleted' => $deleted,
+                'message' => 'Deleted items successfully'
+            ]);
+        else
+            return response()->json('Not deleted');
     }
 
     public function getProducts(Request $request)
     {
-        $catName = $request->query('cat_name');
-        $startIdx = $request->query('s_idx');
-        $endIdx = $request->query('e_idx');
-
-        // Validate input, (No duplicate name, category must exist)
-        $validator = Validator::make(['cat_name' => $catName, 's_idx' => $startIdx, 'e_idx' => $endIdx], [
-            'cat_name' => 'required|generic_name|exists:categories,name',
+        // Validate input
+        $validator = Validator::make($request->all(), [
+            'category_id' => 'required|numeric|min:0|exists:categories,id',
             's_idx' => 'required|integer|min:0',
             'e_idx' => 'required|integer|min:0',
         ]);
@@ -155,33 +177,36 @@ class ProductController extends Controller
                 'validation_errors' => $validator->messages(),
                 'message' => 'Invalid inputs'
             ]);
-        } else {
-            $category = Category::where('name', $catName)->first();
-
-            $cats = $category->descendants;
-
-            $idArr = [$category->id];
-            foreach ($cats as $cat) {
-                array_push($idArr, $cat->id);
-            }
-
-            $products = Product::whereIn('category_id', $idArr)
-                ->offset($startIdx)->limit($endIdx - $startIdx)->get();
-
-            $totalProductsCount = DB::table('products')->whereIn('category_id', $idArr)->count('id');
-
-            foreach ($products as $product) {
-                $product->rating = $product->reviews()->sum('rating');
-                $product->raters_count = $product->reviews()->count();
-            }
-
-            return response()->json([
-                'status' => 200,
-                'products' => $products,
-                'totalProductsCount' => $totalProductsCount,
-                'message' => 'Products retrieved'
-            ]);
         }
+        $startIdx = $request->s_idx;
+        $endIdx = $request->e_idx;
+
+        $category = Category::where('id', $request->category_id)->first();
+
+        $cats = $category->descendants;
+
+        $idArr = [$category->id];
+        foreach ($cats as $cat) {
+            array_push($idArr, $cat->id);
+        }
+
+        $products = Product::whereIn('category_id', $idArr)
+            ->offset($startIdx)->limit($endIdx - $startIdx)->get();
+
+        $totalProductsCount = DB::table('products')->whereIn('category_id', $idArr)->count('id');
+
+        foreach ($products as $product) {
+            $product->rating = $product->reviews()->sum('rating');
+            $product->raters_count = $product->reviews()->count();
+        }
+
+        return response()->json([
+            'status' => 200,
+            'products' => $products,
+            'totalProductsCount' => $totalProductsCount,
+            'message' => 'Products retrieved'
+        ]);
+
 
     }
 

@@ -37,13 +37,13 @@ const AddProduct = function () {
         event.preventDefault();
 
         axios.get('/sanctum/csrf-cookie').then((response) => {
-            axios.post('/api/addproduct', inputs).then((res) => {
+            axios.post('/api/product', inputs).then((res) => {
                     // ProductPage added successfully
                     if (res.data.status === 200) {
                         setErrorMessage('');
                         setValidationErrors('');
-                        navigate('/admin/category/' + inputs.category_name);
-                        // navigate(-1);
+                        // navigate('/admin/category/' + inputs.category);
+                        navigate(-1);
                     }
                     // Failed
                     else {
@@ -78,20 +78,20 @@ const AddProduct = function () {
 
                         </Form.Group>
 
-                        {/* ProductsPage parent select options*/}
+                        {/* Category select options*/}
                         <Form.Group className='mb-3'>
-                            <FloatingLabel label='ProductsPage'>
-                                <Form.Select aria-label="Default select example" name='category_name'
+                            <FloatingLabel label='Category'>
+                                <Form.Select aria-label="Default select example" name='category'
                                              onChange={handleChange}
-                                             isInvalid={validationErrors.category_name}>
+                                             isInvalid={validationErrors.category}>
                                     <option value="">None</option>
                                     {/* List all categories as possible categories*/}
                                     {categories?.map(
                                         (category, idx) =>
-                                            <option value={category.name} key={idx}>{category.name}</option>)}
+                                            <option value={category.id} key={category.id}>{category.name}</option>)}
                                 </Form.Select>
                                 <Form.Control.Feedback
-                                    type='invalid'>{validationErrors.category_name}</Form.Control.Feedback>
+                                    type='invalid'>{validationErrors.category}</Form.Control.Feedback>
                             </FloatingLabel>
                         </Form.Group>
 

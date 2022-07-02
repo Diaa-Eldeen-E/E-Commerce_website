@@ -29,25 +29,28 @@ Route::get('products/search', [\App\Http\Controllers\ProductController::class, '
 
 Route::get('product', [\App\Http\Controllers\ProductController::class, 'getProduct']);
 
+Route::delete('product/{product_id}', [\App\Http\Controllers\ProductController::class, 'deleteProduct']);
+
 Route::get('products', [\App\Http\Controllers\ProductController::class, 'getProducts']);
 
 //Only admin should be able to add product
-Route::post('addproduct', [\App\Http\Controllers\ProductController::class, 'addProduct']);
-
-Route::get('categories', [\App\Http\Controllers\CategoryController::class, 'getCategories']);
-Route::get('nestedcategories', [\App\Http\Controllers\CategoryController::class, 'getNestedCategories']);
-
-// Only admin should be able to update category
-Route::put('category/{catName}', [\App\Http\Controllers\CategoryController::class, 'updateCategory']);
+Route::post('product', [\App\Http\Controllers\ProductController::class, 'addProduct']);
 
 // Only admin should be able to update product
 Route::put('product/{product_id}', [\App\Http\Controllers\ProductController::class, 'updateProduct']);
 
+Route::get('categories', [\App\Http\Controllers\CategoryController::class, 'getCategories']);
+Route::get('nestedcategories', [\App\Http\Controllers\CategoryController::class, 'getNestedCategories']);
+
 // Only admin should be able to add category
 Route::post('category', [\App\Http\Controllers\CategoryController::class, 'addCategory']);
 
+// Only admin should be able to update category
+Route::put('category/{category_id}', [\App\Http\Controllers\CategoryController::class, 'updateCategory']);
+
+
 // Only admin should be able to delete category
-Route::delete('category', [\App\Http\Controllers\CategoryController::class, 'deleteCategory']);
+Route::delete('category/{category_id}', [\App\Http\Controllers\CategoryController::class, 'deleteCategory']);
 
 // Check admin authorization, (Check authentication before calling checkAuth)
 Route::middleware('auth:sanctum')->get('checkAuth', [\App\Http\Controllers\AuthController::class, 'checkAuth']);
