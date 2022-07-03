@@ -13,7 +13,6 @@ const ProductReviewForm = ({product}) => {
     const {getToken} = useAuth();
 
     useEffect(() => {
-        console.log('here');
         getToken() ?
             axios.get('/sanctum/csrf-cookie').then((response) => {
                 axios.get('/api/review?product_id=' + product.id).then((res) => {
