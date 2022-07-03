@@ -39,6 +39,47 @@ const Roles = {
     admin: 1
 }
 
+// Handle axios error responses
+// https://stackoverflow.com/questions/48990632/how-to-manage-axios-errors-globally-or-from-one-point
+// https://medium.com/@ejjay/a-short-ajax-story-on-error-handlers-8baeeccbc062
+
+// errorComposer will compose a handleGlobally function
+const errorComposer = (error) => {
+    return () => {
+        const statusCode = error.response ? error.response.status : null;
+
+        if (statusCode === 404)
+            window.location.href = '/notfound';
+
+        // Not authenticated, login to access this resource
+        if (statusCode === 401)
+            window.location.href = '/login';
+
+        // Forbidden
+        if (statusCode === 403)
+            window.location.href = '/forbidden';
+    }
+}
+
+axios.interceptors.response.use(undefined, function (error) {
+    
+    const statusCode = error.response ? error.response.status : null;
+
+    if (statusCode === 404)
+        window.location.href = '/notfound';
+
+    if (statusCode === 401)
+        window.location.href = '/login';
+
+    if (statusCode === 403)
+        window.location.href = '/forbidden';
+
+    throw error;
+
+    // error.handleGlobally = errorComposer(error);
+    // return Promise.reject(error);
+})
+
 function App() {
 
     return (
