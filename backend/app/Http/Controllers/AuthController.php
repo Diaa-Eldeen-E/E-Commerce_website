@@ -76,6 +76,8 @@ class AuthController extends Controller
             ]);
 
         } else {
+            // TODO: You can make authorization by checking user role here, and issuing related abilities to
+            // its created token, then use those abilities to protect routes
             $token = $user->createToken($user->name . '_Token')->plainTextToken;
 
             return response()->json([

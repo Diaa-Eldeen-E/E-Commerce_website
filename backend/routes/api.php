@@ -15,8 +15,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// Search using scout
 Route::get('search', function (Request $request) {
-
     return response()->json([
         'data' => \App\Models\Product::search($request->query('q'))->take(3)->get(),
         'count' => \App\Models\Product::search($request->query('q'))->count()
@@ -24,55 +24,45 @@ Route::get('search', function (Request $request) {
 });
 
 
-// Search
 Route::get('products/search', [\App\Http\Controllers\ProductController::class, 'searchProducts']);
-
 Route::get('product', [\App\Http\Controllers\ProductController::class, 'getProduct']);
-
-Route::delete('product/{product_id}', [\App\Http\Controllers\ProductController::class, 'deleteProduct']);
-
 Route::get('products', [\App\Http\Controllers\ProductController::class, 'getProducts']);
-
-//Only admin should be able to add product
-Route::post('product', [\App\Http\Controllers\ProductController::class, 'addProduct']);
-
-// Only admin should be able to update product
-Route::put('product/{product_id}', [\App\Http\Controllers\ProductController::class, 'updateProduct']);
-
 Route::get('categories', [\App\Http\Controllers\CategoryController::class, 'getCategories']);
 Route::get('nestedcategories', [\App\Http\Controllers\CategoryController::class, 'getNestedCategories']);
-
-// Only admin should be able to add category
-Route::post('category', [\App\Http\Controllers\CategoryController::class, 'addCategory']);
-
-// Only admin should be able to update category
-Route::put('category/{category_id}', [\App\Http\Controllers\CategoryController::class, 'updateCategory']);
-
-
-// Only admin should be able to delete category
-Route::delete('category/{category_id}', [\App\Http\Controllers\CategoryController::class, 'deleteCategory']);
-
-// Check admin authorization, (Check authentication before calling checkAuth)
-Route::middleware('auth:sanctum')->get('checkAuth', [\App\Http\Controllers\AuthController::class, 'checkAuth']);
 
 Route::post('register', [\App\Http\Controllers\AuthController::class, 'register']);
 Route::post('login', [\App\Http\Controllers\AuthController::class, 'login']);
 
-// Handle logout (Must be authenticated first)
+// Admin actions
+Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+
+    Route::post('category', [\App\Http\Controllers\CategoryController::class, 'addCategory']);
+    Route::put('category/{category_id}', [\App\Http\Controllers\CategoryController::class, 'updateCategory']);
+    Route::delete('category/{category_id}', [\App\Http\Controllers\CategoryController::class, 'deleteCategory']);
+    Route::post('product', [\App\Http\Controllers\ProductController::class, 'addProduct']);
+    Route::put('product/{product_id}', [\App\Http\Controllers\ProductController::class, 'updateProduct']);
+    Route::delete('product/{product_id}', [\App\Http\Controllers\ProductController::class, 'deleteProduct']);
+});
+
+
+// Handle logout (Must be authenticated first) (User actions)
 Route::middleware(['auth:sanctum'])->group(function () {
+
     Route::post('logout', [\App\Http\Controllers\AuthController::class, 'logout']);
     Route::post('addtowishlist', [\App\Http\Controllers\ProductController::class, 'addToWishlist']);
     Route::post('addtocart', [\App\Http\Controllers\ProductController::class, 'addToCart']);
     Route::delete('removefromwishlist', [\App\Http\Controllers\ProductController::class, 'removeFromWishlist']);
     Route::delete('removefromcart', [\App\Http\Controllers\ProductController::class, 'removeFromCart']);
+
+    // Check admin authorization, (Check authentication before calling checkAuth)
+    Route::get('checkAuth', [\App\Http\Controllers\AuthController::class, 'checkAuth']);
+
     Route::get('islisted', [\App\Http\Controllers\ProductController::class, 'isListed']);
     Route::get('iscarted', [\App\Http\Controllers\ProductController::class, 'isCarted']);
     Route::get('wishlist', [\App\Http\Controllers\ProductController::class, 'getWishlist']);
     Route::get('cart', [\App\Http\Controllers\ProductController::class, 'getCart']);
     Route::get('review', [\App\Http\Controllers\ProductController::class, 'getReview']);
     Route::post('review', [\App\Http\Controllers\ProductController::class, 'addReview']);
-
-
 });
 
 
