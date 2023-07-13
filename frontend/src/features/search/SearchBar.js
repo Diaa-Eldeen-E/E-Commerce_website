@@ -13,7 +13,7 @@ import
 import { useState, useRef, useLayoutEffect, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router";
-import Loading from "../common/Loading";
+import Loading from "../../common/Loading";
 import { Link } from "react-router-dom";
 
 

@@ -16,7 +16,7 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import ListNestedCategories from "../features/categories/ListNestedCategories";
-import SearchBar from "../search/SearchBar";
+import SearchBar from "../features/search/SearchBar";
 import { userLogout } from "../features/auth/authActions";
 import { useDispatch, useSelector } from "react-redux";
 

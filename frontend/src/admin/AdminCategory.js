@@ -3,7 +3,7 @@ import { Link, useParams, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { Card, Col, Container, Row, Pagination, Button, Table } from "react-bootstrap";
 import StarRatingComponent from 'react-star-rating-component';
-import PaginationList from "../products/PaginationList";
+import PaginationList from "../features/products/PaginationList";
 import { defaultPageSize, productsPerRow } from "../app/constants";
 import ListProducts from "../features/products/ListProducts";
 

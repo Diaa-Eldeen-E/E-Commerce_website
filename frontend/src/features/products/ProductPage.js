@@ -86,16 +86,23 @@ const ProductPage = function ()
                                             <h2>{product.name}</h2>
                                         </Row>
 
-                                        <Row className='mt-3'>
-                                            <AddToWishlistButton product={product} />
-                                        </Row>
+                                        {
+                                            userToken ?
+
+                                                <Row className='mt-3'>
+                                                    <AddToWishlistButton product={product} />
+                                                </Row>
+
+                                                :
+                                                <></>
+                                        }
                                         <Row className='mt-3'>
                                             <p className='text-danger'>{product.price}$</p>
                                         </Row>
 
 
                                         {
-                                            userToken() ?
+                                            userToken ?
                                                 <Row className='mt-3'>
                                                     <AddToCartForm product={product} />
                                                 </Row>
