@@ -1,21 +1,22 @@
-import {Outlet} from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import React from "react";
-import Navigationbar from "../components/Navigationbar";
-import {Col, Container, Row} from "react-bootstrap";
+import Navigationbar from "../app/Navigationbar";
+import { Col, Container, Row } from "react-bootstrap";
 
 
-const Layout = function () {
+const Layout = function ()
+{
 
     return (
 
         <Container fluid>
 
             <Row>
-                <Navigationbar/>
+                <Navigationbar />
             </Row>
 
             <Row>
-                <Outlet/>
+                <Outlet />
             </Row>
 
             {/*  TODO: Add footer (copy rights, about us, contact, policies)  */}

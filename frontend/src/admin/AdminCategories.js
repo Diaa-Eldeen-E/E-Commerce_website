@@ -1,22 +1,26 @@
 import axios from "axios";
-import {useEffect, useState} from "react";
-import {Button, Col, Container, Fade, Form, Row, ListGroup, ListGroupItem} from "react-bootstrap";
-import {Link} from "react-router-dom";
-import ListNestedCategories from "../components/ListNestedCategories";
-import Loading from "../components/Loading";
+import { useEffect, useState } from "react";
+import { Button, Col, Container, Fade, Form, Row, ListGroup, ListGroupItem } from "react-bootstrap";
+import { Link } from "react-router-dom";
+import ListNestedCategories from "../features/categories/ListNestedCategories";
+import Loading from "../common/Loading";
 
-const AdminCategories = function () {
+const AdminCategories = function ()
+{
     const [refreshData, setRefreshData] = useState(true);
     const [isLoading, setIsLoading] = useState(true);
     const [categories, setCategories] = useState([]);
 
     // Load categories from database
-    useEffect(() => {
+    useEffect(() =>
+    {
         if (!refreshData)
             return;
         setRefreshData(false);
-        axios.get('/sanctum/csrf-cookie').then((response) => {
-            axios.get('/api/nestedcategories').then((res) => {
+        axios.get('/sanctum/csrf-cookie').then((response) =>
+        {
+            axios.get('/api/nestedcategories').then((res) =>
+            {
 
                 setCategories(res.data);
                 setIsLoading(false);
@@ -32,8 +36,8 @@ const AdminCategories = function () {
             {/* AdminCategories lists*/}
             <Row className='w-75 mx-auto mt-3'>
                 {
-                    isLoading ? <Loading/> : <ListNestedCategories categories={categories} isAdmin={true}
-                                                                   displayButtons={true}/>
+                    isLoading ? <Loading /> : <ListNestedCategories categories={categories} isAdmin={true}
+                        displayButtons={true} />
                 }
             </Row>
 

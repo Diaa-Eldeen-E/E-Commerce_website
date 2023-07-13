@@ -1,29 +1,28 @@
 
 import Layout from '../layouts/Layout';
-import Home from '../pages/Home'
 
-import Login from "../auth/Login";
-import Register from "../auth/Register";
+import Login from "../features/auth/Login";
+import Register from "../features/auth/Register";
 
 import { Route, BrowserRouter, Routes } from "react-router-dom";
 import AdminHome from "../admin/AdminHome";
 import { Navigate } from "react-router";
 
-import Page404 from "../pages/Page404";
+import Page404 from "../app/Page404";
 import AdminLayout from "../layouts/AdminLayout";
-import RequireAuth from "../auth/RequireAuth";
+import RequireAuth from "../features/auth/RequireAuth";
 import AdminCategories from "../admin/AdminCategories";
 import UpdateCategory from "../admin/UpdateCategory";
 import AddCategory from "../admin/AddCategory";
 import AdminCategory from "../admin/AdminCategory";
 import AddProduct from "../admin/AddProduct";
 import AdminProduct from "../admin/AdminProduct";
-import ProductsPage from "../pages/ProductsPage";
-import ProductPage from "../pages/ProductPage";
-import CategoriesPage from "../pages/CategoriesPage"
-import SearchPage from "../pages/SearchPage";
-import WishlistPage from "../pages/WishlistPage";
-import CartPage from "../pages/CartPage";
+import ProductsPage from "../features/products/ProductsPage";
+import ProductPage from "../features/products/ProductPage";
+import CategoriesPage from "../features/categories/CategoriesPage"
+import SearchPage from "../features/search/SearchPage";
+import WishlistPage from "../features/wishlist/WishlistPage";
+import CartPage from "../features/cart/CartPage";
 import UpdateProduct from "../admin/UpdateProduct";
 
 import { useSelector } from "react-redux";
@@ -49,11 +48,10 @@ const AppRouter = () =>
 
                         {/*Index route A child route with no path that renders in the parent's outlet at
                              the parent's URL By default*/}
-                        <Route index element={<Home />} />
+                        <Route index element={<CategoriesPage />} />
                         <Route path='category/:categoryID' element={<ProductsPage />} />
                         <Route path='product/:productID' element={<ProductPage />} />
                         <Route path='categories' element={<CategoriesPage />} />
-                        <Route path='/home' element={<Home />} />
                         {/* <Route path='/login' element={<Login />} /> */}
                         <Route path='/login' element={userToken ? <Navigate to='/' replace /> : <Login />} />
                         <Route path='/register' element={userToken ? <Navigate to='/' replace /> : <Register />} />

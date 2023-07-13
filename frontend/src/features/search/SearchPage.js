@@ -1,20 +1,21 @@
-import {useEffect, useState} from "react";
-import {useParams, useSearchParams} from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useParams, useSearchParams } from "react-router-dom";
 import axios from "axios";
-import {Col, Container, Row} from "react-bootstrap";
-import ListProducts from "../components/ListProducts";
-import PaginationList from "../components/PaginationList";
-import {defaultPageSize} from "../constants";
-import Loading from "../components/Loading";
+import { Col, Container, Row } from "react-bootstrap";
+import ListProducts from "../products/ListProducts";
+import PaginationList from "../products/PaginationList";
+import { defaultPageSize } from "../../app/constants";
+import Loading from "../../common/Loading";
 
-const SearchPage = function ({isAdmin}) {
+const SearchPage = function ({ isAdmin })
+{
 
     const [searchResults, setSearchResults] = useState([]);
     const [totalCount, setTotalCount] = useState(10);
     const [isLoading, setIsLoading] = useState(true);
 
 
-//    Extracting Page number, page size from the URL query params
+    //    Extracting Page number, page size from the URL query params
     const [searchParams, setSearchParams] = useSearchParams();
     let query = searchParams.get('q') ? searchParams.get('q') : '';
     let pageNum = searchParams.get('pn') ? searchParams.get('pn') : 1;
@@ -23,12 +24,17 @@ const SearchPage = function ({isAdmin}) {
     let endIdx = (pageNum * pageSize) - 1;
 
 
-//    Fetch products in this category by page
-    useEffect(() => {
+    // Fetch products in this category by page
+    // You might want to take a look at this  https://react.dev/learn/you-might-not-need-an-effect#fetching-data
+    useEffect(() =>
+    {
         let params = 'q=' + query + '&s_idx=' + startIdx + '&e_idx=' + endIdx;
-        axios.get('/sanctum/csrf-cookie').then((response) => {
-            axios.get('/api/products/search?' + params).then((res) => {
-                if (res.data.status === 200) {
+        axios.get('/sanctum/csrf-cookie').then((response) =>
+        {
+            axios.get('/api/products/search?' + params).then((res) =>
+            {
+                if (res.data.status === 200)
+                {
                     setSearchResults(res.data.results);
                     setTotalCount(res.data.totalCount);
                 }
@@ -46,7 +52,7 @@ const SearchPage = function ({isAdmin}) {
         <>
             {
                 isLoading ?
-                    <Loading/>
+                    <Loading />
                     :
                     searchResults?.length > 0 ?
                         <Container>
@@ -56,8 +62,8 @@ const SearchPage = function ({isAdmin}) {
                                 </Col>
                             </Row>
 
-                            <ListProducts products={searchResults} isAdmin={isAdmin}/>
-                            <PaginationList pgNum={pageNum} perPage={pageSize} totalItemsCount={totalCount}/>
+                            <ListProducts products={searchResults} isAdmin={isAdmin} />
+                            <PaginationList pgNum={pageNum} perPage={pageSize} totalItemsCount={totalCount} />
                         </Container>
                         :
                         <h4>No results found</h4>

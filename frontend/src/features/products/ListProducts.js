@@ -1,21 +1,24 @@
-import {Container, Row} from "react-bootstrap";
-import {productsPerRow} from "../constants";
+import { Container, Row } from "react-bootstrap";
+import { productsPerRow } from "../../app/constants";
 import ProductItem from "./ProductItem";
 
 
-const ListProducts = function ({products, isAdmin}) {
+const ListProducts = function ({ products, isAdmin })
+{
     const productsCount = products.length;
     let rowsProducts = [];
-    for (let i = 0; i < products.length; i += productsPerRow) {
+    for (let i = 0; i < products.length; i += productsPerRow)
+    {
         const row = products.slice(i, i + productsPerRow);
         rowsProducts.push(row);
     }
 
-    const listRow = (products, idx) => {
+    const listRow = (products, idx) =>
+    {
         return (
             <Row key={idx}>
                 {
-                    products.map((product) => <ProductItem key={product.id} product={product} isAdmin={isAdmin}/>)
+                    products.map((product) => <ProductItem key={product.id} product={product} isAdmin={isAdmin} />)
                 }
             </Row>
         );

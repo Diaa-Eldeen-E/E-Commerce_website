@@ -1,21 +1,22 @@
-import {Outlet} from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import React from "react";
 import AdminNavigationbar from "../admin/AdminNavigationbar";
-import {Container, Row} from "react-bootstrap";
-import Navigationbar from "../components/Navigationbar";
+import { Container, Row } from "react-bootstrap";
+import Navigationbar from "../app/Navigationbar";
 
 
-const AdminLayout = function () {
+const AdminLayout = function ()
+{
 
     return (
         <Container fluid>
 
             <Row>
-                <AdminNavigationbar/>
+                <AdminNavigationbar />
             </Row>
 
             <Row>
-                <Outlet/>
+                <Outlet />
             </Row>
 
         </Container>

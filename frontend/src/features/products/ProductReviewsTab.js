@@ -1,8 +1,9 @@
-import {Col, Row} from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 import StarRatingComponent from "react-star-rating-component";
 import ProductReviewForm from "./ProductReviewForm";
 
-const ProductReviewsTab = ({product}) => {
+const ProductReviewsTab = ({ product }) =>
+{
     return (
 
 
@@ -28,14 +29,14 @@ const ProductReviewsTab = ({product}) => {
                         </div>
 
                         :
-                        
+
                         <h4>Not rated yet</h4>
                 }
             </Col>
 
 
             <Col>
-                <ProductReviewForm product={product}/>
+                <ProductReviewForm product={product} />
             </Col>
 
 

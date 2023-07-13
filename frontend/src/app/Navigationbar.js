@@ -3,10 +3,10 @@ import { Container, Navbar, NavDropdown, Nav, Form, Row, Button, Col, Badge } fr
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, NavLink } from "react-router-dom";
-import ListNestedCategories from "./ListNestedCategories";
-import SearchBar from "./SearchBar";
+import ListNestedCategories from "../features/categories/ListNestedCategories";
+import SearchBar from "../search/SearchBar";
 import { useDispatch, useSelector } from "react-redux";
-import { userLogout } from "../redux/actions/authActions";
+import { userLogout } from "../features/auth/authActions";
 
 
 const Navigationbar = function ()

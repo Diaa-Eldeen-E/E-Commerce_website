@@ -1,30 +1,33 @@
-import {Button, Card, Col, Container, Form, Row, Nav} from "react-bootstrap";
-import {Link, useParams} from "react-router-dom";
+import { Card, Col, Container, Row, Nav } from "react-bootstrap";
+import { Link, useParams } from "react-router-dom";
 import StarRatingComponent from "react-star-rating-component";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import {maxProductImageHeight, maxProductImageWidth} from "../constants";
-import AddToCartForm from "../components/AddToCartForm";
+import { maxProductImageHeight, maxProductImageWidth } from "../../app/constants";
+import AddToCartForm from "./AddToCartForm";
+import { useSelector } from "react-redux";
+import AddToWishlistButton from "./AddToWishlistButton";
+import Loading from "../../common/Loading";
+import ProductReviewsTab from "./ProductReviewsTab";
 
-import {useAuth} from "../auth/AuthProvider";
-import AddToWishlistButton from "../components/AddToWishlistButton";
-import Loading from "../components/Loading";
-import ProductReviewsTab from "../components/ProductReviewsTab";
 
+const ProductPage = function ()
+{
 
-const ProductPage = function () {
-
-    const {productID} = useParams();
+    const { productID } = useParams();
     const [product, setProduct] = useState({});
-    const {getToken} = useAuth();
+    const { userToken } = useSelector((state) => state.auth)
     const [isDescriptionActive, setIsDescriptionActive] = useState(true);
     const [isReviewsActive, setIsReviewsActive] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
     //    Fetch the product from the database
-    useEffect(() => {
-        axios.get('/sanctum/csrf-cookie').then((response) => {
-            axios.get('/api/product?product_id=' + productID).then((res) => {
+    useEffect(() =>
+    {
+        axios.get('/sanctum/csrf-cookie').then((response) =>
+        {
+            axios.get('/api/product?product_id=' + productID).then((res) =>
+            {
                 if (res.data.status === 200)
                     setProduct(res.data.product);
 
@@ -40,13 +43,16 @@ const ProductPage = function () {
         width: "auto"
     }
 
-    const handleSelect = (eventKey) => {
+    const handleSelect = (eventKey) =>
+    {
 
-        if (eventKey == 'description') {
+        if (eventKey == 'description')
+        {
             setIsDescriptionActive(true);
             setIsReviewsActive(false);
 
-        } else if (eventKey == 'reviews') {
+        } else if (eventKey == 'reviews')
+        {
             setIsDescriptionActive(false);
             setIsReviewsActive(true);
         }
@@ -57,7 +63,7 @@ const ProductPage = function () {
         <>
             {
                 isLoading ?
-                    <Loading/>
+                    <Loading />
                     :
                     product?.id > 0 ?
                         <Container className='justify-content-center w-75 mx-auto mt-5'>
@@ -68,7 +74,7 @@ const ProductPage = function () {
 
                                     <Link to={'/product/' + product.id}>
                                         <Card.Img src={product.image_src}
-                                                  style={productImageStyle}
+                                            style={productImageStyle}
                                         />
                                     </Link>
                                 </Col>
@@ -81,7 +87,7 @@ const ProductPage = function () {
                                         </Row>
 
                                         <Row className='mt-3'>
-                                            <AddToWishlistButton product={product}/>
+                                            <AddToWishlistButton product={product} />
                                         </Row>
                                         <Row className='mt-3'>
                                             <p className='text-danger'>{product.price}$</p>
@@ -89,9 +95,9 @@ const ProductPage = function () {
 
 
                                         {
-                                            getToken() ?
+                                            userToken() ?
                                                 <Row className='mt-3'>
-                                                    <AddToCartForm product={product}/>
+                                                    <AddToCartForm product={product} />
                                                 </Row>
                                                 :
                                                 <></>
@@ -102,18 +108,18 @@ const ProductPage = function () {
 
                             </Row>
 
-                            <br/>
-                            <br/>
-                            <br/>
-                            <br/>
-                            <br/>
+                            <br />
+                            <br />
+                            <br />
+                            <br />
+                            <br />
 
                             {/* Description and reviews*/}
                             <Row>
                                 <Nav variant="tabs" defaultActiveKey='description' onSelect={handleSelect}
-                                     className='bg-white p-0'
+                                    className='bg-white p-0'
                                     // justify={true}
-                                     fill={true}>
+                                    fill={true}>
                                     <Nav.Item key={1}>
                                         <Nav.Link eventKey='description'>
                                             <h3>Description</h3>
@@ -128,10 +134,10 @@ const ProductPage = function () {
                                 {
                                     isDescriptionActive ?
                                         <div className='mt-3'>
-                                            <p dangerouslySetInnerHTML={{__html: product.description}}/>
+                                            <p dangerouslySetInnerHTML={{ __html: product.description }} />
                                         </div>
                                         :
-                                        <ProductReviewsTab product={product}/>
+                                        <ProductReviewsTab product={product} />
                                 }
 
                             </Row>

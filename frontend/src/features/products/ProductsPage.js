@@ -1,26 +1,28 @@
-import {useEffect, useState} from "react";
-import {Link, useParams, useSearchParams} from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import axios from "axios";
-import {Card, Col, Container, Row, Pagination} from "react-bootstrap";
+import { Card, Col, Container, Row, Pagination } from "react-bootstrap";
 import StarRatingComponent from 'react-star-rating-component';
-import PaginationList from "../components/PaginationList";
-import ListProducts from "../components/ListProducts";
+import PaginationList from "./PaginationList";
+import ListProducts from "./ListProducts";
 
 const defaultPageSize = 7;
 const productsPerRow = 3;
 
-const ProductsPage = function () {
+const ProductsPage = function ()
+{
     const [productsState, setProductsState] = useState([]);
     const [rating, setRating] = useState(3);
     const [totalCount, setTotalCount] = useState(10);
 
-    const onStarClick = (newRating) => {
+    const onStarClick = (newRating) =>
+    {
         setRating(newRating);
     }
     // ProductsPage name to be shown
-    let {categoryID} = useParams();
+    let { categoryID } = useParams();
 
-//    Extracting Page number, page size from the URL query params
+    //    Extracting Page number, page size from the URL query params
     const [searchParams, setSearchParams] = useSearchParams();
     let pageNum = searchParams.get('pn') ? searchParams.get('pn') : 1;
     let pageSize = searchParams.get('ps') ? searchParams.get('ps') : defaultPageSize;
@@ -28,12 +30,16 @@ const ProductsPage = function () {
     let endIdx = (pageNum * pageSize) - 1;
 
 
-//    Fetch products in this category by page
-    useEffect(() => {
+    //    Fetch products in this category by page
+    useEffect(() =>
+    {
         let query = 'category_id=' + categoryID + '&s_idx=' + startIdx + '&e_idx=' + endIdx;
-        axios.get('/sanctum/csrf-cookie').then((response) => {
-            axios.get('/api/products?' + query).then((res) => {
-                if (res.data.status === 200) {
+        axios.get('/sanctum/csrf-cookie').then((response) =>
+        {
+            axios.get('/api/products?' + query).then((res) =>
+            {
+                if (res.data.status === 200)
+                {
                     setProductsState(res.data.products);
                     setTotalCount(res.data.totalProductsCount);
                 }
@@ -47,9 +53,9 @@ const ProductsPage = function () {
         <Container>
 
             {/*  Products  */}
-            <ListProducts products={productsState}/>
+            <ListProducts products={productsState} />
 
-            <PaginationList pgNum={pageNum} perPage={pageSize} totalItemsCount={totalCount}/>
+            <PaginationList pgNum={pageNum} perPage={pageSize} totalItemsCount={totalCount} />
         </Container>
     )
 

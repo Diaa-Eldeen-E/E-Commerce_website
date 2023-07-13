@@ -3,13 +3,13 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from "axios";
 
-import AppRouter from './routes/AppRouter';
+import AppRouter from '../routes/AppRouter';
 import { baseURL } from './constants';
 
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from 'react';
-import { authCheck } from './redux/actions/authActions';
-import Loading from './components/Loading';
+import { authCheck } from '../features/auth/authActions';
+import Loading from '../common/Loading';
 
 axios.defaults.withCredentials = true;
 axios.defaults.baseURL = baseURL;

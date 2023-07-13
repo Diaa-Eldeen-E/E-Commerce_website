@@ -7,6 +7,14 @@ export const removeToken = () => localStorage.removeItem('auth_token');
 export const getStoredToken = () => localStorage.getItem('auth_token');
 
 
+// Set the authorization header with the token value for all axios requests
+axios.interceptors.request.use(function (config)
+{
+    const token = localStorage.getItem('auth_token');
+    config.headers.Authorization = 'Bearer ' + token;
+    return config;
+})
+
 
 export const userLogin = createAsyncThunk(
     'auth/login',

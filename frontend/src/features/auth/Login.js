@@ -4,7 +4,7 @@ import { useNavigate } from "react-router";
 import SweetAlert from "react-bootstrap-sweetalert";
 
 import { useDispatch, useSelector } from "react-redux";
-import { userLogin } from "../redux/actions/authActions";
+import { userLogin } from "./authActions";
 import { useEffect } from "react";
 
 const AlertTimeout = 1000;

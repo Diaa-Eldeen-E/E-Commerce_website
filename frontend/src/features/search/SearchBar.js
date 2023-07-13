@@ -1,4 +1,5 @@
-import {
+import
+{
     Button,
     Form,
     FormControl,
@@ -9,14 +10,15 @@ import {
     Overlay,
     Container, Col, Spinner
 } from "react-bootstrap";
-import {useState, useRef, useLayoutEffect, useEffect} from "react";
+import { useState, useRef, useLayoutEffect, useEffect } from "react";
 import axios from "axios";
-import {useNavigate} from "react-router";
-import Loading from "./Loading";
-import {Link} from "react-router-dom";
+import { useNavigate } from "react-router";
+import Loading from "../common/Loading";
+import { Link } from "react-router-dom";
 
 
-const SearchBar = function ({isAdmin}) {
+const SearchBar = function ({ isAdmin })
+{
 
     const navigate = useNavigate();
 
@@ -24,24 +26,28 @@ const SearchBar = function ({isAdmin}) {
     const [searchResults, setSearchResults] = useState([]);
     const ref = useRef(null);
 
-    const handleChange = (event) => {
+    const handleChange = (event) =>
+    {
         setSearchText(event.target.value);
 
         let query = 'q=' + event.target.value + '&s_idx=' + 0 + '&e_idx=' + 9;
-        axios.get('/sanctum/csrf-cookie').then((response) => {
-            axios.get('/api/products/search?' + query).then((res) => {
-                    if (res.data.status === 200)
-                        setSearchResults(res.data.results);
-                    else
-                        setSearchResults([]);
-                }
+        axios.get('/sanctum/csrf-cookie').then((response) =>
+        {
+            axios.get('/api/products/search?' + query).then((res) =>
+            {
+                if (res.data.status === 200)
+                    setSearchResults(res.data.results);
+                else
+                    setSearchResults([]);
+            }
             )
         });
 
     }
 
 
-    const search = function (searchQuery) {
+    const search = function (searchQuery)
+    {
 
         let query = 'q=' + searchQuery + '&s_idx=' + 0 + '&e_idx=' + 9;
         navigate('/admin/search?' + query);
@@ -49,7 +55,8 @@ const SearchBar = function ({isAdmin}) {
 
 
     const [popoverStyle, setPopoverStyle] = useState({});
-    const handleFoucs = (e) => {
+    const handleFoucs = (e) =>
+    {
 
         // Adjust the search results popover to the size of the input text
         setPopoverStyle({
@@ -58,7 +65,8 @@ const SearchBar = function ({isAdmin}) {
         });
     }
 
-    const handleBlur = (e) => {
+    const handleBlur = (e) =>
+    {
 
         // Hide search results, when the search bar is not focused
         setTimeout(() => setSearchResults([]), 250);
@@ -66,12 +74,14 @@ const SearchBar = function ({isAdmin}) {
         setSearchText('');
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = (e) =>
+    {
         e.preventDefault();
         search(searchText);
     }
 
-    const searchItem = (item) => {
+    const searchItem = (item) =>
+    {
         return (
             <li key={item.id}><Link to={(isAdmin ? '/admin' : '') + '/product/' + item.id}>{item.name}</Link></li>
         );
@@ -87,7 +97,7 @@ const SearchBar = function ({isAdmin}) {
                     overlay={
                         <Popover id='popover-contained' style={popoverStyle}>
                             <Popover.Body>
-                                <ul style={{listStyleType: "none"}}>
+                                <ul style={{ listStyleType: "none" }}>
                                     {
                                         searchResults?.length > 0 && searchResults?.map(searchItem)
                                     }
@@ -111,7 +121,7 @@ const SearchBar = function ({isAdmin}) {
                 <Button className='p-0 border-0' type='submit'>
                     <Image
                         src={'/assets/search-logo.png'} className="w-auto rounded-end"
-                        style={{maxHeight: "40px"}}/>
+                        style={{ maxHeight: "40px" }} />
                 </Button>
 
             </InputGroup>

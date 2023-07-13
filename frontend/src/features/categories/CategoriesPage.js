@@ -1,26 +1,30 @@
 import axios from "axios";
-import {useEffect, useState} from "react";
-import {Button, Col, Container, Fade, Form, Row, ListGroup, ListGroupItem} from "react-bootstrap";
-import {Link} from "react-router-dom";
-import ListNestedCategories from "../components/ListNestedCategories";
-import Loading from "../components/Loading";
+import { useEffect, useState } from "react";
+import { Button, Col, Container, Fade, Form, Row, ListGroup, ListGroupItem } from "react-bootstrap";
+import { Link } from "react-router-dom";
+import ListNestedCategories from "./ListNestedCategories";
+import Loading from "../../common/Loading";
 
-const CategoriesPage = function () {
+const CategoriesPage = function ()
+{
     const [refreshData, setRefreshData] = useState(true);
     const [isLoading, setIsLoading] = useState(true);
     const [categories, setCategories] = useState([]);
 
     // Load categories from database
-    useEffect(() => {
+    useEffect(() =>
+    {
         if (!refreshData)
             return;
         setRefreshData(false);
-        axios.get('/sanctum/csrf-cookie').then((response) => {
-            axios.get('/api/nestedcategories').then((res) => {
+        axios.get('/sanctum/csrf-cookie').then((response) =>
+        {
+            axios.get('/api/nestedcategories').then((res) =>
+            {
 
-                    setCategories(res.data);
-                    setIsLoading(false);
-                }
+                setCategories(res.data);
+                setIsLoading(false);
+            }
             )
         });
     }, [refreshData]);
@@ -32,11 +36,12 @@ const CategoriesPage = function () {
     const [validationErrors, setValidationErrors] = useState('');
     const [isAdd, setIsAdd] = useState(false);
 
-    const handleChange = (event) => {
+    const handleChange = (event) =>
+    {
         const Name = event.target.name;
         const Value = event.target.value;
 
-        setInputs({...inputs, [Name]: Value});
+        setInputs({ ...inputs, [Name]: Value });
         console.log("Name: " + Name, "Value: " + Value);
     }
 
@@ -47,7 +52,7 @@ const CategoriesPage = function () {
             {/* Categories lists*/}
             <Row className='w-75 mx-auto'>
                 {
-                    isLoading ? <Loading/> : <ListNestedCategories categories={categories}/>
+                    isLoading ? <Loading /> : <ListNestedCategories categories={categories} />
                 }
             </Row>
 

@@ -1,21 +1,25 @@
 import StarRatingComponent from "react-star-rating-component";
-import {Button, Col, Form, FormLabel, Row} from "react-bootstrap";
+import { Button, Col, Form, FormLabel, Row } from "react-bootstrap";
 import axios from "axios";
-import {useEffect, useState} from "react";
-import Loading from "./Loading";
-import {useAuth} from "../auth/AuthProvider";
+import { useEffect, useState } from "react";
+import Loading from "../../common/Loading";
+import { useSelector } from "react-redux";
 
-const ProductReviewForm = ({product}) => {
+const ProductReviewForm = ({ product }) =>
+{
 
-    const [inputs, setInputs] = useState({'product_id': product.id});
+    const [inputs, setInputs] = useState({ 'product_id': product.id });
     const [review, setReview] = useState({});
     const [isLoading, setIsLoading] = useState(true);
-    const {getToken} = useAuth();
+    const { userToken } = useSelector((state) => state.auth)
 
-    useEffect(() => {
-        getToken() ?
-            axios.get('/sanctum/csrf-cookie').then((response) => {
-                axios.get('/api/review?product_id=' + product.id).then((res) => {
+    useEffect(() =>
+    {
+        userToken ?
+            axios.get('/sanctum/csrf-cookie').then((response) =>
+            {
+                axios.get('/api/review?product_id=' + product.id).then((res) =>
+                {
                     if (res.data?.review)
                         setReview(res.data.review);
 
@@ -27,21 +31,26 @@ const ProductReviewForm = ({product}) => {
             setIsLoading(false);
     }, [])
 
-    const handleChange = (event) => {
+    const handleChange = (event) =>
+    {
         const Name = event.target.name;
         const Value = event.target.value;
 
-        setInputs({...inputs, [Name]: Value});
+        setInputs({ ...inputs, [Name]: Value });
         console.log("Name: " + Name, "Value: " + Value);
     }
 
-    const handleSubmit = function (event) {
+    const handleSubmit = function (event)
+    {
         event.preventDefault();
 
-        axios.get('/sanctum/csrf-cookie').then((response) => {
-            axios.post('/api/review', inputs).then((res) => {
+        axios.get('/sanctum/csrf-cookie').then((response) =>
+        {
+            axios.post('/api/review', inputs).then((res) =>
+            {
                 // Review added successfully
-                if (res.data.status === 200) {
+                if (res.data.status === 200)
+                {
                     setReview(inputs);
                     window.location.reload(false);
                 }
@@ -52,12 +61,12 @@ const ProductReviewForm = ({product}) => {
     return (
 
         isLoading ?
-            <Loading/>
+            <Loading />
 
             :
 
             // Is logged in
-            getToken() ?
+            userToken ?
 
                 // Already reviewed -> Show review
                 review?.rating ?
@@ -86,7 +95,7 @@ const ProductReviewForm = ({product}) => {
                                     name="rate1"
                                     starCount={5}
                                     value={inputs.rating}
-                                    onStarClick={(newRating) => setInputs({...inputs, 'rating': newRating})}
+                                    onStarClick={(newRating) => setInputs({ ...inputs, 'rating': newRating })}
 
                                 />
                             </Col>
@@ -97,7 +106,7 @@ const ProductReviewForm = ({product}) => {
                             <Form.Group className='mb-3' controlId="formReview">
                                 <Form.Label>Your review</Form.Label>
                                 <Form.Control as='textarea' type='textarea' name='description'
-                                              onChange={handleChange}/>
+                                    onChange={handleChange} />
                             </Form.Group>
                         </Row>
 
