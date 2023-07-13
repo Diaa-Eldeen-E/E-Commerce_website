@@ -109,7 +109,7 @@ class AuthController extends Controller
                 'status' => 200,
                 'username' => $user->name,
                 'isAdmin' => $user->role == 1 ? 1 : 0,
-                'message' => 'Logged in successfully'
+                'message' => 'Authentication successful'
             ]);
         else
             return response()->json(['Error, Unauthorized'], 401);
