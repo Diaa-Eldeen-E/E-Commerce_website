@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Wishlist;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
@@ -48,7 +49,6 @@ class AuthController extends Controller
             'token' => $token->plainTextToken,
             'message' => 'Registered successfully'
         ]);
-
     }
 
 
@@ -64,17 +64,15 @@ class AuthController extends Controller
             return response()->json([
                 'validation_errors' => $validator->messages(),
                 'message' => 'Invalid credentials'
-            ]);
+            ])->setStatusCode(Response::HTTP_UNAUTHORIZED);
         }
 
         // Check that user exists and the passwords are matching
         $user = User::where('name', $request->username)->first();
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json([
-                'status' => 401,
                 'message' => 'Invalid credentials'
-            ]);
-
+            ])->setStatusCode(Response::HTTP_UNAUTHORIZED);
         } else {
             // TODO: You can make authorization by checking user role here, and issuing related abilities to
             // its created token, then use those abilities to protect routes
@@ -100,12 +98,18 @@ class AuthController extends Controller
         ]);
     }
 
+    // get user info 
     public function checkAuth(Request $request)
     {
-        $user_role = $request->user()->role;
-        if ($user_role == 1)
+        // Authenticated user
+        $user = $request->user();
+        if ($user)
             return response()->json([
-                'user_role' => $user_role ? 1 : 0
+                'user_role' => $user->role ? 1 : 0,
+                'status' => 200,
+                'username' => $user->name,
+                'isAdmin' => $user->role == 1 ? 1 : 0,
+                'message' => 'Logged in successfully'
             ]);
         else
             return response()->json(['Error, Unauthorized'], 401);
