@@ -1,58 +1,39 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
-import { Button, Col, Container, Fade, Form, Row, ListGroup, ListGroupItem } from "react-bootstrap";
+import { Container, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import ListNestedCategories from "./ListNestedCategories";
 import Loading from "../../common/Loading";
+import { useGetNestedCategoriesQuery } from "../api/apiSlice";
 
-const CategoriesPage = function ()
+const CategoriesPage = function ({ isAdmin })
 {
-    const [refreshData, setRefreshData] = useState(true);
-    const [isLoading, setIsLoading] = useState(true);
-    const [categories, setCategories] = useState([]);
-
     // Load categories from database
-    useEffect(() =>
-    {
-        if (!refreshData)
-            return;
-        setRefreshData(false);
-        axios.get('/sanctum/csrf-cookie').then((response) =>
-        {
-            axios.get('/api/nestedcategories').then((res) =>
-            {
-
-                setCategories(res.data);
-                setIsLoading(false);
-            }
-            )
-        });
-    }, [refreshData]);
-
-
-    // Adding category form
-    const [inputs, setInputs] = useState({});
-    const [errorMessage, setErrorMessage] = useState('');
-    const [validationErrors, setValidationErrors] = useState('');
-    const [isAdd, setIsAdd] = useState(false);
-
-    const handleChange = (event) =>
-    {
-        const Name = event.target.name;
-        const Value = event.target.value;
-
-        setInputs({ ...inputs, [Name]: Value });
-        console.log("Name: " + Name, "Value: " + Value);
-    }
-
+    const { data: categories, isLoading, isSuccess, isError, error } = useGetNestedCategoriesQuery()
 
     return (
         <Container className="my-4">
 
+            {
+                isAdmin ?
+
+                    <Link to='/addcategory' className='position-absolute end-0 me-3 mt-3'>Add category</Link>
+
+                    :
+
+                    <></>
+            }
+
             {/* Categories lists*/}
             <Row className='w-75 mx-auto'>
                 {
-                    isLoading ? <Loading /> : <ListNestedCategories categories={categories} />
+                    isLoading ? <Loading />
+
+                        :
+
+                        isSuccess ? <ListNestedCategories categories={categories} isAdmin displayButtons={isAdmin} />
+
+                            :
+
+                            <p>No categories found</p>
                 }
             </Row>
 

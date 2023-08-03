@@ -1,42 +1,29 @@
 import { Container, Navbar, NavDropdown, Nav, Form, Row, Button, Col, Badge } from "react-bootstrap";
-// import { useAuth } from "../auth/AuthProvider";
-import { useEffect, useState } from "react";
-import axios from "axios";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import ListNestedCategories from "../features/categories/ListNestedCategories";
 import SearchBar from "../features/search/SearchBar";
 import { useDispatch, useSelector } from "react-redux";
 import { userLogout } from "../features/auth/authActions";
+import { useGetNestedCategoriesQuery } from "../features/api/apiSlice";
+import Loading from "../common/Loading";
 
 
-const Navigationbar = function ()
+const Navigationbar = function ({ isAdmin })
 {
-
-    // const { getToken, onLogout } = useAuth();
+    const navigate = useNavigate();
     const { userToken, userInfo, loading } = useSelector((state) => state.auth)
     const dispatch = useDispatch()
 
-    const [categories, setCategories] = useState();
-
     //    Fetch categories
-    useEffect(() =>
-    {
-        axios.get('/sanctum/csrf-cookie').then((response) =>
-        {
-            axios.get('/api/nestedcategories').then((res) =>
-            {
-                setCategories(res.data);
-            }
-            )
-        });
-    }, []);
+    const { data: categories, isLoading, isSuccess, isError, error } = useGetNestedCategoriesQuery()
 
     const handleLogout = (e) =>
     {
 
         e.preventDefault();
-        dispatch(userLogout());
-        console.log('logged out');
+        dispatch(userLogout()).unwrap()
+            .then((response) => navigate('/'))
+            .catch((error) => console.log("unwrapped error during logout: ", error))
     }
 
 
@@ -64,15 +51,26 @@ const Navigationbar = function ()
                             className="me-5 my-2 my-lg-0"
                             style={{ maxHeight: '100px' }}
                         >
-                            <Nav.Link as={NavLink} to="/">Home</Nav.Link>
+                            <Nav.Link as={NavLink} to={isAdmin ? "/admin" : "/"}>Home</Nav.Link>
 
 
                             <NavDropdown title="Categories" id="navbarScrollingDropdown">
+                                {
+                                    isLoading ?
+                                        <Loading />
 
-                                <ListNestedCategories categories={categories} />
+                                        :
 
+                                        isSuccess ?
+
+                                            <ListNestedCategories categories={categories} isAdmin />
+
+                                            :
+
+                                            <p>No categories found</p>
+                                }
                                 <NavDropdown.Divider />
-                                <NavDropdown.Item as={Link} to="/categories">
+                                <NavDropdown.Item as={Link} to={isAdmin ? "/admin/categories" : "/categories"}>
                                     All categories
                                 </NavDropdown.Item>
                             </NavDropdown>
@@ -82,7 +80,7 @@ const Navigationbar = function ()
 
                     {/* Search form */}
                     <Col className='col-6' style={{ maxHeight: "50px" }}>
-                        <SearchBar />
+                        <SearchBar isAdmin />
                     </Col>
 
                     {/* Account */}

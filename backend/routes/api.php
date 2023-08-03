@@ -28,6 +28,7 @@ Route::get('products/search', [\App\Http\Controllers\ProductController::class, '
 Route::get('product', [\App\Http\Controllers\ProductController::class, 'getProduct']);
 Route::get('products', [\App\Http\Controllers\ProductController::class, 'getProducts']);
 Route::get('categories', [\App\Http\Controllers\CategoryController::class, 'getCategories']);
+Route::get('category/{category_id}', [\App\Http\Controllers\CategoryController::class, 'getCategory']);
 Route::get('nestedcategories', [\App\Http\Controllers\CategoryController::class, 'getNestedCategories']);
 
 Route::post('register', [\App\Http\Controllers\AuthController::class, 'register']);

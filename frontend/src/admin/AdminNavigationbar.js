@@ -1,55 +1,26 @@
-import
-{
-    Container,
-    Navbar,
-    NavDropdown,
-    Nav,
-    Form,
-    FormControl,
-    Button,
-    Image,
-    Row,
-    Col,
-    InputGroup
-} from "react-bootstrap";
-import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { Container, Navbar, NavDropdown, Nav, Form, Button, Row, Col } from "react-bootstrap";
 import ListNestedCategories from "../features/categories/ListNestedCategories";
 import SearchBar from "../features/search/SearchBar";
 import { userLogout } from "../features/auth/authActions";
 import { useDispatch, useSelector } from "react-redux";
-
-const getUsername = () =>
-{
-    return localStorage.getItem('auth_name');
-}
-
+import { useGetNestedCategoriesQuery } from "../features/api/apiSlice";
+import { Link, useNavigate, NavLink } from "react-router-dom";
 
 const AdminNavigationbar = function ()
 {
+    const navigate = useNavigate();
+    const { userToken, userInfo, loading } = useSelector((state) => state.auth)
     const dispatch = useDispatch()
-    const [categories, setCategories] = useState();
 
     //    Fetch categories
-    useEffect(() =>
-    {
-        axios.get('/sanctum/csrf-cookie').then((response) =>
-        {
-            axios.get('/api/nestedcategories').then((res) =>
-            {
-                setCategories(res.data);
-            }
-            )
-        });
-    }, []);
+    const { data: categories, isLoading, isSuccess, isError, error } = useGetNestedCategoriesQuery()
 
     const handleLogout = (e) =>
     {
-
         e.preventDefault();
-        dispatch(userLogout());
-        console.log('logged out');
+        dispatch(userLogout()).unwrap()
+            .then((response) => navigate('/'))
+            .catch((error) => console.log("unwrapped error during logout: ", error))
     }
 
     return (
@@ -65,14 +36,14 @@ const AdminNavigationbar = function ()
                     {/* Links to home and categories*/}
                     <Col className='col-4'>
                         <Nav>
-                            <Nav.Link href="#action1">Home</Nav.Link>
+                            <Nav.Link as={NavLink} to="/admin">Home</Nav.Link>
 
                             <NavDropdown title="Categories" id="navbarScrollingDropdown">
 
                                 <ListNestedCategories categories={categories} isAdmin={true} />
 
                                 <NavDropdown.Divider />
-                                <NavDropdown.Item href="/admin/categories">
+                                <NavDropdown.Item as={NavLink} to="/admin/categories">
                                     All categories
                                 </NavDropdown.Item>
                             </NavDropdown>
@@ -87,14 +58,16 @@ const AdminNavigationbar = function ()
                     {/* Account */}
                     <Col className='col-1'>
                         <Nav navbarScroll>
-                            <NavDropdown title={getUsername()} id="navbarScrollingDropdown">
+                            <NavDropdown title={userInfo?.userName} id="navbarScrollingDropdown">
 
-                                <NavDropdown.Item href="/list">Your list</NavDropdown.Item>
-                                <NavDropdown.Item href="/settings">Settings</NavDropdown.Item>
+                                <NavDropdown.Item as={Link} to="/admin/list" disabled={loading}>Your list</NavDropdown.Item>
+                                <NavDropdown.Item as={Link} to="/settings" disabled={loading}>Settings</NavDropdown.Item>
                                 {/*<NavDropdown.Divider/>*/}
                                 <Form onSubmit={handleLogout}>
-                                    <Button type='submit' className='bg-white text-danger border-0'>Sign
-                                        out</Button>
+                                    <Button type='submit' className='bg-white text-danger border-0'
+                                        disabled={loading}>
+                                        Signout
+                                    </Button>
                                 </Form>
                                 {/*<NavDropdown.Item href="#action5">*/}
                                 {/*    Something else here*/}

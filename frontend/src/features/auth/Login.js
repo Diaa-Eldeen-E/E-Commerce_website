@@ -5,7 +5,6 @@ import SweetAlert from "react-bootstrap-sweetalert";
 
 import { useDispatch, useSelector } from "react-redux";
 import { userLogin } from "./authActions";
-import { useEffect } from "react";
 
 const AlertTimeout = 1000;
 
@@ -20,38 +19,26 @@ const Login = function ()
     const navigate = useNavigate();
 
     const [inputs, setInputs] = useState({});
-    // const {onLogin, errorMessage} = useAuth();
 
     const [alert, setAlert] = useState({ 'show': false, 'message': '' });
-    const [errorMessage, setErrorMessage] = useState('');
 
     const handleSubmit = async function (event)
     {
         event.preventDefault();
-        dispatch(userLogin(inputs))
-        console.log('dispatched login');
+        dispatch(userLogin(inputs)).unwrap()
+            .then((response) =>
+            {
+                console.log('Login success, ', response);
+                setAlert({ 'show': true, 'message': 'Logged in successfully' });
+
+                if (response?.isAdmin === 1)
+                    setTimeout(() => navigate('/admin'), AlertTimeout);
+                else
+                    setTimeout(() => navigate('/'), AlertTimeout);
+            })
+            .catch((error) => console.log("unwrapped error during login: ", error))
+
     }
-
-    useEffect(() =>
-    {
-        if (userInfo)
-        {
-            console.log('Login success, ', userInfo);
-            setAlert({ 'show': true, 'message': 'Logged in successfully' });
-
-            if (userInfo.isAdmin === 1)
-                setTimeout(() => navigate('/admin'), AlertTimeout);
-            else
-                setTimeout(() => navigate('/'), AlertTimeout);
-        }
-        else if (error)
-        {
-            setErrorMessage(error);
-            // setTimeout(() => navigate('/login'), AlertTimeout);
-            // navigate('/login')
-        }
-    }, [userInfo, error]);
-
 
 
     const handleChange = (event) =>
@@ -70,7 +57,7 @@ const Login = function ()
             <SweetAlert show={alert.show} title='Success' success
                 onConfirm={() => setAlert({ ...alert, 'show': false })}>{alert.message}</SweetAlert>
             <Form onSubmit={handleSubmit}>
-                <p className='text-danger'>{errorMessage}</p>
+                <p className='text-danger'>{error}</p>
                 <Form.Group className='mb-3' controlId="formUsername">
                     <Form.Label>Username</Form.Label>
                     <Form.Control type='text' name='username' placeholder='Username' onChange={handleChange} />

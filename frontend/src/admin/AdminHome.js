@@ -1,19 +1,20 @@
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 import axios from "axios";
 import AdminNavigationbar from "./AdminNavigationbar.js";
-import {Container, Row} from "react-bootstrap";
-import {useNavigate} from "react-router";
+import { Container, Row } from "react-bootstrap";
+import { useNavigate } from "react-router";
 
 
-const AdminHome = function () {
+const AdminHome = function ()
+{
 
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     // href={'/admin/category/' + catName + '?pn=' + (i) + '&ps=' + pageSize}
 
-    useEffect(() => {
-        // navigate('/admin/category/Electronics');
-        navigate('/admin/categories');
-    }, [])
+    // useEffect(() => {
+    // navigate('/admin/category/Electronics');
+    //     navigate('/admin/categories');
+    // }, [])
 
     return (
 
