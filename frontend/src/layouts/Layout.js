@@ -1,10 +1,10 @@
 import { Outlet } from "react-router-dom";
 import React from "react";
 import Navigationbar from "../app/Navigationbar";
-import { Col, Container, Row } from "react-bootstrap";
+import { Container, Row } from "react-bootstrap";
 
 
-const Layout = function ()
+const Layout = function ({ isAdmin })
 {
 
     return (
@@ -12,7 +12,7 @@ const Layout = function ()
         <Container fluid>
 
             <Row>
-                <Navigationbar />
+                <Navigationbar isAdmin={isAdmin} />
             </Row>
 
             <Row>

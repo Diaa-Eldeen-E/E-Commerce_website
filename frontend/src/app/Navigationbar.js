@@ -51,7 +51,7 @@ const Navigationbar = function ({ isAdmin })
                             className="me-5 my-2 my-lg-0"
                             style={{ maxHeight: '100px' }}
                         >
-                            <Nav.Link as={NavLink} to={isAdmin ? "/admin" : "/"}>Home</Nav.Link>
+                            <Nav.Link as={NavLink} to="/">Home</Nav.Link>
 
 
                             <NavDropdown title="Categories" id="navbarScrollingDropdown">
@@ -70,7 +70,7 @@ const Navigationbar = function ({ isAdmin })
                                             <p>No categories found</p>
                                 }
                                 <NavDropdown.Divider />
-                                <NavDropdown.Item as={Link} to={isAdmin ? "/admin/categories" : "/categories"}>
+                                <NavDropdown.Item as={Link} to="/categories">
                                     All categories
                                 </NavDropdown.Item>
                             </NavDropdown>

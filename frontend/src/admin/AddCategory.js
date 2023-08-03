@@ -31,7 +31,7 @@ const AddCategory = function ()
         event.preventDefault();
 
         addCategory(inputs).unwrap()
-            .then(() => navigate('/admin/categories'))
+            .then(() => navigate('/categories'))
             .catch()
     }
 
@@ -69,7 +69,7 @@ const AddCategory = function ()
                             </Button>
 
                             <Button className='bg-danger mx-5' disabled={isLoading}
-                                onClick={() => navigate('/admin/categories')}>
+                                onClick={() => navigate('..')}>
                                 Cancel
                             </Button>
                         </Col>

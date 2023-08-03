@@ -5,13 +5,12 @@ import Login from "../features/auth/Login";
 import Register from "../features/auth/Register";
 
 import { Route, BrowserRouter, Routes } from "react-router-dom";
-import AdminHome from "../admin/AdminHome";
+import Dashboard from "../admin/Dashboard";
 import { Navigate } from "react-router";
 
 import Page404 from "../app/Page404";
 import AdminLayout from "../layouts/AdminLayout";
-import RequireAuth from "../features/auth/RequireAuth";
-import AdminCategories from "../admin/AdminCategories";
+
 import UpdateCategory from "../admin/UpdateCategory";
 import AddCategory from "../admin/AddCategory";
 import AdminCategory from "../admin/AdminCategory";
@@ -26,6 +25,7 @@ import CartPage from "../features/cart/CartPage";
 import UpdateProduct from "../admin/UpdateProduct";
 
 import { useSelector } from "react-redux";
+import ProtectedRoute from './ProtectedRoute';
 
 
 const Roles = {
@@ -36,7 +36,8 @@ const Roles = {
 
 const AppRouter = () =>
 {
-    const { userToken } = useSelector((state) => state.auth)
+    const { userToken, userInfo } = useSelector((state) => state.auth)
+    const isAdmin = userInfo?.isAdmin ? 1 : 0
 
     return (
         <div>
@@ -44,14 +45,15 @@ const AppRouter = () =>
                 {/*Change from Switch to Routes*/}
                 <Routes>
                     {/*Change from component to element and change from Home to <Home/>*/}
-                    <Route path='/' element={<Layout />}>
+                    <Route path='/' element={<Layout isAdmin={isAdmin} />}>
+                        {/* <Route path='/' element={isAdmin ? <Navigate to='/admin' /> : <Layout />}> */}
 
                         {/*Index route A child route with no path that renders in the parent's outlet at
                              the parent's URL By default*/}
-                        <Route index element={<CategoriesPage />} />
+                        <Route index element={<CategoriesPage isAdmin={isAdmin} />} />
                         <Route path='category/:categoryID' element={<ProductsPage />} />
                         <Route path='product/:productID' element={<ProductPage />} />
-                        <Route path='categories' element={<CategoriesPage />} />
+                        <Route path='categories' element={<CategoriesPage isAdmin={isAdmin} />} />
                         {/* <Route path='/login' element={<Login />} /> */}
                         <Route path='/login' element={userToken ? <Navigate to='/' replace /> : <Login />} />
                         <Route path='/register' element={userToken ? <Navigate to='/' replace /> : <Register />} />
@@ -61,28 +63,45 @@ const AppRouter = () =>
                         <Route path='cart' element={<CartPage />} />
                         {/*  TODO: Add routes for orders, Settings  */}
 
-                    </Route>
+
+                        {/* <ProtectedRoute><Route path='addcategory' element={<AddCategory />} /></ProtectedRoute> */}
 
 
-                    {/*Admin routes*/}
-                    <Route path='/admin' element={<RequireAuth allowedRole={Roles.admin} />}>
-
-                        <Route element={<AdminLayout />}>
-                            <Route index element={<AdminHome />} />
-                            <Route path='/admin/home' exact element={<AdminHome />} />
-                            <Route path='/admin/categories' exact element={<AdminCategories />} />
+                        <Route element={<ProtectedRoute isAllowed={isAdmin} />}>
+                            <Route index element={<Dashboard />} />
+                            <Route path='/admin/home' exact element={<Dashboard />} />
+                            {/* <Route path='/admin/categories' exact element={<AdminCategories />} /> */}
                             <Route path='updatecategory/:categoryID' element={<UpdateCategory />} />
                             <Route path='addcategory' element={<AddCategory />} />
-                            <Route path='category/:categoryID' element={<AdminCategory />} />
+                            <Route path='/admin/category/:categoryID' element={<AdminCategory />} />
                             <Route path='addproduct' element={<AddProduct />} />
                             <Route path='updateproduct/:productID' element={<UpdateProduct />} />
-                            <Route path='product/:productID' element={<AdminProduct />} />
+                            <Route path='/admin/product/:productID' element={<AdminProduct />} />
                             <Route path='search' element={<SearchPage isAdmin={true} />} />
-
                         </Route>
-
-                        {/*<Route index element={<AdminPrivateRoute> <AdminLayout/> </AdminPrivateRoute>}/>*/}
                     </Route>
+
+
+                    {/* Admin routes */}
+                    {/* <Route path='/admin' element={<RequireAuth allowedRole={Roles.admin} />}> */}
+
+
+                    {/* <Route element={<AdminLayout />}> */}
+                    {/* <Route index element={<AdminHome />} />
+                        <Route path='/admin/home' exact element={<AdminHome />} /> */}
+                    {/* <Route path='/admin/categories' exact element={<AdminCategories />} /> */}
+                    {/* <Route path='updatecategory/:categoryID' element={<UpdateCategory />} />
+                        <Route path='addcategory' element={<AddCategory />} />
+                        <Route path='category/:categoryID' element={<AdminCategory />} />
+                        <Route path='addproduct' element={<AddProduct />} />
+                        <Route path='updateproduct/:productID' element={<UpdateProduct />} />
+                        <Route path='product/:productID' element={<AdminProduct />} />
+                        <Route path='search' element={<SearchPage isAdmin={true} />} /> */}
+
+                    {/* </Route> */}
+
+                    {/*<Route index element={<AdminPrivateRoute> <AdminLayout/> </AdminPrivateRoute>}/>*/}
+                    {/* </Route> */}
 
 
                     <Route path='/notfound' element={<Page404 />} />
@@ -91,7 +110,7 @@ const AppRouter = () =>
                 </Routes>
 
             </BrowserRouter>
-        </div>
+        </div >
     )
 }
 

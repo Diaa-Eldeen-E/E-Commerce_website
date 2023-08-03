@@ -93,7 +93,7 @@ const UpdateCategory = function ()
                         <Col>
                             <Button type='submit' className='bg-primary'>Update category</Button>
                             <Button className='bg-danger mx-5'
-                                onClick={() => navigate('/admin/categories')}>Cancel</Button>
+                                onClick={() => navigate('..')}>Cancel</Button>
                         </Col>
                     </Row>
                 </Form>

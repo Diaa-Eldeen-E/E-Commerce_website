@@ -20,22 +20,27 @@ const CategoryItem = function ({ category, isAdmin, displayButtons })
                 </Col>
 
                 {
-                    isAdmin && displayButtons &&
-                    // Buttons
-                    <Col>
-                        <Link to={'/admin/updatecategory/' + category.id}>
+                    isAdmin && displayButtons ?
+                        // Buttons
+                        <Col>
+
                             <Button variant='outline-primary' className='mx-1 my-1'
                                 disabled={isLoading}
-                                onClick={() => navigate('/admin/updatecategory/' + category.id)}>
+                                onClick={() => navigate('/updatecategory/' + category.id)}
+                            >
                                 Update
                             </Button>
-                        </Link>
-                        <Button variant='outline-danger' className='mx-1 my-1'
-                            onClick={() => deleteCategory(category.id)}
-                            disabled={isLoading}>
-                            Delete
-                        </Button>
-                    </Col>
+
+                            <Button variant='outline-danger' className='mx-1 my-1'
+                                onClick={() => deleteCategory(category.id)}
+                                disabled={isLoading}>
+                                Delete
+                            </Button>
+                        </Col>
+
+                        :
+
+                        <></>
                 }
 
             </Row>

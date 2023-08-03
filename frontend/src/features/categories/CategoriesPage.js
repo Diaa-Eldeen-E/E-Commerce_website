@@ -29,7 +29,7 @@ const CategoriesPage = function ({ isAdmin })
 
                         :
 
-                        isSuccess ? <ListNestedCategories categories={categories} isAdmin displayButtons={isAdmin} />
+                        isSuccess ? <ListNestedCategories categories={categories} isAdmin={isAdmin} displayButtons={isAdmin} />
 
                             :
 

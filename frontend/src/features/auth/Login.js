@@ -31,10 +31,10 @@ const Login = function ()
                 console.log('Login success, ', response);
                 setAlert({ 'show': true, 'message': 'Logged in successfully' });
 
-                if (response?.isAdmin === 1)
-                    setTimeout(() => navigate('/admin'), AlertTimeout);
-                else
-                    setTimeout(() => navigate('/'), AlertTimeout);
+                // if (response?.isAdmin === 1)
+                //     setTimeout(() => navigate('/admin'), AlertTimeout);
+                // else
+                setTimeout(() => navigate('/'), AlertTimeout);
             })
             .catch((error) => console.log("unwrapped error during login: ", error))
 

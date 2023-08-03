@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import axios from "axios";
-import { Card, Col, Container, Row, Pagination, Button, Table } from "react-bootstrap";
+import { Container, Button, Table } from "react-bootstrap";
 import StarRatingComponent from 'react-star-rating-component';
 import PaginationList from "../features/products/PaginationList";
 import { defaultPageSize, productsPerRow } from "../app/constants";
-import ListProducts from "../features/products/ListProducts";
+import { useNavigate } from "react-router-dom";
 
 const AdminCategory = function ()
 {
+    const navigate = useNavigate()
     const [products, setProducts] = useState([]);
     const [totalCount, setTotalCount] = useState(10);
 
@@ -61,7 +62,7 @@ const AdminCategory = function ()
     return (
         <Container>
 
-            <Link to='/admin/addproduct' className='position-absolute end-0 me-3 mt-3'>Add product</Link>
+            <Link to='/addproduct' className='position-absolute end-0 me-3 mt-3'>Add product</Link>
 
             {/*  Products  */}
             {/*<ListProducts products={productsState} isAdmin={true}/>*/}
@@ -86,7 +87,8 @@ const AdminCategory = function ()
                                 <td>{product.stock}</td>
 
                                 <td align='end'>
-                                    <Button variant='outline-primary' href={'/admin/updateproduct/' + product.id}>
+                                    <Button variant='outline-primary'
+                                        onClick={() => navigate('/updateproduct' + product.id)}>
                                         Update
                                     </Button>
                                     <Button variant='outline-danger' className='mx-2'
