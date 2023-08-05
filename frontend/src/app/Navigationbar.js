@@ -63,7 +63,7 @@ const Navigationbar = function ({ isAdmin })
 
                                         isSuccess ?
 
-                                            <ListNestedCategories categories={categories} isAdmin />
+                                            <ListNestedCategories categories={categories} isAdmin={isAdmin} />
 
                                             :
 
