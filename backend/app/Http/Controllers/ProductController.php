@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\Wishlist;
 use App\Models\Wishlist_item;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
@@ -33,7 +34,7 @@ class ProductController extends Controller
             return response()->json([
                 'validation_errors' => $validator->messages(),
                 'message' => 'Invalid inputs'
-            ]);
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         $query = str_replace(' ', '%', $query);
@@ -67,7 +68,7 @@ class ProductController extends Controller
             return response()->json([
                 'validation_errors' => $validator->messages(),
                 'message' => 'Invalid inputs'
-            ]);
+            ], Response::HTTP_BAD_REQUEST);
         } else {
 
             $product = new Product;
@@ -89,7 +90,6 @@ class ProductController extends Controller
                 'message' => 'Product added successfully'
             ]);
         }
-
     }
 
     public function updateProduct(Request $request, $product_id)
@@ -109,7 +109,7 @@ class ProductController extends Controller
             return response()->json([
                 'validation_errors' => $validator->messages(),
                 'message' => 'Invalid inputs'
-            ]);
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         $product = Product::where('id', $product_id)->first();
@@ -134,12 +134,13 @@ class ProductController extends Controller
             'category' => $product,
             'message' => 'Product updated successfully'
         ]);
-
     }
 
     public function deleteProduct(Request $request, $product_id)
     {
-        $validator = Validator::make(['product_id' => $product_id], [
+        $validator = Validator::make(
+            ['product_id' => $product_id],
+            [
                 'product_id' => 'required|generic_name|exists:products,id',
             ]
         );
@@ -148,7 +149,7 @@ class ProductController extends Controller
             return response()->json([
                 'validation_errors' => $validator->messages(),
                 'message' => 'Invalid inputs'
-            ]);
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         $deleted = Product::where('id', $product_id)->delete();
@@ -176,7 +177,7 @@ class ProductController extends Controller
             return response()->json([
                 'validation_errors' => $validator->messages(),
                 'message' => 'Invalid inputs'
-            ]);
+            ], Response::HTTP_BAD_REQUEST);
         }
         $startIdx = $request->s_idx;
         $endIdx = $request->e_idx;
@@ -206,14 +207,12 @@ class ProductController extends Controller
             'totalProductsCount' => $totalProductsCount,
             'message' => 'Products retrieved'
         ]);
-
-
     }
 
-    public function getProduct(Request $request)
+    public function getProduct(Request $request, $product_id)
     {
         // Validate input
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make(['product_id' => $product_id], [
             'product_id' => 'required|integer|exists:products,id',
         ]);
 
@@ -221,7 +220,7 @@ class ProductController extends Controller
             return response()->json([
                 'validation_errors' => $validator->messages(),
                 'message' => 'Invalid inputs'
-            ]);
+            ], Response::HTTP_BAD_REQUEST);
         } else {
 
             $product = Product::where('id', $request->product_id)->first();
@@ -230,11 +229,9 @@ class ProductController extends Controller
             $product->raters_count = $product->reviews()->count();
             $product->reviews = $product->reviews()->get();
 
-            return response()->json([
-                'status' => 200,
-                'product' => $product,
-                'message' => 'Product retrieved'
-            ]);
+            $product->parentCategories = $product->category->ancestors;
+
+            return response()->json($product);
         }
     }
 
@@ -249,7 +246,7 @@ class ProductController extends Controller
             return response()->json([
                 'validation_errors' => $validator->messages(),
                 'message' => 'Invalid inputs'
-            ]);
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         // Add the product to this user's wishlist
@@ -257,8 +254,8 @@ class ProductController extends Controller
         $wishlist_item->product_id = $request->product_id;
 
         $request->user()->wishlist()->first()->items()->save($wishlist_item);
-//        $wishlist_item->wishlist_id = $request->user()->wishlist_id;
-//        $wishlist_item->save();
+        //        $wishlist_item->wishlist_id = $request->user()->wishlist_id;
+        //        $wishlist_item->save();
 
         return response()->json([
             'status' => 200,
@@ -277,7 +274,7 @@ class ProductController extends Controller
             return response()->json([
                 'validation_errors' => $validator->messages(),
                 'message' => 'Invalid inputs'
-            ]);
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         // Remove the product from the user's wishlist
@@ -306,7 +303,7 @@ class ProductController extends Controller
             return response()->json([
                 'validation_errors' => $validator->messages(),
                 'message' => 'Invalid inputs'
-            ]);
+            ], Response::HTTP_BAD_REQUEST);
         }
         $product = Product::where('id', $request->product_id)->first();
         if ($request->quantity > $product->stock)
@@ -334,8 +331,8 @@ class ProductController extends Controller
             ]);
             $cart_item->save();
 
-//            $request->user()->cart()->first()->products()
-//                ->attach($request->product_id, ['quantity' => $request->quantity]);
+            //            $request->user()->cart()->first()->products()
+            //                ->attach($request->product_id, ['quantity' => $request->quantity]);
         }
 
         return response()->json([
@@ -355,7 +352,7 @@ class ProductController extends Controller
             return response()->json([
                 'validation_errors' => $validator->messages(),
                 'message' => 'Invalid inputs'
-            ]);
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         // Remove the product from the user's wishlist
@@ -381,7 +378,7 @@ class ProductController extends Controller
             return response()->json([
                 'validation_errors' => $validator->messages(),
                 'message' => 'Invalid inputs'
-            ]);
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         $count = $request->user()->wishlist()->first()->items()->where('product_id', $request->product_id)->count();
@@ -401,7 +398,7 @@ class ProductController extends Controller
             return response()->json([
                 'validation_errors' => $validator->messages(),
                 'message' => 'Invalid inputs'
-            ]);
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         $item = $request->user()->cart()->first()->items()->where('product_id', $request->product_id)->first();
@@ -445,7 +442,7 @@ class ProductController extends Controller
             return response()->json([
                 'validation_errors' => $validator->messages(),
                 'message' => 'Invalid inputs'
-            ]);
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         $review = $request->user()->reviews()->where('product_id', $request->product_id)->first();
@@ -466,7 +463,7 @@ class ProductController extends Controller
             return response()->json([
                 'validation_errors' => $validator->messages(),
                 'message' => 'Invalid inputs'
-            ]);
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         $review = Review::create([

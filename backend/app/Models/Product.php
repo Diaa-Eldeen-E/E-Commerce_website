@@ -31,6 +31,12 @@ class Product extends Model
 
     }
 
+    // Return the product's category
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
     // Return the product's reviews from all users
     public function reviews()
     {

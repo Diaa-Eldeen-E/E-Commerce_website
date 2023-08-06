@@ -20,3 +20,12 @@
     color: gray;
 }
 
+#parentList {
+    list-style-type: none;
+}
+
+#parentList li {
+    float: left;
+    padding: 4px;
+    font-size: small;
+}

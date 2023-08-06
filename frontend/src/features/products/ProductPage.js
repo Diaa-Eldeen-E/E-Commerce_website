@@ -1,41 +1,30 @@
 import { Card, Col, Container, Row, Nav } from "react-bootstrap";
 import { Link, useParams } from "react-router-dom";
-import StarRatingComponent from "react-star-rating-component";
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useState } from "react";
 import { maxProductImageHeight, maxProductImageWidth } from "../../app/constants";
 import AddToCartForm from "./AddToCartForm";
 import { useSelector } from "react-redux";
 import AddToWishlistButton from "./AddToWishlistButton";
 import Loading from "../../common/Loading";
 import ProductReviewsTab from "./ProductReviewsTab";
+import ListSuperCategories from "./ListSuperCategories"
+import { useGetProductQuery } from "../api/apiSlice";
+
+
+
 
 
 const ProductPage = function ()
 {
 
     const { productID } = useParams();
-    const [product, setProduct] = useState({});
     const { userToken } = useSelector((state) => state.auth)
     const [isDescriptionActive, setIsDescriptionActive] = useState(true);
     const [isReviewsActive, setIsReviewsActive] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
 
-    //    Fetch the product from the database
-    useEffect(() =>
-    {
-        axios.get('/sanctum/csrf-cookie').then((response) =>
-        {
-            axios.get('/api/product?product_id=' + productID).then((res) =>
-            {
-                if (res.data.status === 200)
-                    setProduct(res.data.product);
+    // Load product from database
+    const { data: product, isLoading, isSuccess } = useGetProductQuery(productID)
 
-                setIsLoading(false);
-            })
-        })
-
-    }, [productID])
 
     let productImageStyle = {
         maxHeight: maxProductImageHeight,
@@ -46,12 +35,12 @@ const ProductPage = function ()
     const handleSelect = (eventKey) =>
     {
 
-        if (eventKey == 'description')
+        if (eventKey === 'description')
         {
             setIsDescriptionActive(true);
             setIsReviewsActive(false);
 
-        } else if (eventKey == 'reviews')
+        } else if (eventKey === 'reviews')
         {
             setIsDescriptionActive(false);
             setIsReviewsActive(true);
@@ -60,101 +49,106 @@ const ProductPage = function ()
 
     return (
 
-        <>
-            {
-                isLoading ?
-                    <Loading />
-                    :
-                    product?.id > 0 ?
-                        <Container className='justify-content-center w-75 mx-auto mt-5'>
-                            <Row>
+        isLoading ?
+            <Loading />
+            :
+            isSuccess ?
 
-                                {/* ProductPage image */}
-                                <Col className='col-sm-auto'>
+                <Container>
+                    <Row>
+                        <ListSuperCategories superCategories={product.parentCategories} />
+                    </Row>
 
-                                    <Link to={'/product/' + product.id}>
-                                        <Card.Img src={product.image_src}
-                                            style={productImageStyle}
-                                        />
-                                    </Link>
-                                </Col>
-
-                                {/* ProductPage name, price, add to cart, wishlist, etc*/}
-                                <Col className='ms-8'>
-                                    <Container>
-                                        <Row>
-                                            <h2>{product.name}</h2>
-                                        </Row>
-
-                                        {
-                                            userToken ?
-
-                                                <Row className='mt-3'>
-                                                    <AddToWishlistButton product={product} />
-                                                </Row>
-
-                                                :
-                                                <></>
-                                        }
-                                        <Row className='mt-3'>
-                                            <p className='text-danger'>{product.price}$</p>
-                                        </Row>
+                    <Container className='justify-content-center w-75 mx-auto mt-5'>
 
 
-                                        {
-                                            userToken ?
-                                                <Row className='mt-3'>
-                                                    <AddToCartForm product={product} />
-                                                </Row>
-                                                :
-                                                <></>
-                                        }
-                                    </Container>
-                                </Col>
+
+                        <Row>
+
+                            {/* ProductPage image */}
+                            <Col className='col-sm-auto'>
+
+                                <Link to={'/product/' + product.id}>
+                                    <Card.Img src={product.image_src}
+                                        style={productImageStyle}
+                                    />
+                                </Link>
+                            </Col>
+
+                            {/* ProductPage name, price, add to cart, wishlist, etc*/}
+                            <Col className='ms-8'>
+                                <Container>
+                                    <Row>
+                                        <h2>{product.name}</h2>
+                                    </Row>
+
+                                    {
+                                        userToken ?
+
+                                            <Row className='mt-3'>
+                                                <AddToWishlistButton product={product} />
+                                            </Row>
+
+                                            :
+                                            <></>
+                                    }
+                                    <Row className='mt-3'>
+                                        <p className='text-danger'>{product.price}$</p>
+                                    </Row>
 
 
-                            </Row>
+                                    {
+                                        userToken ?
+                                            <Row className='mt-3'>
+                                                <AddToCartForm product={product} />
+                                            </Row>
+                                            :
+                                            <></>
+                                    }
+                                </Container>
+                            </Col>
 
-                            <br />
-                            <br />
-                            <br />
-                            <br />
-                            <br />
 
-                            {/* Description and reviews*/}
-                            <Row>
-                                <Nav variant="tabs" defaultActiveKey='description' onSelect={handleSelect}
-                                    className='bg-white p-0'
-                                    // justify={true}
-                                    fill={true}>
-                                    <Nav.Item key={1}>
-                                        <Nav.Link eventKey='description'>
-                                            <h3>Description</h3>
-                                        </Nav.Link>
-                                    </Nav.Item>
-                                    <Nav.Item>
-                                        <Nav.Link eventKey="reviews">
-                                            <h3>Reviews</h3>
-                                        </Nav.Link>
-                                    </Nav.Item>
-                                </Nav>
-                                {
-                                    isDescriptionActive ?
-                                        <div className='mt-3'>
-                                            <p dangerouslySetInnerHTML={{ __html: product.description }} />
-                                        </div>
-                                        :
-                                        <ProductReviewsTab product={product} />
-                                }
+                        </Row>
 
-                            </Row>
-                        </Container>
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
 
-                        :
+                        {/* Description and reviews*/}
+                        <Row>
+                            <Nav variant="tabs" defaultActiveKey='description' onSelect={handleSelect}
+                                className='bg-white p-0'
+                                // justify={true}
+                                fill={true}>
+                                <Nav.Item key={1}>
+                                    <Nav.Link eventKey='description'>
+                                        <h3>Description</h3>
+                                    </Nav.Link>
+                                </Nav.Item>
+                                <Nav.Item>
+                                    <Nav.Link eventKey="reviews">
+                                        <h3>Reviews</h3>
+                                    </Nav.Link>
+                                </Nav.Item>
+                            </Nav>
+                            {
+                                isDescriptionActive ?
+                                    <div className='mt-3'>
+                                        <p>{product.description}</p>
+                                    </div>
+                                    :
+                                    <ProductReviewsTab product={product} />
+                            }
 
-                        <h4 className='text-danger'>Error, not found</h4>
-            }
-        </>
+                        </Row>
+                    </Container>
+                </Container>
+                :
+
+                <h1 className='text-danger'>Error, not found</h1>
     )
 }
 

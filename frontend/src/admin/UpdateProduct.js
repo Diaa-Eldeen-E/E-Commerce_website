@@ -1,69 +1,43 @@
-import {Button, Col, Container, FloatingLabel, Form, InputGroup, Row} from "react-bootstrap";
-import {useNavigate} from "react-router";
-import {useParams} from "react-router-dom";
-import {useEffect, useState} from "react";
-import axios from "axios";
+import { Button, Col, Container, Form, Row } from "react-bootstrap";
+import { useNavigate } from "react-router";
+import { useParams } from "react-router-dom";
+import { useState } from "react";
+import { useGetCategoriesQuery, useUpdateProductMutation, useGetProductQuery } from "../features/api/apiSlice";
 
 
-const UpdateProduct = function () {
+const UpdateProduct = function ()
+{
     const navigate = useNavigate();
+    let { productID } = useParams();
 
     // Update category form
-    let {productID} = useParams();
-    const [product, setProduct] = useState({});
-    const [categories, setCategories] = useState([]);
     const [inputs, setInputs] = useState({});
-    const [errorMessage, setErrorMessage] = useState('');
-    const [validationErrors, setValidationErrors] = useState('');
+
+    const [updateProduct, { isLoading, error }] = useUpdateProductMutation()
+    let validationErrors = error?.data?.validation_errors
+    let errorMessage = error?.data?.message
 
     // Load categories from database
-    useEffect(() => {
-
-        axios.get('/sanctum/csrf-cookie').then((response) => {
-            axios.get('/api/categories').then((res) => {
-                setCategories(res.data);
-            })
-        });
-    }, []);
+    const { data: categories } = useGetCategoriesQuery()
 
     // Load product from database
-    useEffect(() => {
+    const { data: product } = useGetProductQuery(productID)
 
-        axios.get('/sanctum/csrf-cookie').then((response) => {
-            axios.get('/api/product?product_id=' + productID).then((res) => {
-                setProduct(res.data.product);
-            })
-        });
-    }, [productID]);
-
-    const handleChange = (event) => {
+    const handleChange = (event) =>
+    {
         const Name = event.target.name;
         const Value = event.target.value;
 
-        setInputs({...inputs, [Name]: Value});
+        setInputs({ ...inputs, [Name]: Value });
         console.log("Name: " + Name, "Value: " + Value);
     }
 
-    const handleSubmit = function (event) {
+    const handleSubmit = function (event)
+    {
         event.preventDefault();
 
-        axios.get('/sanctum/csrf-cookie').then((response) => {
-            axios.put('/api/product/' + productID, inputs).then((res) => {
-                    // ProductPage added successfully
-                    if (res.data.status === 200) {
-                        setErrorMessage('');
-                        setValidationErrors('');
-                        navigate(-1);
-                    }
-                    // Failed
-                    else {
-                        // Show error message
-                        setErrorMessage(res.data.message);
-                        setValidationErrors(res.data.validation_errors);
-                    }
-                }
-            )
-        })
+        updateProduct(inputs).then(() => navigate('..'))
+            .catch(err => console.log('Caught error in update product: ', err))
     }
 
     return (
@@ -79,10 +53,10 @@ const UpdateProduct = function () {
                         {/* ProductPage name input */}
                         <Form.Group className='mb-3' controlId="formName">
                             <Form.Label>Name</Form.Label>
-                            <Form.Control type='text' name='name' placeholder={product.name}
-                                          onChange={handleChange}
-                                          isInvalid={validationErrors.name}/>
-                            <Form.Control.Feedback type='invalid'>{validationErrors.name}</Form.Control.Feedback>
+                            <Form.Control type='text' name='name' defaultValue={product?.name}
+                                onChange={handleChange}
+                                isInvalid={validationErrors?.name} />
+                            <Form.Control.Feedback type='invalid'>{validationErrors?.name}</Form.Control.Feedback>
 
 
                         </Form.Group>
@@ -91,33 +65,33 @@ const UpdateProduct = function () {
                         <Form.Group className='mb-3'>
                             <Form.Label>Category</Form.Label>
                             <Form.Select aria-label="Default select example" name='category_name'
-                                         onChange={handleChange}
-                                         isInvalid={validationErrors.category_name}>
-                                <option value=""></option>
+                                defaultValue={product?.category?.name}
+                                onChange={handleChange}
+                                isInvalid={validationErrors?.category_name}>
                                 {/* List all categories as possible categories*/}
                                 {categories?.map(
                                     (category, idx) =>
                                         <option value={category.name} key={idx}>{category.name}</option>)}
                             </Form.Select>
                             <Form.Control.Feedback
-                                type='invalid'>{validationErrors.category_name}</Form.Control.Feedback>
+                                type='invalid'>{validationErrors?.category_name}</Form.Control.Feedback>
 
                         </Form.Group>
 
                         {/* Product image source input */}
                         <Form.Group className='mb-3' controlId="formImgSrc">
                             <Form.Label>Image source</Form.Label>
-                            <Form.Control type='text' name='image_src' placeholder={product.image_src}
-                                          onChange={handleChange}/>
+                            <Form.Control type='text' name='image_src' defaultValue={product?.image_src}
+                                onChange={handleChange} />
 
                         </Form.Group>
 
                         {/* Product description input */}
                         <Form.Group className='mb-3' controlId="formDescription">
                             <Form.Label>Description</Form.Label>
-                            <Form.Control as='textarea' name='description' placeholder={product.description}
-                                          onChange={handleChange}
-                                          style={{height: "100px"}}/>
+                            <Form.Control as='textarea' name='description' defaultValue={product?.description}
+                                onChange={handleChange}
+                                style={{ height: "100px" }} />
                         </Form.Group>
                     </Row>
                     <Row>
@@ -125,14 +99,14 @@ const UpdateProduct = function () {
                         <Col>
                             <Form.Label>Price</Form.Label>
                             <Form.Control
-                                placeholder={product.price}
+                                defaultValue={product?.price}
                                 aria-label="Price"
                                 name='price'
                                 onChange={handleChange}
-                                isInvalid={validationErrors.price}
+                                isInvalid={validationErrors?.price}
                             />
                             <Form.Control.Feedback
-                                type='invalid'>{validationErrors.price}</Form.Control.Feedback>
+                                type='invalid'>{validationErrors?.price}</Form.Control.Feedback>
 
 
                         </Col>
@@ -141,11 +115,11 @@ const UpdateProduct = function () {
                         <Col>
                             <Form.Group controlId="formStock">
                                 <Form.Label>Stock</Form.Label>
-                                <Form.Control type='text' name='stock' placeholder={product.stock}
-                                              onChange={handleChange}
-                                              isInvalid={validationErrors.stock}/>
+                                <Form.Control type='text' name='stock' defaultValue={product?.stock}
+                                    onChange={handleChange}
+                                    isInvalid={validationErrors?.stock} />
                                 <Form.Control.Feedback
-                                    type='invalid'>{validationErrors.stock}</Form.Control.Feedback>
+                                    type='invalid'>{validationErrors?.stock}</Form.Control.Feedback>
 
 
                             </Form.Group>
@@ -155,9 +129,9 @@ const UpdateProduct = function () {
 
                     <Row className='mt-4'>
                         <Col>
-                            <Button type='submit' className='bg-primary'>Update product</Button>
-                            <Button className='bg-danger mx-5'
-                                    onClick={() => navigate(-1)}>Cancel</Button>
+                            <Button type='submit' className='bg-primary' disabled={isLoading}>Update product</Button>
+                            <Button className='bg-danger mx-5' disabled={isLoading}
+                                onClick={() => navigate(-1)}>Cancel</Button>
                         </Col>
                     </Row>
                 </Form>
