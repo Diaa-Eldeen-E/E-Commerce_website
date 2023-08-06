@@ -21,6 +21,7 @@ class CreateProductsTable extends Migration
             $table->text('description')->nullable();
             $table->unsignedDouble('price');
             $table->unsignedInteger('stock');
+            $table->string('slug', 255)->default('');
 
             $table->timestamps();
 

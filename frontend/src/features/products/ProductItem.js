@@ -1,16 +1,17 @@
-import {Card, Col, Row} from "react-bootstrap";
-import {Link} from "react-router-dom";
+import { Card, Col, Row } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import StarRatingComponent from "react-star-rating-component";
 
-const ProductItem = function ({product, isAdmin}) {
+const ProductItem = function ({ product, isAdmin })
+{
 
     return (
         <>
-            <Col style={{maxWidth: "500px"}}>
+            <Col style={{ maxWidth: "500px" }}>
                 <Card>
-                    <Link to={(isAdmin ? '/admin' : '') + '/product/' + product.id}>
+                    <Link to={(isAdmin ? '/admin' : '') + '/product/' + product.id + '/' + product.slug}>
                         <Card.Img src={product.image_src}
-                                  style={{maxHeight: "200px", maxWidth: "500px", width: "auto"}}/>
+                            style={{ maxHeight: "200px", maxWidth: "500px", width: "auto" }} />
                     </Link>
                     <Card.Body>
                         <Card.Title>{product.name}</Card.Title>
