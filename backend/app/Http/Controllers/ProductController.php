@@ -164,13 +164,15 @@ class ProductController extends Controller
             return response()->json('Not deleted');
     }
 
-    public function getProducts(Request $request)
+    public function getProducts(Request $request, $category_id)
     {
         // Validate input
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make(array_merge($request->all(), ['category_id' => $category_id]), [
             'category_id' => 'required|numeric|min:0|exists:categories,id',
-            's_idx' => 'required|integer|min:0',
-            'e_idx' => 'required|integer|min:0',
+            // 's_idx' => 'required|integer|min:0',
+            // 'e_idx' => 'required|integer|min:0',
+            'page' => 'integer|min:0',
+            'size' => 'integer|min:0'
         ]);
 
         if ($validator->fails()) {
@@ -179,8 +181,11 @@ class ProductController extends Controller
                 'message' => 'Invalid inputs'
             ], Response::HTTP_BAD_REQUEST);
         }
-        $startIdx = $request->s_idx;
-        $endIdx = $request->e_idx;
+        // $startIdx = $request->s_idx;
+        // $endIdx = $request->e_idx;
+
+        $page_num = $request->page ? $request->page : 1;
+        $page_size = $request->size ? $request->size : 10;
 
         $category = Category::where('id', $request->category_id)->first();
 
@@ -191,22 +196,19 @@ class ProductController extends Controller
             array_push($idArr, $cat->id);
         }
 
-        $products = Product::whereIn('category_id', $idArr)
-            ->offset($startIdx)->limit($endIdx - $startIdx)->get();
+        // $products = Product::whereIn('category_id', $idArr)
+        //     ->offset($startIdx)->limit($endIdx - $startIdx)->get();
 
-        $totalProductsCount = DB::table('products')->whereIn('category_id', $idArr)->count('id');
+        $products = Product::whereIn('category_id', $idArr)->paginate($page_size);
+
+        // $totalProductsCount = DB::table('products')->whereIn('category_id', $idArr)->count('id');
 
         foreach ($products as $product) {
             $product->rating = $product->reviews()->sum('rating');
             $product->raters_count = $product->reviews()->count();
         }
 
-        return response()->json([
-            'status' => 200,
-            'products' => $products,
-            'totalProductsCount' => $totalProductsCount,
-            'message' => 'Products retrieved'
-        ]);
+        return response()->json($products);
     }
 
     public function getProduct(Request $request, $product_id)
