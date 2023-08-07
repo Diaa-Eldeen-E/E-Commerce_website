@@ -18,9 +18,12 @@ export const apiSlice = createApi({
 
     }),
 
-    tagTypes: ['Category'],
+    tagTypes: ['Category', 'Product'],
 
     endpoints: (builder) => ({
+
+
+        // Categories API
         getNestedCategories: builder.query({
             query: () => ({ url: 'api/nestedcategories', method: 'GET', }),
             providesTags: ['Category']
@@ -44,6 +47,31 @@ export const apiSlice = createApi({
             query: (categoryID) => ({ url: 'api/category/' + categoryID, method: 'DELETE', }),
             invalidatesTags: ['Category']
         }),
+
+
+
+        // Products API
+        getProducts: builder.query({
+            query: ({ categoryID, pageNum, pageSize }) => (
+                { url: 'api/products/' + categoryID + '?' + 'page=' + pageNum + '&size=' + pageSize, method: 'GET', }
+            ),
+            providesTags: ['Product']
+        }),
+        getProduct: builder.query({
+            query: (productID) => ({ url: 'api/product/' + productID, method: 'GET', })
+        }),
+        addProduct: builder.mutation({
+            query: (product) => ({ url: 'api/product', method: 'POST', body: product }),
+            invalidatesTags: ['Product']
+        }),
+        updateProduct: builder.mutation({
+            query: (product) => ({ url: 'api/product/' + product?.id, method: 'PUT', body: product }),
+            invalidatesTags: ['Product']
+        }),
+        deleteProduct: builder.mutation({
+            query: (productID) => ({ url: 'api/product/' + productID, method: 'DELETE', }),
+            invalidatesTags: ['Product']
+        }),
     })
 })
 
@@ -51,4 +79,7 @@ export const apiSlice = createApi({
 // export hooks for usage in functional components, which are   
 // auto-generated based on the defined endpoints
 export const { useGetCategoriesQuery, useGetNestedCategoriesQuery, useGetCategoryQuery,
-    useAddCategoryMutation, useUpdateCategoryMutation, useDeleteCategoryMutation } = apiSlice
+    useAddCategoryMutation, useUpdateCategoryMutation, useDeleteCategoryMutation,
+    useGetProductsQuery, useGetProductQuery,
+    useAddProductMutation, useUpdateProductMutation, useDeleteProductMutation,
+} = apiSlice

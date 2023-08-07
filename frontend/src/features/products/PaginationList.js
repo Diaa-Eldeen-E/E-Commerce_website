@@ -1,40 +1,51 @@
-import {Container, Pagination} from "react-bootstrap";
+import { Container, Pagination } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
-const PaginationList = ({pageNum, perPage, totalItemsCount}) => {
-
+const PaginationList = ({ currentPage, perPage, totalItemsCount }) =>
+{
+    const navigate = useNavigate()
+    currentPage = Number(currentPage)
     let pagesCount = Math.ceil(totalItemsCount / perPage);
 
+    const goToPage = (pageNumber) =>
+    {
+        navigate(`?pn=` + pageNumber + '&ps=' + perPage)
+    }
+
     let items = [];
-    for (let i = 1; i <= pagesCount; i++) {
+    for (let i = 1; i <= pagesCount; i++)
+    {
         items.push(
-            <Pagination.Item key={i} active={i == pageNum}
-                             href={'?pn=' + (i) + '&ps=' + perPage}
+            <Pagination.Item key={i} active={i === currentPage}
+                onClick={() => goToPage(i)}
             >
                 {i}
             </Pagination.Item>,
         );
     }
 
-    let startIdx = (pageNum - 1) * perPage;
-    let endIdx = (pageNum * perPage) - 1;
     return (
         <Container className='w-75 mx-auto mt-5'>
             <Pagination className=''>
-                <Pagination.First disabled={pageNum == 1}
-                                  href={'?pn=' + 1 + '&ps=' + perPage}
+                <Pagination.First disabled={currentPage === 1}
+                    // href={'?pn=' + 1 + '&ps=' + perPage}
+                    onClick={() => goToPage(1)}
                 />
-                <Pagination.Prev disabled={pageNum == 1}
-                                 href={'?pn=' + (pageNum - 1) + '&ps=' + perPage}
+                <Pagination.Prev disabled={currentPage === 1}
+                    // href={'?pn=' + (currentPage - 1) + '&ps=' + perPage}
+                    onClick={() => goToPage(currentPage - 1)}
                 />
 
                 {items}
 
-                <Pagination.Next disabled={pageNum == pagesCount}
-                                 href={'?pn=' + (pageNum + 1) + '&ps=' + perPage}
+                <Pagination.Next disabled={currentPage === pagesCount}
+                    // href={'?pn=' + (currentPage + 1) + '&ps=' + perPage}
+                    onClick={() => goToPage(currentPage + 1)}
 
                 />
-                <Pagination.Last disabled={pageNum == pagesCount}
-                                 href={'?pn=' + pagesCount + '&ps=' + perPage}
+                <Pagination.Last disabled={currentPage === pagesCount}
+                    // href={'?pn=' + pagesCount + '&ps=' + perPage}
+                    onClick={() => goToPage(pagesCount)}
                 />
             </Pagination>
         </Container>

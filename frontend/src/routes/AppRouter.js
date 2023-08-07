@@ -9,7 +9,6 @@ import Dashboard from "../admin/Dashboard";
 import { Navigate } from "react-router";
 
 import Page404 from "../app/Page404";
-import AdminLayout from "../layouts/AdminLayout";
 
 import UpdateCategory from "../admin/UpdateCategory";
 import AddCategory from "../admin/AddCategory";
@@ -51,8 +50,10 @@ const AppRouter = () =>
                         {/*Index route A child route with no path that renders in the parent's outlet at
                              the parent's URL By default*/}
                         <Route index element={<CategoriesPage isAdmin={isAdmin} />} />
-                        <Route path='category/:categoryID' element={<ProductsPage />} />
+                        <Route path='product-category/:categoryID' element={<ProductsPage />} />
+                        <Route path='product-category/:categoryID/:categoryName' element={<ProductsPage />} />
                         <Route path='product/:productID' element={<ProductPage />} />
+                        <Route path='product/:productID/:productSlug' element={<ProductPage />} />
                         <Route path='categories' element={<CategoriesPage isAdmin={isAdmin} />} />
                         {/* <Route path='/login' element={<Login />} /> */}
                         <Route path='/login' element={userToken ? <Navigate to='/' replace /> : <Login />} />
@@ -73,7 +74,8 @@ const AppRouter = () =>
                             {/* <Route path='/admin/categories' exact element={<AdminCategories />} /> */}
                             <Route path='updatecategory/:categoryID' element={<UpdateCategory />} />
                             <Route path='addcategory' element={<AddCategory />} />
-                            <Route path='/admin/category/:categoryID' element={<AdminCategory />} />
+                            <Route path='/admin/product-category/:categoryID' element={<AdminCategory />} />
+                            <Route path='/admin/product-category/:categoryID/:categoryName' element={<AdminCategory />} />
                             <Route path='addproduct' element={<AddProduct />} />
                             <Route path='updateproduct/:productID' element={<UpdateProduct />} />
                             <Route path='/admin/product/:productID' element={<AdminProduct />} />

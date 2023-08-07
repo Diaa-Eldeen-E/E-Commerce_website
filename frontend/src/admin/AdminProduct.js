@@ -1,61 +1,59 @@
-import {Card, Col, Container, Row} from "react-bootstrap";
-import {Link, useParams} from "react-router-dom";
+import { Card, Col, Container, Row } from "react-bootstrap";
+import { Link, useParams } from "react-router-dom";
 import StarRatingComponent from "react-star-rating-component";
-import {useEffect, useState} from "react";
-import axios from "axios";
+import { useGetProductQuery } from "../features/api/apiSlice";
+import Loading from "../common/Loading";
 
+const AdminProduct = function ()
+{
 
-const AdminProduct = function () {
+    const { productID } = useParams();
 
-    const {catName, productID} = useParams();
-    const [product, setProduct] = useState({});
+    // Load product from database
+    const { data: product, isLoading, isSuccess } = useGetProductQuery(productID)
 
-    //    Fetch the product from the database
-    useEffect(() => {
-        axios.get('/sanctum/csrf-cookie').then((response) => {
-            axios.get('/api/product?product_id=' + productID).then((res) => {
-                if (res.data.status === 200)
-                    setProduct(res.data.product);
-            })
-        })
-
-    }, [productID])
 
     return (
-        <Container>
-            <Row>
+        isLoading ? <Loading />
+            :
+            isSuccess ?
+                <Container>
+                    <Row>
 
-                <Col md='4'>
-                    <Card>
-                        <Link to={'/admin/product/' + product.id}>
-                            <Card.Img src={product.image_src}/>
-                        </Link>
-                        <Card.Body>
-                            <Card.Title>{product.name}</Card.Title>
-                            <Card.Text>{product.description}</Card.Text>
+                        <Col md='4'>
+                            <Card>
+                                <Link to={'/admin/product/' + product?.id}>
+                                    <Card.Img src={product?.image_src} />
+                                </Link>
+                                <Card.Body>
+                                    <Card.Title>{product?.name}</Card.Title>
+                                    <Card.Text>{product?.description}</Card.Text>
 
-                        </Card.Body>
-                        <Card.Footer>
-                            <Row>
-                                <Col className='col-8'>
-                                    <StarRatingComponent
-                                        name="rate1"
-                                        starCount={5}
-                                        value={Math.ceil(product.rating / product.raters_count)}
-                                    />
-                                </Col>
-                                <Col className='col-4 text-danger'>
-                                    {product.price}$
-                                </Col>
-                            </Row>
-                        </Card.Footer>
+                                </Card.Body>
+                                <Card.Footer>
+                                    <Row>
+                                        <Col className='col-8'>
+                                            <StarRatingComponent
+                                                name="rate1"
+                                                starCount={5}
+                                                value={Math.ceil(product?.rating / product?.raters_count)}
+                                            />
+                                        </Col>
+                                        <Col className='col-4 text-danger'>
+                                            {product?.price}$
+                                        </Col>
+                                    </Row>
+                                </Card.Footer>
 
-                    </Card>
-                </Col>
+                            </Card>
+                        </Col>
 
-            </Row>
+                    </Row>
 
-        </Container>
+
+                </Container>
+                :
+                <h1 className='text-danger'>Error, not found</h1>
     )
 }
 

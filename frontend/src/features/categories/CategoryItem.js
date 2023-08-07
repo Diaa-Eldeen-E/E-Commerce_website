@@ -15,7 +15,7 @@ const CategoryItem = function ({ category, isAdmin, displayButtons })
 
                 {/* Category name*/}
                 <Col className='col-8'>
-                    <Link to={(isAdmin ? '/admin/' : '/') + 'category/' + category.id}><p
+                    <Link to={(isAdmin ? '/admin/' : '/') + 'product-category/' + category.id + '/' + category.name}><p
                         className='my-auto'> {category.name}</p></Link>
                 </Col>
 

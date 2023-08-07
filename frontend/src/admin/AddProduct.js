@@ -1,59 +1,39 @@
-import {Button, Col, Container, FloatingLabel, Form, InputGroup, Row} from "react-bootstrap";
-import {useNavigate} from "react-router";
-import {useParams} from "react-router-dom";
-import {useEffect, useState} from "react";
-import axios from "axios";
+import { Button, Col, Container, FloatingLabel, Form, Row } from "react-bootstrap";
+import { useNavigate } from "react-router";
+import { useState } from "react";
+import { useAddProductMutation, useGetCategoriesQuery } from "../features/api/apiSlice";
 
 
-const AddProduct = function () {
+const AddProduct = function ()
+{
     const navigate = useNavigate();
 
-    // Update category form
-    const [category, setCategory] = useState({});
-    const [categories, setCategories] = useState([]);
+    // Add product form
     const [inputs, setInputs] = useState({});
-    const [errorMessage, setErrorMessage] = useState('');
-    const [validationErrors, setValidationErrors] = useState('');
+
+    const [addProduct, { isLoading, error }] = useAddProductMutation()
+    let validationErrors = error?.data?.validation_errors
+    let errorMessage = error?.data?.message
 
     // Load categories from database
-    useEffect(() => {
+    const { data: categories } = useGetCategoriesQuery()
 
-        axios.get('/sanctum/csrf-cookie').then((response) => {
-            axios.get('/api/categories').then((res) => {
-                setCategories(res.data);
-            })
-        });
-    }, []);
-
-    const handleChange = (event) => {
+    const handleChange = (event) =>
+    {
         const Name = event.target.name;
         const Value = event.target.value;
 
-        setInputs({...inputs, [Name]: Value});
+        setInputs({ ...inputs, [Name]: Value });
         console.log("Name: " + Name, "Value: " + Value);
     }
 
-    const handleSubmit = function (event) {
+    const handleSubmit = function (event)
+    {
         event.preventDefault();
 
-        axios.get('/sanctum/csrf-cookie').then((response) => {
-            axios.post('/api/product', inputs).then((res) => {
-                    // ProductPage added successfully
-                    if (res.data.status === 200) {
-                        setErrorMessage('');
-                        setValidationErrors('');
-                        // navigate('/admin/category/' + inputs.category);
-                        navigate(-1);
-                    }
-                    // Failed
-                    else {
-                        // Show error message
-                        setErrorMessage(res.data.message);
-                        setValidationErrors(res.data.validation_errors);
-                    }
-                }
-            )
-        })
+        addProduct(inputs).unwrap()
+            .then(() => navigate('..'))
+            .catch(err => console.log("caught error in add product: ", err))
     }
 
     return (
@@ -65,15 +45,15 @@ const AddProduct = function () {
 
                 <Form onSubmit={handleSubmit}>
 
-                    {/*<p className='text-danger'>{errorMessage}</p>*/}
+                    <p className='text-danger'>{errorMessage}</p>
                     <Row>
                         {/* Product name input */}
                         <Form.Group className='mb-3' controlId="formCategory">
                             <FloatingLabel label='Name'>
                                 <Form.Control type='text' name='name' placeholder='Product name'
-                                              onChange={handleChange}
-                                              isInvalid={validationErrors.name}/>
-                                <Form.Control.Feedback type='invalid'>{validationErrors.name}</Form.Control.Feedback>
+                                    onChange={handleChange}
+                                    isInvalid={validationErrors?.name} />
+                                <Form.Control.Feedback type='invalid'>{validationErrors?.name}</Form.Control.Feedback>
                             </FloatingLabel>
 
                         </Form.Group>
@@ -82,8 +62,8 @@ const AddProduct = function () {
                         <Form.Group className='mb-3'>
                             <FloatingLabel label='Category'>
                                 <Form.Select aria-label="Default select example" name='category'
-                                             onChange={handleChange}
-                                             isInvalid={validationErrors.category}>
+                                    onChange={handleChange}
+                                    isInvalid={validationErrors?.category}>
                                     <option value="">None</option>
                                     {/* List all categories as possible categories*/}
                                     {categories?.map(
@@ -91,7 +71,7 @@ const AddProduct = function () {
                                             <option value={category.id} key={category.id}>{category.name}</option>)}
                                 </Form.Select>
                                 <Form.Control.Feedback
-                                    type='invalid'>{validationErrors.category}</Form.Control.Feedback>
+                                    type='invalid'>{validationErrors?.category}</Form.Control.Feedback>
                             </FloatingLabel>
                         </Form.Group>
 
@@ -99,7 +79,7 @@ const AddProduct = function () {
                         <Form.Group className='mb-3' controlId="formImgSrc">
                             <FloatingLabel label='Image source'>
                                 <Form.Control type='text' name='image_src' placeholder='Image source'
-                                              onChange={handleChange}/>
+                                    onChange={handleChange} />
                             </FloatingLabel>
                         </Form.Group>
 
@@ -107,8 +87,8 @@ const AddProduct = function () {
                         <Form.Group className='mb-3' controlId="formDescription">
                             <FloatingLabel label='Description'>
                                 <Form.Control as='textarea' name='description' placeholder='ProductPage description'
-                                              onChange={handleChange}
-                                              style={{height: "100px"}}/>
+                                    onChange={handleChange}
+                                    style={{ height: "100px" }} />
                             </FloatingLabel>
                         </Form.Group>
 
@@ -120,10 +100,10 @@ const AddProduct = function () {
                                     aria-label="Price"
                                     name='price'
                                     onChange={handleChange}
-                                    isInvalid={validationErrors.price}
+                                    isInvalid={validationErrors?.price}
                                 />
                                 <Form.Control.Feedback
-                                    type='invalid'>{validationErrors.price}</Form.Control.Feedback>
+                                    type='invalid'>{validationErrors?.price}</Form.Control.Feedback>
                             </FloatingLabel>
 
 
@@ -134,10 +114,10 @@ const AddProduct = function () {
                             <Form.Group className='mb-3' controlId="formDescription">
                                 <FloatingLabel label='Stock'>
                                     <Form.Control type='text' name='stock' placeholder='ProductPage stock'
-                                                  onChange={handleChange}
-                                                  isInvalid={validationErrors.stock}/>
+                                        onChange={handleChange}
+                                        isInvalid={validationErrors?.stock} />
                                     <Form.Control.Feedback
-                                        type='invalid'>{validationErrors.stock}</Form.Control.Feedback>
+                                        type='invalid'>{validationErrors?.stock}</Form.Control.Feedback>
                                 </FloatingLabel>
 
                             </Form.Group>
@@ -146,9 +126,9 @@ const AddProduct = function () {
                     </Row>
                     <Row className='mt-3'>
                         <Col>
-                            <Button type='submit' className='bg-primary'>Add product</Button>
-                            <Button className='bg-danger mx-5'
-                                    onClick={() => navigate(-1)}>Cancel</Button>
+                            <Button type='submit' className='bg-primary' disabled={isLoading}>Add product</Button>
+                            <Button className='bg-danger mx-5' disabled={isLoading}
+                                onClick={() => navigate(-1)}>Cancel</Button>
                         </Col>
                     </Row>
                 </Form>
