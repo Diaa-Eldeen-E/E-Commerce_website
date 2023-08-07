@@ -52,12 +52,9 @@ class CategoryController extends Controller
 
             $category = Category::where('id', $category_id)->first();
 
+            // [Todo:] Return category parent and children with it
 
-            return response()->json([
-                'status' => 200,
-                'category' => $category,
-                'message' => 'Category retrieved'
-            ]);
+            return response()->json($category);
         }
     }
 
@@ -117,7 +114,7 @@ class CategoryController extends Controller
                 'message' => 'Deleted items successfully'
             ]);
         else
-            return response()->json('Not deleted');
+            return response()->json('Not deleted', Response::HTTP_BAD_REQUEST);
     }
 
     public function updateCategory(Request $request, $category_id)
@@ -136,12 +133,8 @@ class CategoryController extends Controller
             ], Response::HTTP_BAD_REQUEST);
         }
 
-        // Delete old one, then insert the updated one
-        // Category::where('id', $category_id)->delete();
         $category = Category::where('id', $category_id)->first();
 
-        // $category = new Category;
-        // $category->id = $category_id;
         $category->name = $request->name;
 
         if ($request->has('parent_id')) {
