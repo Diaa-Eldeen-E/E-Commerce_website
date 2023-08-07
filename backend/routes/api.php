@@ -25,8 +25,8 @@ Route::get('search', function (Request $request) {
 
 
 Route::get('products/search', [\App\Http\Controllers\ProductController::class, 'searchProducts']);
-Route::get('product', [\App\Http\Controllers\ProductController::class, 'getProduct']);
-Route::get('products', [\App\Http\Controllers\ProductController::class, 'getProducts']);
+Route::get('product/{product_id}', [\App\Http\Controllers\ProductController::class, 'getProduct']);
+Route::get('products/{category_id}', [\App\Http\Controllers\ProductController::class, 'getProducts']);
 Route::get('categories', [\App\Http\Controllers\CategoryController::class, 'getCategories']);
 Route::get('category/{category_id}', [\App\Http\Controllers\CategoryController::class, 'getCategory']);
 Route::get('nestedcategories', [\App\Http\Controllers\CategoryController::class, 'getNestedCategories']);
