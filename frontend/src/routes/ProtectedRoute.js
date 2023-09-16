@@ -1,11 +1,16 @@
 
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 
 
 const ProtectedRoute = function ({ isAllowed, redirectPath = '/', children })
 {
+    const location = useLocation();
+
     if (!isAllowed)
-        return (<Navigate to={redirectPath} replace />)
+    {
+        console.log("Redirected (Protected route)");
+        return (<Navigate to={redirectPath} replace state={{ path: location.pathname }} />)
+    }
 
     //TODO: Admin authorization (Role attribute in users table, abilities attribute in tokens table)
 

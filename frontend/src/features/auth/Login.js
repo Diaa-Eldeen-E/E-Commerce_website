@@ -1,6 +1,6 @@
 import { Form, Button, Container } from "react-bootstrap";
 import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useLocation } from "react-router";
 import SweetAlert from "react-bootstrap-sweetalert";
 
 import { useDispatch, useSelector } from "react-redux";
@@ -14,6 +14,8 @@ const Login = function ()
 
     const { loading, error, userInfo } = useSelector((state) => state.auth)
     const dispatch = useDispatch()
+    const { state } = useLocation(); // Original path intended before redirection to login page
+    const originalPath = state?.path
 
     // In react-router-dom v6 useHistory() is replaced by useNavigate().
     const navigate = useNavigate();
@@ -29,12 +31,10 @@ const Login = function ()
             .then((response) =>
             {
                 console.log('Login success, ', response);
-                setAlert({ 'show': true, 'message': 'Logged in successfully' });
+                navigate(originalPath ? originalPath : '/')
 
-                // if (response?.isAdmin === 1)
-                //     setTimeout(() => navigate('/admin'), AlertTimeout);
-                // else
-                setTimeout(() => navigate('/'), AlertTimeout);
+                // setAlert({ 'show': true, 'message': 'Logged in successfully' });
+                // setTimeout(() => navigate(originalPath ? originalPath : '/'), AlertTimeout);
             })
             .catch((error) => console.log("unwrapped error during login: ", error))
 
