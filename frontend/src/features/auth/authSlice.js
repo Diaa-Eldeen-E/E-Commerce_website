@@ -6,8 +6,8 @@ import { removeToken, getStoredToken } from './authActions';
 const init_userToken = localStorage.getItem('auth_token') ? localStorage.getItem('auth_token') : null
 
 const initialState = {
-    initLoading: false,
-    loading: false,
+    initLoading: true,
+    loading: true,
     userToken: init_userToken,
     userInfo: null,
     error: null
