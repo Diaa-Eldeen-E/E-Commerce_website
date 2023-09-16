@@ -33,7 +33,8 @@ export const apiSlice = createApi({
             providesTags: ['Category']
         }),
         getCategory: builder.query({
-            query: (categoryID) => ({ url: 'api/category/' + categoryID, method: 'GET', })
+            query: (categoryID) => ({ url: 'api/category/' + categoryID, method: 'GET', }),
+            providesTags: ['Category']
         }),
         addCategory: builder.mutation({
             query: (category) => ({ url: 'api/category', method: 'POST', body: category }),
@@ -55,10 +56,15 @@ export const apiSlice = createApi({
             query: ({ categoryID, pageNum, pageSize }) => (
                 { url: 'api/products/' + categoryID + '?' + 'page=' + pageNum + '&size=' + pageSize, method: 'GET', }
             ),
-            providesTags: ['Product']
+            providesTags: (result = [], error, arg) => [
+                'Product',
+                ...result?.data?.map(({ id }) => ({ type: 'Product', id }))
+            ]
+
         }),
         getProduct: builder.query({
-            query: (productID) => ({ url: 'api/product/' + productID, method: 'GET', })
+            query: (productID) => ({ url: 'api/product/' + productID, method: 'GET', }),
+            providesTags: (result, error, productID) => [{ type: 'Product', id: productID }]
         }),
         addProduct: builder.mutation({
             query: (product) => ({ url: 'api/product', method: 'POST', body: product }),
@@ -66,7 +72,7 @@ export const apiSlice = createApi({
         }),
         updateProduct: builder.mutation({
             query: (product) => ({ url: 'api/product/' + product?.id, method: 'PUT', body: product }),
-            invalidatesTags: ['Product']
+            invalidatesTags: (result, error, product) => [{ type: 'Product', id: product.id }]
         }),
         deleteProduct: builder.mutation({
             query: (productID) => ({ url: 'api/product/' + productID, method: 'DELETE', }),
