@@ -37,21 +37,23 @@ const Navigationbar = function ({ isAdmin })
 
     return (
 
-        <Navbar className='bg-secondary'>
-            <Container fluid style={{ height: "50px" }}>
+        < Navbar className='bg-secondary py-xs-1 py-md-4'   >
+            <Container fluid className="px-5">
+
                 <Row className='w-100'>
+
                     {/* Brand */}
-                    <Col className='col-1'>
-                        <Navbar.Brand href="#" className={"text-warning"}>Store</Navbar.Brand>
+                    <Col className='mt-1' xs={4} md={1}>
+                        <Navbar.Brand as={Link} to="/" className={"text-warning"}>Store</Navbar.Brand>
                     </Col>
 
                     {/* Links to home and categories*/}
-                    <Col className='col-4'>
+                    <Col md={3} xs={4}>
                         <Nav
                             className="me-5 my-2 my-lg-0"
                             style={{ maxHeight: '100px' }}
                         >
-                            <Nav.Link as={NavLink} to="/">Home</Nav.Link>
+                            {/* <Nav.Link as={NavLink} to="/">Home</Nav.Link> */}
 
 
                             <NavDropdown title="Categories" id="navbarScrollingDropdown">
@@ -76,16 +78,16 @@ const Navigationbar = function ({ isAdmin })
                             </NavDropdown>
 
                         </Nav>
-                    </Col>
+                    </Col >
 
                     {/* Search form */}
-                    <Col className='col-6' style={{ maxHeight: "50px" }}>
+                    <Col md={6} style={{ maxHeight: "50px" }} xs={12}>
                         <SearchBar isAdmin />
-                    </Col>
+                    </Col >
 
                     {/* Account */}
-                    <Col className='col-1'>
-                        <Nav navbarScroll>
+                    <Col md={{ offset: 0, span: 2 }} xs={{ offset: 8, span: 4 }}>
+                        <Nav >
                             <NavDropdown title={userInfo ? userInfo.userName : "Account"} id="navbarScrollingDropdown">
                                 <NavDropdown.Item as={Link} to="/login" hidden={userToken ? true : false}>
                                     Sign in
@@ -130,20 +132,17 @@ const Navigationbar = function ({ isAdmin })
 
                             {/*    [TODO: Cart icon ] */}
 
-                            <Nav.Link href="/cart">
-
+                            <Nav.Link to="/cart">
                                 Cart
-
+                                <Badge style={{ 'display': 'inline' }} className="bg-dark">4</Badge>
                             </Nav.Link>
 
-                            <Badge>4</Badge>
-
-
                         </Nav>
-                    </Col>
+                    </Col >
+
                 </Row>
-            </Container>
-        </Navbar>
+            </Container >
+        </Navbar >
     );
 
 

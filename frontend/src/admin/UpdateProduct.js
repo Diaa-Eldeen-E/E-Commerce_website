@@ -1,7 +1,7 @@
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { useNavigate } from "react-router";
 import { useParams } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useGetCategoriesQuery, useUpdateProductMutation, useGetProductQuery } from "../features/api/apiSlice";
 
 
@@ -10,18 +10,22 @@ const UpdateProduct = function ()
     const navigate = useNavigate();
     let { productID } = useParams();
 
-    // Update category form
-    const [inputs, setInputs] = useState({});
-
-    const [updateProduct, { isLoading, error }] = useUpdateProductMutation()
-    let validationErrors = error?.data?.validation_errors
-    let errorMessage = error?.data?.message
-
     // Load categories from database
     const { data: categories } = useGetCategoriesQuery()
 
     // Load product from database
     const { data: product } = useGetProductQuery(productID)
+
+    // Update category form
+    const [updateProduct, { isLoading, error }] = useUpdateProductMutation()
+    const [inputs, setInputs] = useState(product);
+    let validationErrors = error?.data?.validation_errors
+    let errorMessage = error?.data?.message
+
+    useEffect(() =>
+    {
+        setInputs(product)
+    }, [product])
 
     const handleChange = (event) =>
     {
@@ -36,7 +40,7 @@ const UpdateProduct = function ()
     {
         event.preventDefault();
 
-        updateProduct(inputs).then(() => navigate('..'))
+        updateProduct(inputs).then(() => navigate(-1))
             .catch(err => console.log('Caught error in update product: ', err))
     }
 

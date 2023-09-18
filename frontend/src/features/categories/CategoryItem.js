@@ -1,50 +1,52 @@
-import { Col, Row, Button } from "react-bootstrap";
+import { Col, Button, Card } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { useDeleteCategoryMutation } from "../api/apiSlice";
 
 
-const CategoryItem = function ({ category, isAdmin, displayButtons })
+const CategoryItem = function ({ category, isAdmin = 0, displayButtons = 0 })
 {
 
     const [deleteCategory, { isLoading }] = useDeleteCategoryMutation()
     const navigate = useNavigate()
 
     return (
-        <li key={category.id} className='list-group-item-action'>
-            <Row className='align-items-center'>
+        <Card className="text-center">
+            <Link to={(isAdmin ? '/admin' : '') + '/product-category/' + category.id + '/' + category.name}>
+                <Card.Img src={category.image_src}
+                    // style={{ maxWidth: "160px" }} 
+                    style={{ height: "100px", width: 'auto', maxWidth: "160px" }} />
+            </Link>
+            <Card.Body>
+                <Card.Title>{category.name}</Card.Title>
+            </Card.Body>
 
-                {/* Category name*/}
-                <Col className='col-8'>
-                    <Link to={(isAdmin ? '/admin/' : '/') + 'product-category/' + category.id + '/' + category.name}><p
-                        className='my-auto'> {category.name}</p></Link>
-                </Col>
 
-                {
-                    isAdmin && displayButtons ?
-                        // Buttons
-                        <Col>
+            {/*  Admin edit and delete buttons */}
+            {
+                isAdmin && displayButtons ?
 
-                            <Button variant='outline-primary' className='mx-1 my-1'
-                                disabled={isLoading}
-                                onClick={() => navigate('/updatecategory/' + category.id)}
-                            >
-                                Update
-                            </Button>
+                    <Col>
 
-                            <Button variant='outline-danger' className='mx-1 my-1'
-                                onClick={() => deleteCategory(category.id)}
-                                disabled={isLoading}>
-                                Delete
-                            </Button>
-                        </Col>
+                        <Button variant='outline-primary' className='mx-1 my-1'
+                            disabled={isLoading}
+                            onClick={() => navigate('/updatecategory/' + category.id)}
+                        >
+                            Update
+                        </Button>
 
-                        :
+                        <Button variant='outline-danger' className='mx-1 my-1'
+                            onClick={() => deleteCategory(category.id)}
+                            disabled={isLoading}>
+                            Delete
+                        </Button>
+                    </Col>
 
-                        <></>
-                }
+                    :
 
-            </Row>
-        </li>
+                    <></>
+            }
+        </Card>
+
     )
 }
 
@@ -52,12 +54,12 @@ export default CategoryItem;
 
 
 // axios.get('/sanctum/csrf-cookie').then((response) =>
-    // {
-    //     axios.delete('/api/category/' + categoryID).then((res) =>
-    //     {
-    //         if (res.data.status === 200)
-    //             window.location.reload(false);
-    //         else
-    //             console.log('Failed to delete item');
-    //     })
-    // })
+// {
+//     axios.delete('/api/category/' + categoryID).then((res) =>
+//     {
+//         if (res.data.status === 200)
+//             window.location.reload(false);
+//         else
+//             console.log('Failed to delete item');
+//     })
+// })

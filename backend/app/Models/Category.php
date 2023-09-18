@@ -29,7 +29,20 @@ class Category extends Model
         return $this->ancestors();
     }
 
-    // Return all descendant categories in the hierarchy
+
+    // Return category children
+    public function childCategories()
+    {
+        $children = $this->where('parent_id', $this->id)->get();
+        return $children;
+    }
+
+    public function getChildCategoriesAttribute()
+    {
+        return $this->childCategories();
+    }
+
+    // Return all descendant categories in the hierarchy in an array form
     public function descendants()
     {
         // Get direct children

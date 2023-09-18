@@ -7,30 +7,25 @@ const ProductItem = function ({ product, isAdmin })
 
     return (
         <>
-            <Col style={{ maxWidth: "500px" }}>
-                <Card>
+            <Col className="d-flex">
+                <Card className="text-center">
                     <Link to={(isAdmin ? '/admin' : '') + '/product/' + product.id + '/' + product.slug}>
                         <Card.Img src={product.image_src}
-                            style={{ maxHeight: "200px", maxWidth: "500px", width: "auto" }} />
+                            style={{ maxWidth: "160px" }} />
                     </Link>
                     <Card.Body>
                         <Card.Title>{product.name}</Card.Title>
                         <Card.Text>{product.description}</Card.Text>
-
+                        <StarRatingComponent
+                            name="rate1"
+                            starCount={5}
+                            value={Math.ceil(product.rating / product.raters_count)}
+                        />
                     </Card.Body>
                     <Card.Footer>
-                        <Row>
-                            <Col>
-                                <StarRatingComponent
-                                    name="rate1"
-                                    starCount={5}
-                                    value={Math.ceil(product.rating / product.raters_count)}
-                                />
-                            </Col>
-                            <Col className='text-danger'>
-                                {product.price}$
-                            </Col>
-                        </Row>
+                        <p className='text-danger'>
+                            {product.price}$
+                        </p>
                     </Card.Footer>
 
                 </Card>

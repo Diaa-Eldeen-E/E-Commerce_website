@@ -1,4 +1,5 @@
-import CategoryItem from "./CategoryItem";
+import CategoryLink from "../categories/CategoryLink";
+
 
 const ListNestedCategories = ({ categories, isAdmin, displayButtons }) =>
 {
@@ -6,14 +7,14 @@ const ListNestedCategories = ({ categories, isAdmin, displayButtons }) =>
     const listChildren = (category) =>
     {
         return (
-            <div key={category.id}>
-                <CategoryItem category={category} isAdmin={isAdmin} displayButtons={displayButtons} />
+            <li key={category.id} className='list-group-item-action'>
+                <CategoryLink category={category} isAdmin={isAdmin} displayButtons={displayButtons} />
                 {
                     category?.children?.length > 0 &&
                     <ListNestedCategories categories={category.children} isAdmin={isAdmin}
                         displayButtons={displayButtons} />
                 }
-            </div>
+            </li>
         );
     }
 

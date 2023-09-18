@@ -29,3 +29,11 @@
     padding: 4px;
     font-size: small;
 }
+
+.category-link:hover {
+    background-color: darkgrey;
+}
+
+.offcanvas {
+    width: 65% !important;
+}

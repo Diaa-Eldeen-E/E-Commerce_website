@@ -60,20 +60,26 @@ const AppRouter = () =>
                         <Route path='/register' element={userToken ? <Navigate to='/' replace /> : <Register />} />
 
                         <Route path='search' element={<SearchPage />} />
-                        <Route path='wishlist' element={<WishlistPage />} />
-                        <Route path='cart' element={<CartPage />} />
+
+                        {/* <Route path='cart' element={<CartPage />} /> */}
+
+                        <Route element={<ProtectedRoute isAllowed={userInfo ? 1 : 0} redirectPath={'/login'} />}>
+                            <Route path='cart' element={<CartPage />} />
+                            <Route path='wishlist' element={<WishlistPage />} />
+                        </Route>
                         {/*  TODO: Add routes for orders, Settings  */}
 
 
                         {/* <ProtectedRoute><Route path='addcategory' element={<AddCategory />} /></ProtectedRoute> */}
-
-
-                        <Route element={<ProtectedRoute isAllowed={isAdmin} />}>
-                            <Route index element={<Dashboard />} />
+                        <Route element={<ProtectedRoute isAllowed={userInfo?.isAdmin ? 1 : 0} />}>
+                            <Route path='addcategory' element={<AddCategory />} />
+                        </Route>
+                        <Route element={<ProtectedRoute isAllowed={userInfo?.isAdmin ? 1 : 0} />}>
+                            {/* <Route index element={<Dashboard />} /> */}
                             <Route path='/admin/home' exact element={<Dashboard />} />
                             {/* <Route path='/admin/categories' exact element={<AdminCategories />} /> */}
                             <Route path='updatecategory/:categoryID' element={<UpdateCategory />} />
-                            <Route path='addcategory' element={<AddCategory />} />
+                            {/* <Route path='addcategory' element={<AddCategory />} /> */}
                             <Route path='/admin/product-category/:categoryID' element={<AdminCategory />} />
                             <Route path='/admin/product-category/:categoryID/:categoryName' element={<AdminCategory />} />
                             <Route path='addproduct' element={<AddProduct />} />

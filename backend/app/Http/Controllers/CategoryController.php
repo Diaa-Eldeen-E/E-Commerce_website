@@ -17,16 +17,17 @@ class CategoryController extends Controller
     {
         // Return categories in nested form
         $rootCats = Category::where('parent_id', NULL)->orderBy('name', 'asc')->get();
-        function rec_cat($parents)
+
+        function recursive_cat($rootCats)
         {
-            foreach ($parents as $parent) {
-                $parent->children = Category::where('parent_id', $parent->id)->orderBy('name', 'asc')->get();
-                if ($parent->children->count() > 0)
-                    rec_cat($parent->children);
+            foreach ($rootCats as $rootCat) {
+                $rootCat->children = Category::where('parent_id', $rootCat->id)->orderBy('name', 'asc')->get();
+                if ($rootCat->children->count() > 0)
+                    recursive_cat($rootCat->children);
             }
         }
 
-        rec_cat($rootCats);
+        recursive_cat($rootCats);
         return response()->json($rootCats);
     }
 
@@ -51,8 +52,8 @@ class CategoryController extends Controller
         } else {
 
             $category = Category::where('id', $category_id)->first();
-
-            // [Todo:] Return category parent and children with it
+            $category->children = $category->getChildCategoriesAttribute();
+            $category->ancestors = $category->getAncestorsAttribute();
 
             return response()->json($category);
         }
@@ -122,7 +123,7 @@ class CategoryController extends Controller
         // Validate input
         $validator = Validator::make(array_merge($request->all(), ['category_id' => $category_id]), [
             'category_id' => 'required|numeric|min:0|exists:categories,id',
-            'name' => 'required|generic_name|unique:categories,name',
+            'name' => 'required|generic_name',
             'parent_id' => 'nullable|numeric|min:0|exists:categories,id'
         ]);
 
@@ -135,9 +136,26 @@ class CategoryController extends Controller
 
         $category = Category::where('id', $category_id)->first();
 
+        $duplicateCategories = DB::table('categories')
+            ->where('name', $request->name)
+            ->whereNotIn('id', [$category_id])
+            ->get();
+        if ($duplicateCategories->count() > 0)
+            return response()->json([
+                'validation_errors' => ['name' => 'This name already exists'],
+                'message' => 'Invalid inputs'
+            ], Response::HTTP_BAD_REQUEST);
+
         $category->name = $request->name;
+        $category->image_src = $request->image_src;
 
         if ($request->has('parent_id')) {
+            // Category cannot be a parent to itself
+            if ($request->parent_id == $category->id)
+                return response()->json([
+                    'validation_errors' => ['parent_id' => 'Invalid parent category'],
+                    'message' => 'Invalid inputs'
+                ], Response::HTTP_BAD_REQUEST);
             $category->parent_id = $request->parent_id;
         } else
             $category->parent_id = NULL;

@@ -1,6 +1,7 @@
 import { Container, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import ListNestedCategories from "./ListNestedCategories";
+import ListCategories from "./ListCategories";
 import Loading from "../../common/Loading";
 import { useGetNestedCategoriesQuery } from "../api/apiSlice";
 
@@ -29,7 +30,11 @@ const CategoriesPage = function ({ isAdmin })
 
                         :
 
-                        isSuccess ? <ListNestedCategories categories={categories} isAdmin={isAdmin} displayButtons={isAdmin} />
+                        isSuccess ?
+                            isAdmin ?
+                                <ListNestedCategories categories={categories} isAdmin={isAdmin} displayButtons={isAdmin} />
+                                :
+                                <ListCategories categories={categories} />
 
                             :
 

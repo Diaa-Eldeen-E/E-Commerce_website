@@ -16,6 +16,7 @@ class CreateCategoriesTable extends Migration
         Schema::create('categories', function (Blueprint $table) {
             $table->unsignedBigInteger('id')->autoIncrement();  // Primary key
             $table->string('name', 255)->unique();
+            $table->string('image_src')->default('/assets/products/no_image.png');
             $table->unsignedBigInteger('parent_id')->nullable()->default(NULL);
             $table->timestamps();
 
