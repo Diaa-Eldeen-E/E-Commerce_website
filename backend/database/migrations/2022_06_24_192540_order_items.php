@@ -14,7 +14,7 @@ class OrderProducts extends Migration
     public function up()
     {
         //
-        Schema::create('orders_products', function (Blueprint $table) {
+        Schema::create('order_items', function (Blueprint $table) {
             $table->unsignedBigInteger('order_id');
 
             $table->unsignedBigInteger('product_id');
