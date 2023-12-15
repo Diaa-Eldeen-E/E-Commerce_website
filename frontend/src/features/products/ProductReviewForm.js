@@ -1,35 +1,17 @@
 import StarRatingComponent from "react-star-rating-component";
-import { Button, Col, Form, FormLabel, Row } from "react-bootstrap";
-import axios from "axios";
-import { useEffect, useState } from "react";
+import { Button, Col, Form, Row } from "react-bootstrap";
+import { useState } from "react";
 import Loading from "../../common/Loading";
 import { useSelector } from "react-redux";
+import { useGetUserReviewQuery, useAddReviewMutation } from "../api/apiSlice";
 
 const ProductReviewForm = ({ product }) =>
 {
-
     const [inputs, setInputs] = useState({ 'product_id': product.id });
-    const [review, setReview] = useState({});
-    const [isLoading, setIsLoading] = useState(true);
     const { userToken } = useSelector((state) => state.auth)
 
-    useEffect(() =>
-    {
-        userToken ?
-            axios.get('/sanctum/csrf-cookie').then((response) =>
-            {
-                axios.get('/api/review?product_id=' + product.id).then((res) =>
-                {
-                    if (res.data?.review)
-                        setReview(res.data.review);
-
-                    setIsLoading(false);
-                })
-            })
-
-            :
-            setIsLoading(false);
-    }, [])
+    const { data: review, isLoading, isSuccess } = useGetUserReviewQuery(product.id)
+    const [addReview, { isLoading: isAdding, error }] = useAddReviewMutation()
 
     const handleChange = (event) =>
     {
@@ -43,19 +25,7 @@ const ProductReviewForm = ({ product }) =>
     const handleSubmit = function (event)
     {
         event.preventDefault();
-
-        axios.get('/sanctum/csrf-cookie').then((response) =>
-        {
-            axios.post('/api/review', inputs).then((res) =>
-            {
-                // Review added successfully
-                if (res.data.status === 200)
-                {
-                    setReview(inputs);
-                    window.location.reload(false);
-                }
-            })
-        })
+        addReview(inputs);
     }
 
     return (
@@ -80,7 +50,7 @@ const ProductReviewForm = ({ product }) =>
                         <p>{review.description}</p>
                     </>
 
-                    // Show review form
+                    // Not reviewed -> Show review form
 
                     :
 
@@ -111,7 +81,10 @@ const ProductReviewForm = ({ product }) =>
                         </Row>
 
                         <Row className='mt-3'>
-                            <Button type='submit' className='bg-danger'>Add review</Button>
+                            <Button type='submit' className='bg-danger'
+                                disabled={isAdding}>
+                                Add review
+                            </Button>
                         </Row>
                     </Form>
 
