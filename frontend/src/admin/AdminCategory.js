@@ -1,5 +1,5 @@
 import { Link, useParams, useSearchParams } from "react-router-dom";
-import { Container, Button, Table } from "react-bootstrap";
+import { Container, Button, Table, Row } from "react-bootstrap";
 import PaginationList from "../features/products/PaginationList";
 import { defaultPageSize } from "../app/constants";
 import { useNavigate } from "react-router-dom";
@@ -71,7 +71,9 @@ const AdminCategory = function ()
                             }
                         </tbody>
                     </Table>
-                    <PaginationList currentPage={pageNum} perPage={pageSize} totalItemsCount={totalCount} />
+                    <Row className="justify-content-center mt-5">
+                        <PaginationList currentPage={pageNum} perPage={pageSize} totalItemsCount={totalCount} />
+                    </Row>
                 </Container>
 
                 :
