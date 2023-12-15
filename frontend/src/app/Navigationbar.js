@@ -4,7 +4,7 @@ import ListNestedCategories from "../features/categories/ListNestedCategories";
 import SearchBar from "../features/search/SearchBar";
 import { useDispatch, useSelector } from "react-redux";
 import { userLogout } from "../features/auth/authActions";
-import { useGetNestedCategoriesQuery } from "../features/api/apiSlice";
+import { useGetNestedCategoriesQuery, useGetCartCountQuery } from "../features/api/apiSlice";
 import Loading from "../common/Loading";
 
 
@@ -13,6 +13,8 @@ const Navigationbar = function ({ isAdmin })
     const navigate = useNavigate();
     const { userToken, userInfo, loading } = useSelector((state) => state.auth)
     const dispatch = useDispatch()
+
+    const { data: cartCount } = useGetCartCountQuery()
 
     //    Fetch categories
     const { data: categories, isLoading, isSuccess, isError, error } = useGetNestedCategoriesQuery()
@@ -132,9 +134,9 @@ const Navigationbar = function ({ isAdmin })
 
                             {/*    [TODO: Cart icon ] */}
 
-                            <Nav.Link to="/cart">
+                            <Nav.Link as={Link} to="/cart">
                                 Cart
-                                <Badge style={{ 'display': 'inline' }} className="bg-dark">4</Badge>
+                                <Badge style={{ 'display': 'inline' }} className={userToken ? 'bg-dark' : 'd-none'} >{cartCount}</Badge>
                             </Nav.Link>
 
                         </Nav>
