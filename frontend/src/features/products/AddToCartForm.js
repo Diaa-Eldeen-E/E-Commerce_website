@@ -1,80 +1,76 @@
-import {Button, Col, FloatingLabel, Form, Row} from "react-bootstrap";
-import axios from "axios";
-import {useState, useEffect} from "react";
+import { Button, Col, Fade, Form, Row } from "react-bootstrap";
+import { useState } from "react";
+import { useIsCartedQuery, useAddToCartMutation } from "../api/apiSlice";
 
-const AddToCartForm = function ({product}) {
+const AddToCartForm = function ({ product })
+{
 
-    const [inputs, setInputs] = useState({'product_id': product.id});
-    const [cartQty, setCartQty] = useState(0);
-    const [isLoading, setIsLoading] = useState(true);
+    const [inputs, setInputs] = useState({ 'product_id': product.id });
+    const [isSuccess, setIsSuccess] = useState(false);
 
-    useEffect(() => {
-        axios.get('/sanctum/csrf-cookie').then((response) => {
-            axios.get('/api/iscarted?product_id=' + product.id).then((res) => {
-                if (res.data?.iscarted)
-                    setCartQty(res.data.quantity);
-                else
-                    setCartQty(0);
-                setIsLoading(false);
-            })
-        })
-    }, []);
+    const { data: productInCart, isLoading } = useIsCartedQuery(product.id)
+    const [addToCart, { isLoading: isCarting, error }] = useAddToCartMutation()
 
-    const handleChange = (event) => {
+
+    const handleChange = (event) =>
+    {
         const Name = event.target.name;
         const Value = event.target.value;
 
-        setInputs({...inputs, [Name]: Value});
+        setInputs({ ...inputs, [Name]: Value });
         console.log("Name: " + Name, "Value: " + Value);
-        console.log(cartQty);
-        console.log(product.stock);
     }
 
-    const handleSubmit = function (event) {
+    const handleSubmit = function (event)
+    {
         event.preventDefault();
-        axios.get('/sanctum/csrf-cookie').then((response) => {
-            axios.post('/api/addtocart', inputs).then((res) => {
-                if (res.data.status === 200) {
-
-                    window.location.reload(false);
-                }
+        addToCart(inputs).unwrap()
+            .then(() => setIsSuccess(true))
+            .catch(error =>
+            {
+                console.log("add to cart error: ", error);
             })
-        })
     }
 
-    const selectOptions = function (count) {
+    const selectOptions = function (count)
+    {
         let rows = [];
-        for (let idx = 1; idx <= count; idx++) {
+        for (let idx = 1; idx <= count; idx++)
+        {
             rows.push(<option value={idx} key={idx}>{idx}</option>);
         }
         return rows;
     }
-
 
     return (
         isLoading ?
             <>
             </>
             :
-            product.stock - cartQty > 0 ?
+            product.stock - (productInCart?.quantity ? productInCart.quantity : 0) ?
 
                 <Form onSubmit={handleSubmit}>
+
+                    {/* Add to cart flash message */}
+                    <Fade in={isSuccess} onEntered={() => setTimeout(() => setIsSuccess(false), 1500)}
+                        className='text-success'><p>Item added to cart</p></Fade>
+
                     <Row>
                         <Col>
                             <Form.Group controlId="formX">
                                 <Form.Select aria-label="Default select example" name='quantity'
-                                             onChange={handleChange}
+                                    onChange={handleChange}
                                 >
                                     <option value="">Quantity</option>
                                     {
-                                        selectOptions(product.stock - cartQty)
+                                        selectOptions(product.stock - (productInCart?.quantity ? productInCart.quantity : 0))
                                     }
                                 </Form.Select>
 
                             </Form.Group>
                         </Col>
                         <Col>
-                            <Button type='submit'>Add to cart</Button>
+                            <Button type='submit' disabled={isCarting}>Add to cart</Button>
                         </Col>
                     </Row>
                 </Form>
