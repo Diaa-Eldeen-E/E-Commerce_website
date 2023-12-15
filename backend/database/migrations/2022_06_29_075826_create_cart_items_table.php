@@ -14,7 +14,7 @@ class CreateCartItemsTable extends Migration
     public function up()
     {
         Schema::create('cart_items', function (Blueprint $table) {
-            // TODO: Add auto incrementing id for cart_items
+            // You could optionally add auto incrementing id for cart_items
             $table->unsignedBigInteger('cart_id');
             $table->unsignedBigInteger('product_id');
             $table->unsignedBigInteger('quantity');

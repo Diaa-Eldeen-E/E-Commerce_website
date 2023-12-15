@@ -41,7 +41,7 @@ const ProductsPage = function ()
                     <Row className=" mt-3">
 
                         {/* Left-side bar (sub-categories and filters) */}
-                        <Col className="col-auto mt-5">
+                        <Col className="col-auto pt-5" style={{ backgroundColor: "whitesmoke" }}>
 
                             <Col className="d-lg-block d-none">
                                 <FiltersBar category={category} />
@@ -53,7 +53,7 @@ const ProductsPage = function ()
 
                             <Offcanvas show={show} onHide={handleClose} responsive="lg">
                                 <Offcanvas.Header closeButton>
-                                    <Offcanvas.Title>Responsive offcanvas</Offcanvas.Title>
+                                    <Offcanvas.Title>Filters</Offcanvas.Title>
                                 </Offcanvas.Header>
                                 <Offcanvas.Body>
                                     <FiltersBar category={category} />
@@ -62,11 +62,12 @@ const ProductsPage = function ()
                         </Col>
 
                         <Col>
+                            {/* Show current category at the top */}
                             <Row>
                                 <ListSuperCategories superCategories={[category, ...category?.ancestors]} />
                             </Row>
 
-                            {/*  Products  */}
+                            {/*  List products  */}
                             <Row>
                                 <ListProducts products={productsArray} />
                             </Row>
