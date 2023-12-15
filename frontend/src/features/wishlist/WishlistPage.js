@@ -1,42 +1,13 @@
-import axios from "axios";
-import { useState, useEffect } from "react";
 import Loading from "../../common/Loading";
-import { Button, Container, Table } from "react-bootstrap";
+import { Button, Container, Table, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
-
-const removeFromWishlist = (product) =>
-{
-    axios.get('/sanctum/csrf-cookie').then((response) =>
-    {
-        axios.delete('/api/removefromwishlist?product_id=' + product.id).then((res) =>
-        {
-            if (res.data?.status === 200)
-            {
-                window.location.reload(false);
-            }
-        })
-    })
-}
+import { useGetWishlistQuery, useRemoveFromWishlistMutation } from "../api/apiSlice";
+import { CURRENCY } from "../../app/constants";
 
 const WishlistPage = function ()
 {
-
-    const [products, setProducts] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-
-    useEffect(() =>
-    {
-        axios.get('/sanctum/csrf-cookie').then((response) =>
-        {
-            axios.get('/api/wishlist').then((res) =>
-            {
-                if (res.data?.status === 200)
-                    setProducts(res.data.products);
-
-                setIsLoading(false);
-            })
-        })
-    }, []);
+    const { data: products, isLoading, isSuccess } = useGetWishlistQuery()
+    const [removeFromWishlist, { isLoading: isRemoving, error }] = useRemoveFromWishlistMutation()
 
     return (
         isLoading ?
@@ -60,11 +31,11 @@ const WishlistPage = function ()
                                     <tr className='table-row' key={product.id}>
                                         <td>{idx + 1}</td>
                                         <td><Link to={'/product/' + product.id}>{product.name}</Link></td>
-                                        <td>{product.price}</td>
+                                        <td>{product.price} {CURRENCY}</td>
                                         <td>{product.stock > 0 ? 'In Stock' : 'Out of stock'}</td>
                                         <td>
-                                            <Button variant='outline-danger'
-                                                onClick={() => removeFromWishlist(product)}>
+                                            <Button variant='outline-danger' disabled={isRemoving}
+                                                onClick={() => removeFromWishlist(product.id)}>
                                                 x
                                             </Button>
                                         </td>
@@ -73,6 +44,7 @@ const WishlistPage = function ()
                             }
                         </tbody>
                     </Table>
+
                 </Container>
 
                 :
