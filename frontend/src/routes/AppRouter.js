@@ -22,9 +22,12 @@ import SearchPage from "../features/search/SearchPage";
 import WishlistPage from "../features/wishlist/WishlistPage";
 import CartPage from "../features/cart/CartPage";
 import UpdateProduct from "../admin/UpdateProduct";
+import OrdersPage from "../features/orders/OrdersPage";
 
 import { useSelector } from "react-redux";
 import ProtectedRoute from './ProtectedRoute';
+import CheckoutSuccessPage from '../features/cart/CheckoutSuccessPage';
+import OrderPage from '../features/orders/OrderPage';
 
 
 const Roles = {
@@ -41,43 +44,38 @@ const AppRouter = () =>
     return (
         <div>
             <BrowserRouter>
-                {/*Change from Switch to Routes*/}
                 <Routes>
-                    {/*Change from component to element and change from Home to <Home/>*/}
                     <Route path='/' element={<Layout isAdmin={isAdmin} />}>
-                        {/* <Route path='/' element={isAdmin ? <Navigate to='/admin' /> : <Layout />}> */}
 
-                        {/*Index route A child route with no path that renders in the parent's outlet at
-                             the parent's URL By default*/}
                         <Route index element={<CategoriesPage isAdmin={isAdmin} />} />
                         <Route path='product-category/:categoryID' element={<ProductsPage />} />
                         <Route path='product-category/:categoryID/:categoryName' element={<ProductsPage />} />
                         <Route path='product/:productID' element={<ProductPage />} />
                         <Route path='product/:productID/:productSlug' element={<ProductPage />} />
                         <Route path='categories' element={<CategoriesPage isAdmin={isAdmin} />} />
-                        {/* <Route path='/login' element={<Login />} /> */}
+
                         <Route path='/login' element={userToken ? <Navigate to='/' replace /> : <Login />} />
                         <Route path='/register' element={userToken ? <Navigate to='/' replace /> : <Register />} />
 
-                        <Route path='search' element={<SearchPage />} />
+                        <Route path='search' element={<SearchPage isAdmin={isAdmin} />} />
 
-                        {/* <Route path='cart' element={<CartPage />} /> */}
-
+                        {/* User protected routes */}
                         <Route element={<ProtectedRoute isAllowed={userInfo ? 1 : 0} redirectPath={'/login'} />}>
                             <Route path='cart' element={<CartPage />} />
                             <Route path='wishlist' element={<WishlistPage />} />
+                            <Route path='orders' element={<OrdersPage />} />
+                            <Route path='order/:orderID' element={<OrderPage />} />
+                            <Route path='checkout-success' element={<CheckoutSuccessPage />} />
                         </Route>
-                        {/*  TODO: Add routes for orders, Settings  */}
 
 
+                        {/* Admin protected routes */}
                         {/* <ProtectedRoute><Route path='addcategory' element={<AddCategory />} /></ProtectedRoute> */}
                         <Route element={<ProtectedRoute isAllowed={userInfo?.isAdmin ? 1 : 0} />}>
                             <Route path='addcategory' element={<AddCategory />} />
                         </Route>
                         <Route element={<ProtectedRoute isAllowed={userInfo?.isAdmin ? 1 : 0} />}>
-                            {/* <Route index element={<Dashboard />} /> */}
                             <Route path='/admin/home' exact element={<Dashboard />} />
-                            {/* <Route path='/admin/categories' exact element={<AdminCategories />} /> */}
                             <Route path='updatecategory/:categoryID' element={<UpdateCategory />} />
                             {/* <Route path='addcategory' element={<AddCategory />} /> */}
                             <Route path='/admin/product-category/:categoryID' element={<AdminCategory />} />
@@ -85,32 +83,8 @@ const AppRouter = () =>
                             <Route path='addproduct' element={<AddProduct />} />
                             <Route path='updateproduct/:productID' element={<UpdateProduct />} />
                             <Route path='/admin/product/:productID' element={<AdminProduct />} />
-                            <Route path='search' element={<SearchPage isAdmin={true} />} />
                         </Route>
                     </Route>
-
-
-                    {/* Admin routes */}
-                    {/* <Route path='/admin' element={<RequireAuth allowedRole={Roles.admin} />}> */}
-
-
-                    {/* <Route element={<AdminLayout />}> */}
-                    {/* <Route index element={<AdminHome />} />
-                        <Route path='/admin/home' exact element={<AdminHome />} /> */}
-                    {/* <Route path='/admin/categories' exact element={<AdminCategories />} /> */}
-                    {/* <Route path='updatecategory/:categoryID' element={<UpdateCategory />} />
-                        <Route path='addcategory' element={<AddCategory />} />
-                        <Route path='category/:categoryID' element={<AdminCategory />} />
-                        <Route path='addproduct' element={<AddProduct />} />
-                        <Route path='updateproduct/:productID' element={<UpdateProduct />} />
-                        <Route path='product/:productID' element={<AdminProduct />} />
-                        <Route path='search' element={<SearchPage isAdmin={true} />} /> */}
-
-                    {/* </Route> */}
-
-                    {/*<Route index element={<AdminPrivateRoute> <AdminLayout/> </AdminPrivateRoute>}/>*/}
-                    {/* </Route> */}
-
 
                     <Route path='/notfound' element={<Page404 />} />
                     <Route path='*' element={<Page404 />} />

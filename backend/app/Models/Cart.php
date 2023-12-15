@@ -25,4 +25,11 @@ class Cart extends Model
         // withPivot: Extra attributes to be accessed in the intermediate table
         // withTimestamps: automatically maintain the created_at and updated_at timestamps in the intermediate table
     }
+
+    // Clear this cart from all products
+    public function clear()
+    {
+        // $this->items()->where('cart_id', $this->id)->delete();
+        Cart_item::Where('cart_id', $this->id)->delete();
+    }
 }

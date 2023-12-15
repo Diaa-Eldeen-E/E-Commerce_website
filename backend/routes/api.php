@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
@@ -14,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
 
 // Search using scout
 Route::get('search', function (Request $request) {
@@ -34,6 +36,11 @@ Route::get('nestedcategories', [\App\Http\Controllers\CategoryController::class,
 Route::post('register', [\App\Http\Controllers\AuthController::class, 'register']);
 Route::post('login', [\App\Http\Controllers\AuthController::class, 'login']);
 
+// Unauthinticated redirection (Invalid token)
+Route::any('unauthenticated', function (Request $request) {
+    return response('Unauthenticated', 401);
+})->name('unauthenticated');
+
 // Admin actions
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {
 
@@ -45,24 +52,40 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::delete('product/{product_id}', [\App\Http\Controllers\ProductController::class, 'deleteProduct']);
 });
 
+// Disable CSRF for stripe webhook
+Route::post('/stripe-webhook', [\App\Http\Controllers\CartController::class, 'handleStripeWebhook']);
+
 
 // Handle logout (Must be authenticated first) (User actions)
 Route::middleware(['auth:sanctum'])->group(function () {
 
+    Route::post('/cart-checkout', [\App\Http\Controllers\CartController::class, 'cartCheckout']);
+    Route::get('/cart-checkout1', [\App\Http\Controllers\CartController::class, 'cartCheckout1']);
+    Route::get('/cart-checkout2', [\App\Http\Controllers\CartController::class, 'cartCheckout2']);
+    Route::post('/create-intent', [\App\Http\Controllers\CartController::class, 'cartCreatePaymentIntent']);
+
+
     Route::post('logout', [\App\Http\Controllers\AuthController::class, 'logout']);
-    Route::post('addtowishlist', [\App\Http\Controllers\ProductController::class, 'addToWishlist']);
-    Route::post('addtocart', [\App\Http\Controllers\ProductController::class, 'addToCart']);
-    Route::delete('removefromwishlist', [\App\Http\Controllers\ProductController::class, 'removeFromWishlist']);
-    Route::delete('removefromcart', [\App\Http\Controllers\ProductController::class, 'removeFromCart']);
 
     // Check admin authorization, (Check authentication before calling checkAuth)
     Route::get('checkAuth', [\App\Http\Controllers\AuthController::class, 'checkAuth']);
 
-    Route::get('islisted', [\App\Http\Controllers\ProductController::class, 'isListed']);
-    Route::get('iscarted', [\App\Http\Controllers\ProductController::class, 'isCarted']);
-    Route::get('wishlist', [\App\Http\Controllers\ProductController::class, 'getWishlist']);
-    Route::get('cart', [\App\Http\Controllers\ProductController::class, 'getCart']);
-    Route::get('review', [\App\Http\Controllers\ProductController::class, 'getReview']);
+    Route::get('wishlist', [\App\Http\Controllers\WishlistController::class, 'getWishlist']);
+    Route::post('wishlist', [\App\Http\Controllers\WishlistController::class, 'addToWishlist']);
+    Route::delete('wishlist/{product_id}', [\App\Http\Controllers\WishlistController::class, 'removeFromWishlist']);
+    Route::get('islisted/{product_id}', [\App\Http\Controllers\WishlistController::class, 'isListed']);
+
+    Route::get('cart', [\App\Http\Controllers\CartController::class, 'getCart']);
+    Route::get('cartcount', [\App\Http\Controllers\CartController::class, 'getCartCount']);
+    Route::post('cart', [\App\Http\Controllers\CartController::class, 'addToCart']);
+    Route::delete('cart/{product_id}', [\App\Http\Controllers\CartController::class, 'removeFromCart']);
+    Route::get('iscarted/{product_id}', [\App\Http\Controllers\CartController::class, 'isCarted']);
+
+    Route::get('order/all', [\App\Http\Controllers\OrderController::class, 'getOrders']);
+    Route::get('order/{order_id}', [\App\Http\Controllers\OrderController::class, 'getOrder']);
+    Route::get('order/checkout/{session_id}', [\App\Http\Controllers\OrderController::class, 'getCheckoutOrder']);
+
+    Route::get('user-review/{product_id}', [\App\Http\Controllers\ProductController::class, 'getUserReview']);
     Route::post('review', [\App\Http\Controllers\ProductController::class, 'addReview']);
 });
 

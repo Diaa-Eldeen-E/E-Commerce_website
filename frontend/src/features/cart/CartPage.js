@@ -1,48 +1,62 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
 import Loading from "../../common/Loading";
-import { Table, Container, Button } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Table, Container, Button, Row } from "react-bootstrap";
+import { Link, useSearchParams } from "react-router-dom";
+import { useGetCartQuery, useRemoveFromCartMutation } from "../api/apiSlice";
+import { defaultPageSize, CURRENCY } from "../../app/constants";
+import PaginationList from "../products/PaginationList";
+import axios from "axios";
+import { useState } from "react";
 
-const removeFromCart = (product) =>
-{
-    axios.get('/sanctum/csrf-cookie').then((response) =>
-    {
-        axios.delete('/api/removefromcart?product_id=' + product.id).then((res) =>
-        {
-            if (res.data?.status === 200)
-            {
-                window.location.reload(false);
-            }
-        })
-    })
-}
+
+// import CheckoutForm from "./CartCheckout";
+// import { loadStripe } from '@stripe/stripe-js';
+// import { Elements } from '@stripe/react-stripe-js';
+
+// const stripePromise = loadStripe('pk_test_51O5QszLKQgcrUNY7G53YhOufp79n1HBvM23Cjq25KHIULcVePh5wZ0Hs4XifjvOSHgulaEeKWDI60H0WD2c7WQWX00u3N2E5qm');
+// const options = {
+//     mode: 'payment',
+//     currency: 'usd',
+//     amount: 1000,
+//     // Customizable appearance API.
+//     appearance: {
+//     },
+// };
+
 
 const CartPage = function ()
 {
 
-    const [products, setProducts] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
+    //    Extracting Page number, page size from the URL query params
+    const [searchParams] = useSearchParams();
+    let pageNum = searchParams.get('pn') ? searchParams.get('pn') : 1;
+    let pageSize = searchParams.get('ps') ? searchParams.get('ps') : defaultPageSize;
 
-    useEffect(() =>
+    const { data: products, isLoading, isSuccess } = useGetCartQuery(pageSize)
+    const productsArray = products?.data
+    const productsCount = products?.total ? products?.total : 0
+    const [removeFromCart, { isLoading: isRemoving, error }] = useRemoveFromCartMutation()
+    let totalAmount = 0
+    const [isRedirecting, setIsRedirecting] = useState(false)
+
+    const redirectToCheckout = async function ()
     {
-        axios.get('/sanctum/csrf-cookie').then((response) =>
+        setIsRedirecting(true);
+        axios.post('/api/cart-checkout').then((res) =>
+            window.location.href = res?.data?.stripe_checkout_url   // Redirect
+        ).catch(error =>
         {
-            axios.get('/api/cart').then((res) =>
-            {
-                if (res.data?.status === 200)
-                    setProducts(res.data.products);
-
-                setIsLoading(false);
-            })
+            setIsRedirecting(false)
+            console.log('caught error during checkout redirectionL ', error);
         })
-    }, []);
+
+    }
 
     return (
+
         isLoading ?
             <Loading />
             :
-            products?.length > 0 ?
+            productsCount > 0 ?
                 <Container className='w-75 mt-5'>
                     <Table striped hover className='align-items-center justify-content-start'>
                         <thead>
@@ -51,32 +65,53 @@ const CartPage = function ()
                                 <th>Product</th>
                                 <th>Price</th>
                                 <th>Quantity</th>
-                                <th>Subtotal</th>
+                                <th>Total</th>
                             </tr>
                         </thead>
 
                         <tbody>
                             {
-                                products.map((product, idx) =>
+                                productsArray.map((product, idx) =>
                                     <tr className='table-row' key={product.id}>
                                         <td>{idx + 1}</td>
                                         <td><Link to={'/product/' + product.id}>{product.name}</Link></td>
-                                        <td>{product.price}</td>
+                                        <td>{product.price} {CURRENCY}</td>
                                         <td>{product.pivot.quantity}</td>
-                                        <td>{product.pivot.quantity * product.price}</td>
+                                        <td>{product.pivot.quantity * product.price} {CURRENCY}</td>
                                         <td>
-                                            <Button variant='outline-danger'
-                                                onClick={() => removeFromCart(product)}>
+                                            <Button variant='outline-danger' disabled={isRemoving}
+                                                onClick={() => removeFromCart(product.id)}>
                                                 x
                                             </Button>
                                         </td>
+                                        <td className='d-none'>{totalAmount += product.pivot.quantity * product.price}$</td>
                                     </tr>
                                 )
                             }
+                            <tr>
+                                <td></td><td></td><td></td><td></td>
+                                <td>{totalAmount} {CURRENCY}</td>
+                            </tr>
                         </tbody>
                     </Table>
 
-                    {/*  TODO: Proceed to checkout  */}
+                    <Row className="justify-content-center mt-5">
+                        <PaginationList currentPage={pageNum} perPage={pageSize} totalItemsCount={productsCount} />
+                    </Row>
+
+                    {/*  Proceed to checkout  */}
+                    <Row className='justify-content-center mt-5'>
+                        <Button variant="danger" className="w-auto"
+                            onClick={() => redirectToCheckout()} disabled={isRedirecting}>
+                            Proceed to checkout
+                        </Button>
+                    </Row>
+
+                    <Row className='mt-5'>
+                        {/* <Elements stripe={stripePromise} options={options}>
+                            <CheckoutForm />
+                        </Elements> */}
+                    </Row>
 
                 </Container>
 
@@ -86,5 +121,7 @@ const CartPage = function ()
     )
 
 }
+
+
 
 export default CartPage;
