@@ -2,18 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Cart_item;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Review;
-use App\Models\User;
-use App\Models\Wishlist;
-use App\Models\Wishlist_item;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
@@ -237,207 +232,11 @@ class ProductController extends Controller
         }
     }
 
-    public function addToWishlist(Request $request)
+    public function getUserReview(Request $request, $product_id)
     {
         // Validate input
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make(['product_id' => $product_id], [
             'product_id' => 'required|integer|exists:products,id',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'validation_errors' => $validator->messages(),
-                'message' => 'Invalid inputs'
-            ], Response::HTTP_BAD_REQUEST);
-        }
-
-        // Add the product to this user's wishlist
-        $wishlist_item = new Wishlist_item;
-        $wishlist_item->product_id = $request->product_id;
-
-        $request->user()->wishlist()->first()->items()->save($wishlist_item);
-        //        $wishlist_item->wishlist_id = $request->user()->wishlist_id;
-        //        $wishlist_item->save();
-
-        return response()->json([
-            'status' => 200,
-            'message' => 'Product added to wishlist successfully'
-        ]);
-    }
-
-    public function removeFromWishlist(Request $request)
-    {
-        // Validate input
-        $validator = Validator::make($request->all(), [
-            'product_id' => 'required|integer|exists:wishlist_items,product_id',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'validation_errors' => $validator->messages(),
-                'message' => 'Invalid inputs'
-            ], Response::HTTP_BAD_REQUEST);
-        }
-
-        // Remove the product from the user's wishlist
-        $deleted = $request->user()->wishlist()->first()->items()
-            ->where('product_id', $request->product_id)->delete();
-
-
-        if ($deleted)
-            return response()->json([
-                'status' => 200,
-                'message' => 'Product removed from wishlist'
-            ]);
-        else
-            return response()->json(['Failed to delete'], 500);
-    }
-
-    public function addToCart(Request $request)
-    {
-        // Validate input
-        $validator = Validator::make($request->all(), [
-            'product_id' => 'required|integer|exists:products,id',
-            'quantity' => 'required|integer|min:0'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'validation_errors' => $validator->messages(),
-                'message' => 'Invalid inputs'
-            ], Response::HTTP_BAD_REQUEST);
-        }
-        $product = Product::where('id', $request->product_id)->first();
-        if ($request->quantity > $product->stock)
-            return response()->json(['The requested quantity is unavailable'], 400);
-
-        // Add the product to this user's cart
-        $prevCartItem = $request->user()->cart()->first()->items()
-            ->where('product_id', $request->product_id)->first();
-
-        // Already in cart?
-        if ($prevCartItem) {
-            // Add this quantity to the previous quantity if available
-            if ($request->quantity + $prevCartItem->quantity > $product->stock)
-                return response()->json(['The requested quantity is unavailable'], 400);
-            else {
-                $prevCartItem->quantity += $request->quantity;
-                $prevCartItem->save();
-            }
-        } // Not previously carted -> Create a new cart item
-        else {
-            $cart_item = new Cart_item([
-                'product_id' => $request->product_id,
-                'cart_id' => $request->user()->cart()->first()->id,
-                'quantity' => $request->quantity
-            ]);
-            $cart_item->save();
-
-            //            $request->user()->cart()->first()->products()
-            //                ->attach($request->product_id, ['quantity' => $request->quantity]);
-        }
-
-        return response()->json([
-            'status' => 200,
-            'message' => 'Items added to cart successfully'
-        ]);
-    }
-
-    public function removeFromCart(Request $request)
-    {
-        // Validate input
-        $validator = Validator::make($request->all(), [
-            'product_id' => 'required|integer|exists:cart_items,product_id',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'validation_errors' => $validator->messages(),
-                'message' => 'Invalid inputs'
-            ], Response::HTTP_BAD_REQUEST);
-        }
-
-        // Remove the product from the user's wishlist
-        $deleted = $request->user()->cart()->first()->items()
-            ->where('product_id', $request->product_id)->delete();
-
-        if ($deleted)
-            return response()->json([
-                'status' => 200,
-                'message' => 'Product removed from cart'
-            ]);
-        else
-            return response()->json(['Failed to delete'], 500);
-    }
-
-    public function isListed(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'product_id' => 'required|integer|min:0',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'validation_errors' => $validator->messages(),
-                'message' => 'Invalid inputs'
-            ], Response::HTTP_BAD_REQUEST);
-        }
-
-        $count = $request->user()->wishlist()->first()->items()->where('product_id', $request->product_id)->count();
-
-        return response()->json([
-            'islisted' => $count > 0
-        ]);
-    }
-
-    public function isCarted(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'product_id' => 'required|integer|min:0',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'validation_errors' => $validator->messages(),
-                'message' => 'Invalid inputs'
-            ], Response::HTTP_BAD_REQUEST);
-        }
-
-        $item = $request->user()->cart()->first()->items()->where('product_id', $request->product_id)->first();
-
-        if ($item)
-            return response()->json([
-                'iscarted' => 1,
-                'quantity' => $item->quantity,
-            ]);
-        else
-            return response()->json([
-                'iscarted' => 0,
-            ]);
-    }
-
-    public function getWishlist(Request $request)
-    {
-        return response()->json([
-            'status' => 200,
-            'products' => $request->user()->wishlist()->first()->products()->get(),
-            'message' => 'Products retrieved'
-        ]);
-    }
-
-    public function getCart(Request $request)
-    {
-        return response()->json([
-            'status' => 200,
-            'products' => $request->user()->cart()->first()->products()->get(),
-            'message' => 'Products retrieved'
-        ]);
-    }
-
-    public function getReview(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'product_id' => 'required|integer|min:0',
         ]);
 
         if ($validator->fails()) {
@@ -449,9 +248,7 @@ class ProductController extends Controller
 
         $review = $request->user()->reviews()->where('product_id', $request->product_id)->first();
 
-        return response()->json([
-            'review' => $review
-        ]);
+        return response()->json($review);
     }
 
     public function addReview(Request $request)
