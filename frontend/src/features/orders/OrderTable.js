@@ -1,4 +1,4 @@
-import { Table, Container, Row } from "react-bootstrap";
+import { Table, Container, Row, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { CURRENCY } from "../../app/constants";
 
@@ -13,9 +13,17 @@ const OrderTable = function ({ order })
             <Row>
 
                 <h4>Order date</h4>
-                <p>{order.created_at}</p>
-
-                <Link to={'/order/' + order.id}>Order details</Link>
+                <p>{order?.created_at}</p>
+                <Col md={'auto'}>
+                    <Link to={'/order/' + order?.id}>Order details</Link>
+                </Col>
+                <Col></Col>
+                <Col md={'auto'}>
+                    <a target='_blank' rel='noopener noreferrer' // Open in new tab
+                        href={order?.invoice ? order?.invoice : '#'}>
+                        Invoice
+                    </a>
+                </Col>
             </Row>
             <Table striped hover className='align-items-center justify-content-start'>
                 <thead>

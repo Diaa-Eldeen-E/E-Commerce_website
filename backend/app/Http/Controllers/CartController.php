@@ -8,18 +8,25 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\Product;
 use App\Models\Cart_item;
 use App\Models\Order;
+use App\Http\Controllers\NotFoundHttpException;
 
 class CartController extends Controller
 {
 
     protected function handleStripeSessionCompleteEvent($session)
     {
-        // Update the user's order state
+        $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
+
+        // Update the user's order state and attach the stripe created invoice
         $order = Order::Where('session_id', $session->id)->first();
+        if (!$order)
+            return;
         $order->status = 'paid';
+        $invoice = $stripe->invoices->retrieve($session->invoice, []);
+        $order->invoice = $invoice->hosted_invoice_url;
         $order->save();
 
-        // Update products stock
+        // Update products stock (Subtract the sold items from the inventory)
         foreach ($order->products()->get() as $product) {
             $product->stock = $product->stock - $product->pivot->quantity;
             $product->save();
@@ -46,7 +53,8 @@ class CartController extends Controller
 
         // Validate stripe signature
         $endpoint_secret = env('STRIPE_WEBHOOK_SECRET');
-        $sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];
+        // $sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];    // standard PHP
+        $sig_header = $request->server('HTTP_STRIPE_SIGNATURE');
         try {
             $event = \Stripe\Webhook::constructEvent($payload, $sig_header, $endpoint_secret);
         } catch (\Stripe\Exception\SignatureVerificationException $e) {
@@ -61,10 +69,6 @@ class CartController extends Controller
                 $out->writeln('payment_intent.succeeded');
                 $paymentIntent = $event->data->object; // contains a \Stripe\PaymentIntent
 
-                // Invoice?
-                // Sales data 
-                // handlePaymentIntentSucceeded($paymentIntent);
-
                 break;
             case 'issuing_authorization.request':
                 $out->writeln('issuing_authorization.request accepted');
@@ -75,8 +79,6 @@ class CartController extends Controller
             case 'checkout.session.completed':
                 $out->writeln('checkout.session.completed');
                 $session = $event->data->object;
-                $out->writeln('session');
-                $out->writeln($session);
                 $this->handleStripeSessionCompleteEvent($session);
                 break;
 
@@ -122,7 +124,9 @@ class CartController extends Controller
                 'cancel_url' => env('APP_URL') . '/cart',
                 'line_items' => $line_items,
                 'mode' => 'payment',    // One time payment (vs subscription)
-
+                'customer_creation' => 'always',
+                'customer_email' => $request->user()->email,
+                'invoice_creation' => ['enabled' => true]
             ]
         );
 

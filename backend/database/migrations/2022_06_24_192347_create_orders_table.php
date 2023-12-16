@@ -19,6 +19,7 @@ class CreateOrdersTable extends Migration
             $table->unsignedBigInteger('user_id');
             $table->string('status');
             $table->unsignedBigInteger('total_price')->default(0);
+            $table->string('invoice', 1027)->default(NULL);
             $table->string('session_id')->unique()->default(NULL);
             $table->string('payment_intent_id')->unique()->default(NULL);
             $table->timestamps();
