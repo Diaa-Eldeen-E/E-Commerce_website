@@ -84,7 +84,7 @@ const Navigationbar = function ({ isAdmin })
 
                     {/* Search form */}
                     <Col md={6} style={{ maxHeight: "50px" }} xs={12}>
-                        <SearchBar isAdmin />
+                        <SearchBar isAdmin={isAdmin} />
                     </Col >
 
                     {/* Account */}

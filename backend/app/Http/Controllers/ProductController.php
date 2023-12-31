@@ -5,25 +5,33 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Review;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class ProductController extends Controller
 {
     public function searchProducts(Request $request)
     {
         $query = $request->query('q');
-        $startIdx = $request->query('s_idx');
-        $endIdx = $request->query('e_idx');
 
         // Validate input
-        $validator = Validator::make(['query' => $query, 's_idx' => $startIdx, 'e_idx' => $endIdx], [
-            'query' => 'required|generic_name|max:255',
-            's_idx' => 'required|integer|min:0',
-            'e_idx' => 'required|integer|min:0',
+        $validator = Validator::make($request->all(), [
+            'q' => 'generic_name|max:255',  // Query
+            'category' => 'numeric|min:0|exists:categories,id',
+            'page' => 'integer|min:0',
+            'size' => 'integer|min:0',
+            'min_price' => 'integer|min:0',
+            'max_price' => 'integer|gt:min_price',
         ]);
+
+        $page_num = $request->page ? $request->page : 1;
+        $page_size = $request->size ? $request->size : 10;
+        $min_price = $request->min_price ? $request->min_price : 0;
+        $max_price = $request->max_price ? $request->max_price : PHP_INT_MAX;
 
         if ($validator->fails()) {
             return response()->json([
@@ -34,18 +42,28 @@ class ProductController extends Controller
 
         $query = str_replace(' ', '%', $query);
 
-        // Search in products table
-        $results = DB::table('products')->where('name', 'like', '%' . $query . '%')
-            ->offset($startIdx)->limit($endIdx - $startIdx)->get();
-        $totalCount = DB::table('products')->where('name', 'like', '%' . $query . '%')
-            ->count();
+        // Searching inside a particular category
+        if ($request->category) {
 
+            $category = Category::where('id', $request->category)->first();
 
-        return response()->json([
-            'status' => 200,
-            'results' => $results,
-            'totalCount' => $totalCount
-        ]);
+            // Include all descendant categories
+            $cats = $category->descendants;
+            $idArr = [$category->id];
+            foreach ($cats as $cat) {
+                array_push($idArr, $cat->id);
+            }
+
+            $results = DB::table('products')->where('name', 'like', '%' . $query . '%')
+                ->whereIn('category_id', $idArr)
+                ->whereBetween('price', [$min_price, $max_price])->paginate($page_size);
+        }
+        // Searching inside all products
+        else
+            $results = DB::table('products')->where('name', 'like', '%' . $query . '%')
+                ->whereBetween('price', [$min_price, $max_price])->paginate($page_size);
+
+        return response()->json($results);
     }
 
     //
@@ -83,7 +101,7 @@ class ProductController extends Controller
                 'status' => 200,
                 'product' => $product,
                 'message' => 'Product added successfully'
-            ]);
+            ], Response::HTTP_CREATED);
         }
     }
 
@@ -126,7 +144,7 @@ class ProductController extends Controller
 
         return response()->json([
             'status' => 200,
-            'category' => $product,
+            'product' => $product,
             'message' => 'Product updated successfully'
         ]);
     }
@@ -150,13 +168,9 @@ class ProductController extends Controller
         $deleted = Product::where('id', $product_id)->delete();
 
         if ($deleted)
-            return response()->json([
-                'status' => 200,
-                'deleted' => $deleted,
-                'message' => 'Deleted items successfully'
-            ]);
+            return response('', Response::HTTP_NO_CONTENT);
         else
-            return response()->json('Not deleted');
+            return response('Not deleted', Reseponse::HTTP_BAD_REQUEST);
     }
 
     public function getProducts(Request $request, $category_id)
@@ -164,8 +178,6 @@ class ProductController extends Controller
         // Validate input
         $validator = Validator::make(array_merge($request->all(), ['category_id' => $category_id]), [
             'category_id' => 'required|numeric|min:0|exists:categories,id',
-            // 's_idx' => 'required|integer|min:0',
-            // 'e_idx' => 'required|integer|min:0',
             'page' => 'integer|min:0',
             'size' => 'integer|min:0'
         ]);
@@ -176,16 +188,13 @@ class ProductController extends Controller
                 'message' => 'Invalid inputs'
             ], Response::HTTP_BAD_REQUEST);
         }
-        // $startIdx = $request->s_idx;
-        // $endIdx = $request->e_idx;
 
         $page_num = $request->page ? $request->page : 1;
         $page_size = $request->size ? $request->size : 10;
 
+        // Include all descendant categories
         $category = Category::where('id', $request->category_id)->first();
-
         $cats = $category->descendants;
-
         $idArr = [$category->id];
         foreach ($cats as $cat) {
             array_push($idArr, $cat->id);
@@ -195,13 +204,6 @@ class ProductController extends Controller
         //     ->offset($startIdx)->limit($endIdx - $startIdx)->get();
 
         $products = Product::whereIn('category_id', $idArr)->paginate($page_size);
-
-        // $totalProductsCount = DB::table('products')->whereIn('category_id', $idArr)->count('id');
-
-        foreach ($products as $product) {
-            $product->rating = $product->reviews()->sum('rating');
-            $product->raters_count = $product->reviews()->count();
-        }
 
         return response()->json($products);
     }
@@ -222,10 +224,8 @@ class ProductController extends Controller
 
             $product = Product::where('id', $request->product_id)->first();
 
-            $product->rating = $product->reviews()->sum('rating');
             $product->raters_count = $product->reviews()->count();
             $product->reviews = $product->reviews()->get();
-
             $product->parentCategories = $product->category->ancestors;
 
             return response()->json($product);
@@ -254,7 +254,13 @@ class ProductController extends Controller
     public function addReview(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'product_id' => 'required|integer|min:0',
+            'product_id' => [
+                'required',
+                'integer',
+                'min:0',
+                // The same user cannot rate the same product twice
+                Rule::unique('reviews')->where(fn (Builder $query) => $query->where('user_id', $request->user()->id))
+            ],
             'rating' => 'required|integer|min:0|max:5',
         ]);
 
@@ -265,6 +271,7 @@ class ProductController extends Controller
             ], Response::HTTP_BAD_REQUEST);
         }
 
+        // The review model automatically updates the product rating
         $review = Review::create([
             'product_id' => $request->product_id,
             'rating' => $request->rating,
@@ -272,11 +279,10 @@ class ProductController extends Controller
             'user_id' => $request->user()->id
         ]);
 
-
         return response()->json([
             'status' => 200,
-            'message' => 'Review added successfully',
-            'review' => $review
-        ]);
+            'review' => $review,
+            'message' => 'Review created successfully'
+        ], Response::HTTP_CREATED);
     }
 }

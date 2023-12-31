@@ -78,6 +78,21 @@ export const apiSlice = createApi({
             query: (productID) => ({ url: 'api/product/' + productID, method: 'DELETE', }),
             invalidatesTags: ['Product']
         }),
+        searchProducts: builder.query({
+            query: (searchQuery) => (
+                {
+                    url: 'api/products/search?'
+                        + (searchQuery?.pageNum ? 'page=' + searchQuery.pageNum : '')
+                        + (searchQuery?.pageSize ? '&size=' + searchQuery.pageSize : '')
+                        + (searchQuery?.query ? '&q=' + searchQuery.query : '')
+                        + (searchQuery?.category ? '&category=' + searchQuery?.category : '')
+                        + (searchQuery?.min_price ? '&min_price=' + searchQuery.min_price : '')
+                        + (searchQuery?.max_price ? '&max_price=' + searchQuery.max_price : '')
+                    , method: 'GET',
+                }
+            ),
+            providesTags: ['Product']
+        }),
 
 
         // Cart API
@@ -161,7 +176,7 @@ export const apiSlice = createApi({
 // auto-generated based on the defined endpoints
 export const { useGetCategoriesQuery, useGetNestedCategoriesQuery, useGetCategoryQuery,
     useAddCategoryMutation, useUpdateCategoryMutation, useDeleteCategoryMutation,
-    useGetProductsQuery, useGetProductQuery,
+    useGetProductsQuery, useGetProductQuery, useSearchProductsQuery,
     useAddProductMutation, useUpdateProductMutation, useDeleteProductMutation,
     useGetCartQuery, useGetCartCountQuery, useIsCartedQuery, useAddToCartMutation, useRemoveFromCartMutation,
     useGetWishlistQuery, useIsListedQuery, useAddToWishlistMutation, useRemoveFromWishlistMutation,

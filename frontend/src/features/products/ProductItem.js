@@ -1,4 +1,4 @@
-import { Card, Col, Row } from "react-bootstrap";
+import { Card, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import StarRatingComponent from "react-star-rating-component";
 
@@ -19,14 +19,12 @@ const ProductItem = function ({ product, isAdmin })
                         <StarRatingComponent
                             name="rate1"
                             starCount={5}
-                            value={Math.ceil(product.rating / product.raters_count)}
+                            value={Math.ceil(product.rating)}
                         />
-                    </Card.Body>
-                    <Card.Footer>
                         <p className='text-danger'>
                             {product.price}$
                         </p>
-                    </Card.Footer>
+                    </Card.Body>
 
                 </Card>
             </Col>
