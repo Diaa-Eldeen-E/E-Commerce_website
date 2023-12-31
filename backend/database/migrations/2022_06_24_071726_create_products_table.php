@@ -22,6 +22,7 @@ class CreateProductsTable extends Migration
             $table->unsignedDouble('price');
             $table->unsignedInteger('stock');
             $table->string('slug', 255)->default('');
+            $table->unsignedDouble('rating')->default(0);
 
             $table->timestamps();
 

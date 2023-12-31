@@ -56,7 +56,7 @@ const ProductPage = function ()
 
                 <Container>
                     <Row>
-                        <ListSuperCategories superCategories={product.parentCategories} />
+                        <ListSuperCategories superCategories={[product?.category, ...product?.parentCategories]} />
                     </Row>
 
                     <Container className='justify-content-center w-75 mx-auto mt-5'>
@@ -144,6 +144,11 @@ const ProductPage = function ()
                             }
 
                         </Row>
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
                     </Container>
                 </Container>
                 :
