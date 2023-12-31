@@ -16,6 +16,14 @@ class Review extends Model
         'user_id'
     ];
 
+    // The relationships that should always be loaded (i.e. retrieved with the review query)
+    protected $with = ['user'];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public static function boot()
     {
         parent::boot();
